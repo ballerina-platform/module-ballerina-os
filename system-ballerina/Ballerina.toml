@@ -1,0 +1,28 @@
+[project]
+org-name = "ballerina"
+version = "@toml.version@"
+
+[platform]
+target = "java8"
+
+    [[platform.libraries]]
+    artifactId = "system"
+    version = "@project.version@"
+    path = "../system-native/build/libs/system-native-@project.version@.jar"
+    groupId = "ballerina"
+    modules = ["system"]
+
+    [[platform.libraries]]
+    artifactId = "ballerina-io"
+    version = "2.0.0-Preview2"
+    path = "./lib/ballerina-io-2.0.0-Preview2.jar"
+    groupId = "org.ballerinalang"
+    modules = ["system"]
+
+    [[platform.libraries]]
+    artifactId = "system"
+    version = "@project.version@"
+    path = "../system-test-utils/build/libs/system-test-utils-@project.version@.jar"
+    groupId = "org.ballerinalang.stdlib.system"
+    modules = ["system"]
+    scope = "testOnly"
