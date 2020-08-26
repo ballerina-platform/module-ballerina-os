@@ -27,5 +27,3 @@ dependencies {
     compile group: 'org.ballerinalang', name: 'ballerina-time', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-io', version: "${ballerinaLangVersion}"
 }
-
-
