@@ -20,8 +20,6 @@ package org.ballerinalang.stdlib.system.testutils;
 
 import org.ballerinalang.jvm.StringUtils;
 import org.ballerinalang.jvm.values.api.BString;
-import org.ballerinalang.stdlib.system.utils.SystemUtils;
-//import org.apache.commons.lang3.SystemUtils;
 
 public class SystemTestUtils {
 

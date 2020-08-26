@@ -14,8 +14,6 @@ plugins {
 rootProject.name = 'system'
 include(':build-config:checkstyle')
 include ':system-native', ':system-test-utils', ':system-ballerina'
-include 'system-test-utils'
-include 'system-native'
 
 gradleEnterprise {
     buildScan {

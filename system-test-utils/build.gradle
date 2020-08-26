@@ -22,9 +22,7 @@ plugins {
 description = 'Ballerina - System Test Utils'
 
 dependencies {
-    compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    compile "org.slf4j:slf4j-jdk14:${slf4jVersion}"
     compile project(":system-native")
-    compile "org.apache.commons:commons-lang3:3.8.1"
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: "${apacheCommonsVersion}"
 }

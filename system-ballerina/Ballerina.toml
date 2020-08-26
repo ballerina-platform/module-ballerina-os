@@ -14,8 +14,8 @@ target = "java8"
 
     [[platform.libraries]]
     artifactId = "ballerina-io"
-    version = "2.0.0-Preview2"
-    path = "./lib/ballerina-io-2.0.0-Preview2.jar"
+    version = "@lang.version@"
+    path = "./lib/ballerina-io-@lang.version@.jar"
     groupId = "org.ballerinalang"
     modules = ["system"]
 
