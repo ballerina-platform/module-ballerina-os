@@ -79,18 +79,18 @@ function nativeUuid() returns handle = @java:Method {
     class: "java.util.UUID"
 } external;
 
-//# Executes an operating system command as a subprocess of the current process.
-//# ```ballerina
-//# system:Process|system:Error proc = system:exec("ls", {}, "/", "-la")
-//# ```
-//#
-//# + command - The name of the command to be executed
-//# + env - Environment variables to be set to the process
-//# + dir - The current working directory to be set to the process
-//# + args - Command arguments to be passed in
-//# + return - A `system:Process` object if successful or else a `system:Error` if a failure occurs
-//public function exec(@untainted string command, @untainted map<string> env = {},
-//                     @untainted string? dir = (), @untainted string... args) returns Process|Error = @java:Method {
-//    name: "exec",
-//    class: "org.ballerinalang.stdlib.system.nativeimpl.Exec"
-//} external;
+# Executes an operating system command as a subprocess of the current process.
+# ```ballerina
+# system:Process|system:Error proc = system:exec("ls", {}, "/", "-la")
+# ```
+#
+# + command - The name of the command to be executed
+# + env - Environment variables to be set to the process
+# + dir - The current working directory to be set to the process
+# + args - Command arguments to be passed in
+# + return - A `system:Process` object if successful or else a `system:Error` if a failure occurs
+public function exec(@untainted string command, @untainted map<string> env = {},
+                     @untainted string? dir = (), @untainted string... args) returns Process|Error = @java:Method {
+    name: "exec",
+    class: "org.ballerinalang.stdlib.system.nativeimpl.Exec"
+} external;

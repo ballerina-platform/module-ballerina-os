@@ -22,13 +22,11 @@ plugins {
 description = 'Ballerina - System Java Utils'
 
 dependencies {
-    implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
-    implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
-    implementation group: 'org.ballerinalang', name: 'ballerina-runtime-api', version: "${ballerinaLangVersion}"
-    implementation group: 'org.ballerinalang', name: 'ballerina-time', version: "${ballerinaLangVersion}"
-//    implementation group: 'org.ballerinalang', name: 'ballerina-lang:internal', version: "${ballerinaLangVersion}"
-    implementation group: 'org.ballerinalang', name: 'ballerina-io', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+    compile group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-time', version: "${ballerinaLangVersion}"
+    compile group: 'org.ballerinalang', name: 'ballerina-io', version: "${ballerinaLangVersion}"
 }
 
 
