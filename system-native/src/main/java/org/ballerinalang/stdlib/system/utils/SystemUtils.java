@@ -19,25 +19,14 @@ package org.ballerinalang.stdlib.system.utils;
 
 import org.ballerinalang.jvm.BallerinaErrors;
 import org.ballerinalang.jvm.BallerinaValues;
-import org.ballerinalang.jvm.StringUtils;
 import org.ballerinalang.jvm.values.ErrorValue;
-import org.ballerinalang.jvm.values.MapValue;
 import org.ballerinalang.jvm.values.ObjectValue;
-import org.ballerinalang.jvm.values.api.BString;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
-import java.time.ZonedDateTime;
 
-import static org.ballerinalang.stdlib.system.utils.SystemConstants.FILE_INFO_TYPE;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_FIELD;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_TYPE;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.SYSTEM_PACKAGE_ID;
-import static org.ballerinalang.stdlib.time.util.TimeUtils.createTimeRecord;
-import static org.ballerinalang.stdlib.time.util.TimeUtils.getTimeRecord;
-import static org.ballerinalang.stdlib.time.util.TimeUtils.getTimeZoneRecord;
 
 /**
  * @since 0.94.1
@@ -71,17 +60,6 @@ public class SystemUtils {
      */
     public static ErrorValue getBallerinaError(String typeId, String message) {
         return BallerinaErrors.createDistinctError(typeId, SYSTEM_PACKAGE_ID, message);
-    }
-
-    public static ObjectValue getFileInfo(File inputFile) throws IOException {
-        MapValue<BString, Object> lastModifiedInstance;
-        FileTime lastModified = Files.getLastModifiedTime(inputFile.toPath());
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse(lastModified.toString());
-        lastModifiedInstance = createTimeRecord(getTimeZoneRecord(), getTimeRecord(),
-                lastModified.toMillis(), StringUtils.fromString(zonedDateTime.getZone().toString()));
-        return BallerinaValues.createObjectValue(SYSTEM_PACKAGE_ID, FILE_INFO_TYPE,
-                                                 StringUtils.fromString(inputFile.getName()), inputFile.length(),
-                                                 lastModifiedInstance, inputFile.isDirectory());
     }
 
     public static ObjectValue getProcessObject(Process process) throws IOException {
