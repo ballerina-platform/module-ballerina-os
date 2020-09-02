@@ -2,6 +2,9 @@
 org-name = "ballerina"
 version = "@toml.version@"
 
+[dependencies]
+"ballerina/io" = "@stdlib.io.version@"
+
 [platform]
 target = "java8"
 
@@ -14,8 +17,8 @@ target = "java8"
 
     [[platform.libraries]]
     artifactId = "ballerina-io"
-    version = "@lang.version@"
-    path = "./lib/ballerina-io-@lang.version@.jar"
+    version = "2.0.0-Preview4-SNAPSHOT"
+    path = "./lib/ballerina-io-2.0.0-Preview4-SNAPSHOT.jar"
     groupId = "org.ballerinalang"
     modules = ["system"]
 

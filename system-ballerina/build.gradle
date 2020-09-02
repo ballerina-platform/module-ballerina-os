@@ -28,7 +28,7 @@ dependencies {
     jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.ballerinalang', name: 'ballerina-io', version: "${ballerinaLangVersion}") {
+    externalJars (group: 'org.ballerinalang', name: 'ballerina-io', version: "2.0.0-Preview4-SNAPSHOT") {
         transitive = false
     }
     compile project(':system-native')
@@ -53,6 +53,46 @@ task unpackJballerinaTools(type: Copy) {
     }
 }
 
+task unpackStdLibs() {
+    doLast {
+        configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            copy {
+                from project.zipTree(artifact.getFile())
+                into new File("${buildDir}/target/extracted-distributions", artifact.name + "-zip")
+            }
+        }
+    }
+}
+
+task copyStdlibs(type: Copy) {
+    def ballerinaDist = "build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+    into ballerinaDist
+
+    /* Standard Libraries */
+    configurations.ballerinaStdLibs.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        def artifactExtractedPath = "${buildDir}/target/extracted-distributions/" + artifact.name + "-zip"
+        into("bir-cache/") {
+            from "${artifactExtractedPath}/caches/bir"
+        }
+        into("bre/lib/") {
+            from "${artifactExtractedPath}/libs"
+        }
+        into("docs/") {
+            from "${artifactExtractedPath}/docs"
+        }
+        // pack to new cache
+        into("cache/bir/") {
+            from "${artifactExtractedPath}/caches/bir"
+        }
+        into("cache/balo/") {
+            from "${artifactExtractedPath}/caches/balo"
+        }
+        into("cache/jar/") {
+            from "${artifactExtractedPath}/caches/jar"
+        }
+    }
+}
+
 task copyToLib(type: Copy) {
     into "$project.projectDir/lib"
     from configurations.externalJars
@@ -65,19 +105,32 @@ def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 def tomlVersion = project.version.split("-")[0]
-def langVersion = project.ballerinaLangVersion
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def targetBallerinaJar = file("$project.projectDir/target/caches/jar_cache/${moduleOrg}/${moduleName}/${tomlVersion}/${moduleOrg}-${moduleName}-${tomlVersion}.jar")
 def targetNativeJar = file("$project.rootDir/${moduleName}-native/build/libs/${moduleName}-native-${project.version}.jar")
+def originalConfig = ballerinaConfigFile.text
+
+task updateTomlVerions {
+    doLast {
+        def stdlibDependentIoVersion = project.stdlibIoVersion.split("-")[0]
+        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
+        newConfig = newConfig.replace("@toml.version@", tomlVersion)
+        newConfig = newConfig.replace("@stdlib.io.version@", stdlibDependentIoVersion)
+        ballerinaConfigFile.text = newConfig
+    }
+}
+
+task revertTomlFile {
+    doLast {
+        ballerinaConfigFile.text = originalConfig
+    }
+}
 
 task ballerinaBuild {
     inputs.dir file(project.projectDir)
+    finalizedBy(revertTomlFile)
+
     doLast {
-        def originalConfig = ballerinaConfigFile.text
-        def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
-        newConfig = newConfig.replace("@toml.version@", tomlVersion)
-        newConfig = newConfig.replace("@lang.version@", langVersion)
-        ballerinaConfigFile.text = newConfig
 
         def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
         def additionalBuildParams = ""
@@ -169,7 +222,6 @@ task ballerinaBuild {
             from file("$project.projectDir/target/apidocs/${moduleName}")
             into file("$project.projectDir/build/docs_parent/docs/${moduleName}")
         }
-        ballerinaConfigFile.text = originalConfig
     }
 
     outputs.dir artifactCacheParent
@@ -204,5 +256,8 @@ publishing {
 ballerinaBuild.dependsOn ":system-native:build"
 ballerinaBuild.dependsOn ":system-test-utils:build"
 unpackJballerinaTools.dependsOn copyToLib
-ballerinaBuild.dependsOn unpackJballerinaTools
+unpackStdLibs.dependsOn unpackJballerinaTools
+copyStdlibs.dependsOn unpackStdLibs
+updateTomlVerions.dependsOn copyStdlibs
+ballerinaBuild.dependsOn updateTomlVerions
 build.dependsOn ballerinaBuild
