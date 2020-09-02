@@ -27,7 +27,6 @@ ext.ballerinaLangVersion = project.ballerinaLangVersion
 ext.puppycrawlCheckstyleVersion = "8.18"
 ext.slf4jVersion = "1.7.30"
 ext.apacheCommonsVersion = "3.8.1"
-ext.ballerinaIoVersion = "0.5.0"
 
 allprojects {
     group = 'org.ballerinalang'
@@ -60,12 +59,33 @@ allprojects {
 
         maven {
             url = 'https://maven.pkg.github.com/ballerina-platform/module-ballerina-system'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url "https://maven.pkg.github.com/ballerina-platform/module-ballerina-io"
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
         }
     }
 }
 
 subprojects {
     apply plugin: 'java'
+
+    configurations {
+        ballerinaStdLibs
+    }
+
+    dependencies {
+        /* Standard libraries */
+        ballerinaStdLibs "org.ballerinalang:io-ballerina:${project.stdlibIoVersion}"
+    }
 
     release {
         // Disable check snapshots temporarily
