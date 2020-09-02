@@ -28,7 +28,7 @@ dependencies {
     jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
         transitive = false
     }
-    externalJars (group: 'org.ballerinalang', name: 'ballerina-io', version: "${stdlibIoNativeVersion}") {
+    externalJars (group: 'org.ballerinalang', name: 'io-native', version: "${stdlibIoVersion}") {
         transitive = false
     }
     compile project(':system-native')
@@ -113,7 +113,7 @@ def originalConfig = ballerinaConfigFile.text
 task updateTomlVerions {
     doLast {
         def stdlibDependentIoVersion = project.stdlibIoVersion.split("-")[0]
-        def stdlibNativeIoVersion = project.stdlibIoNativeVersion
+        def stdlibNativeIoVersion = project.stdlibIoVersion
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
         newConfig = newConfig.replace("@io.native.version@", stdlibNativeIoVersion)
@@ -188,11 +188,6 @@ task ballerinaBuild {
 
         copy {
             from targetNativeJar
-            into file("$artifactLibParent/libs")
-        }
-
-        copy {
-            from configurations.externalJars
             into file("$artifactLibParent/libs")
         }
 
