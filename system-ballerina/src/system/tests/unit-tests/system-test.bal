@@ -110,15 +110,15 @@ function toString(io:ReadableByteChannel input) returns string|error {
 
 function getExpectedValidEnv() returns string = @java:Method {
     name: "testValidEnv",
-    class: "org.ballerinalang.stdlib.system.testutils.SystemTestUtils"
+    'class: "org.ballerinalang.stdlib.system.testutils.SystemTestUtils"
 } external;
 
 function getExpectedUserHome() returns string = @java:Method {
     name: "testGetUserHome",
-    class: "org.ballerinalang.stdlib.system.testutils.SystemTestUtils"
+    'class: "org.ballerinalang.stdlib.system.testutils.SystemTestUtils"
 } external;
 
 function getExpectedUserName() returns string = @java:Method {
     name: "testGetUserName",
-    class: "org.ballerinalang.stdlib.system.testutils.SystemTestUtils"
+    'class: "org.ballerinalang.stdlib.system.testutils.SystemTestUtils"
 } external;

@@ -19,7 +19,7 @@ import ballerina/java;
 
 # This object contains information on a process being created from Ballerina.
 # This is returned from the `exec` function in the `system` module.
-class Process {
+public class Process {
 
     private int BUF_SIZE = 10240;
 
