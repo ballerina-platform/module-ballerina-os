@@ -19,76 +19,76 @@ import ballerina/java;
 
 # This object contains information on a process being created from Ballerina.
 # This is returned from the `exec` function in the `system` module.
-public type Process object {
+public class Process {
 
     private int BUF_SIZE = 10240;
 
-# Waits for the process to finish its work and exit.
-# ```ballerina
-# int|error exitCode = process.waitForExit();
-# ```
-#
-# + return - Returns the exit code for the process or else an `Error` if a failure occurs
+    # Waits for the process to finish its work and exit.
+    # ```ballerina
+    # int|error exitCode = process.waitForExit();
+    # ```
+    #
+    # + return - Returns the exit code for the process or else an `Error` if a failure occurs
     public function waitForExit() returns int|Error {
         return nativeWaitForExit(self);
     }
 
-# Returns the exit code of the process when it has finished the execution.
-# Error if the process has not exited yet.
-# ```ballerina
-# int|error exitCode = process.exitCode();
-# ```
-#
-# + return - Returns the exit code of the process or else an `Error` if the process hasn't exited yet
+    # Returns the exit code of the process when it has finished the execution.
+    # Error if the process has not exited yet.
+    # ```ballerina
+    # int|error exitCode = process.exitCode();
+    # ```
+    #
+    # + return - Returns the exit code of the process or else an `Error` if the process hasn't exited yet
     public function exitCode() returns int|Error {
         return nativeExitCode(self);
     }
 
-# Destroys the process.
-# ```ballerina
-# process.destroy();
-# ```
+    # Destroys the process.
+    # ```ballerina
+    # process.destroy();
+    # ```
     public function destroy() {
         return nativeDestroy(self);
     }
 
-# Provides a channel (to write into), which is made available as the 'standard input' for the process.
-# ```ballerina
-# io:WritableByteChannel output = process.stdin();
-# ```
-#
-# + return - The `io:WritableByteChannel`, which represents the process's 'standard input'
+    # Provides a channel (to write into), which is made available as the 'standard input' for the process.
+    # ```ballerina
+    # io:WritableByteChannel output = process.stdin();
+    # ```
+    #
+    # + return - The `io:WritableByteChannel`, which represents the process's 'standard input'
     public function stdin() returns io:WritableByteChannel {
         return nativeStdin(self);
     }
 
-# Provides a channel (to read from), which is made available as the 'standard output' of the process.
-# ```ballerina
-# io:ReadableByteChannel input = process.stdout();
-# ```
-#
-# + return - The `io:ReadableByteChannel`, which represents the process's 'standard output'
+    # Provides a channel (to read from), which is made available as the 'standard output' of the process.
+    # ```ballerina
+    # io:ReadableByteChannel input = process.stdout();
+    # ```
+    #
+    # + return - The `io:ReadableByteChannel`, which represents the process's 'standard output'
     public function stdout() returns io:ReadableByteChannel {
         return nativeStdout(self);
     }
 
-# Provides a channel (to read from), which is made available as the 'standard error' of the process.
-# ```ballerina
-# io:ReadableByteChannel input = process.stderr();
-# ```
-#
-# + return - The `io:ReadableByteChannel`, which represents the process's 'standard error'
+    # Provides a channel (to read from), which is made available as the 'standard error' of the process.
+    # ```ballerina
+    # io:ReadableByteChannel input = process.stderr();
+    # ```
+    #
+    # + return - The `io:ReadableByteChannel`, which represents the process's 'standard error'
     public function stderr() returns io:ReadableByteChannel {
         return nativeStderr(self);
     }
 
-# Pipes the standard output of the current process to the standard input of the given process.
-# ```ballerina
-# var x3out = x1.pipe(x2).pipe(x3).stdout();
-# ```
-#
-# + process - The process to pipe the data to
-# + return - The process that is passed to be used to help the chain pipe operations
+    # Pipes the standard output of the current process to the standard input of the given process.
+    # ```ballerina
+    # var x3out = x1.pipe(x2).pipe(x3).stdout();
+    # ```
+    #
+    # + process - The process to pipe the data to
+    # + return - The process that is passed to be used to help the chain pipe operations
     public function pipe(Process process) returns Process {
         io:ReadableByteChannel input = self.stdout();
         io:WritableByteChannel output = process.stdin();
@@ -127,34 +127,34 @@ public type Process object {
         }
     }
 
-};
+}
 
 function nativeWaitForExit(Process process) returns int | Error = @java:Method {
     name: "waitForExit",
-    class: "org.ballerinalang.stdlib.system.nativeimpl.WaitForExit"
+    'class: "org.ballerinalang.stdlib.system.nativeimpl.WaitForExit"
 } external;
 
 function nativeExitCode(Process process) returns int | Error = @java:Method {
     name: "exitCode",
-    class: "org.ballerinalang.stdlib.system.nativeimpl.ExitCode"
+    'class: "org.ballerinalang.stdlib.system.nativeimpl.ExitCode"
 } external;
 
 function nativeDestroy(Process process) = @java:Method {
     name: "destroy",
-    class: "org.ballerinalang.stdlib.system.nativeimpl.Destroy"
+    'class: "org.ballerinalang.stdlib.system.nativeimpl.Destroy"
 } external;
 
 function nativeStdin(Process process) returns io:WritableByteChannel = @java:Method {
     name: "stdin",
-    class: "org.ballerinalang.stdlib.system.nativeimpl.Stdin"
+    'class: "org.ballerinalang.stdlib.system.nativeimpl.Stdin"
 } external;
 
 function nativeStdout(Process process) returns io:ReadableByteChannel = @java:Method {
     name: "stdout",
-    class: "org.ballerinalang.stdlib.system.nativeimpl.Stdout"
+    'class: "org.ballerinalang.stdlib.system.nativeimpl.Stdout"
 } external;
 
 function nativeStderr(Process process) returns io:ReadableByteChannel = @java:Method {
     name: "stderr",
-    class: "org.ballerinalang.stdlib.system.nativeimpl.Stderr"
+    'class: "org.ballerinalang.stdlib.system.nativeimpl.Stderr"
 } external;
