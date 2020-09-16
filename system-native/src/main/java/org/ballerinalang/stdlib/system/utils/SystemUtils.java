@@ -17,10 +17,12 @@
  */
 package org.ballerinalang.stdlib.system.utils;
 
-import org.ballerinalang.jvm.BallerinaErrors;
-import org.ballerinalang.jvm.BallerinaValues;
-import org.ballerinalang.jvm.values.ErrorValue;
-import org.ballerinalang.jvm.values.ObjectValue;
+import org.ballerinalang.jvm.api.BErrorCreator;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.BValueCreator;
+import org.ballerinalang.jvm.api.values.BError;
+import org.ballerinalang.jvm.api.values.BObject;
+import org.ballerinalang.jvm.api.values.BString;
 
 import java.io.IOException;
 
@@ -33,7 +35,7 @@ import static org.ballerinalang.stdlib.system.utils.SystemConstants.SYSTEM_PACKA
  */
 public class SystemUtils {
 
-    private static final String UNKNOWN_MESSAGE = "Unknown Error";
+    private static final BString UNKNOWN_MESSAGE = BStringUtils.fromString("Unknown Error");
 
     /**
      * Returns error object  with message. Error type is generic ballerina error type. This utility to construct
@@ -44,8 +46,9 @@ public class SystemUtils {
      *              "Unknown Error" sets to message by default.
      * @return Ballerina error object.
      */
-    public static ErrorValue getBallerinaError(String typeId, Throwable ex) {
-        String errorMsg = ex != null && ex.getMessage() != null ? ex.getMessage() : UNKNOWN_MESSAGE;
+    public static BError getBallerinaError(String typeId, Throwable ex) {
+        BString errorMsg = ex != null && ex.getMessage() != null ? BStringUtils.fromString(ex.getMessage()) :
+                UNKNOWN_MESSAGE;
         return getBallerinaError(typeId, errorMsg);
     }
 
@@ -58,17 +61,17 @@ public class SystemUtils {
      *                "Unknown Error" is set to message by default.
      * @return Ballerina error object.
      */
-    public static ErrorValue getBallerinaError(String typeId, String message) {
-        return BallerinaErrors.createDistinctError(typeId, SYSTEM_PACKAGE_ID, message);
+    public static BError getBallerinaError(String typeId, BString message) {
+        return BErrorCreator.createDistinctError(typeId, SYSTEM_PACKAGE_ID, message);
     }
 
-    public static ObjectValue getProcessObject(Process process) throws IOException {
-        ObjectValue obj = BallerinaValues.createObjectValue(SYSTEM_PACKAGE_ID, PROCESS_TYPE);
+    public static BObject getProcessObject(Process process) throws IOException {
+        BObject obj = (BObject) BValueCreator.createObjectValue(SYSTEM_PACKAGE_ID, PROCESS_TYPE);
         obj.addNativeData(PROCESS_FIELD, process);
         return obj;
     }
     
-    public static Process processFromObject(ObjectValue objVal) {
+    public static Process processFromObject(BObject objVal) {
         return (Process) objVal.getNativeData(PROCESS_FIELD);
     }
 

@@ -18,21 +18,21 @@
 
 package org.ballerinalang.stdlib.system.testutils;
 
-import org.ballerinalang.jvm.StringUtils;
-import org.ballerinalang.jvm.values.api.BString;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.values.BString;
 
 public class SystemTestUtils {
 
     public static BString testValidEnv() {
-        return StringUtils.fromString(System.getenv("JAVA_HOME"));
+        return BStringUtils.fromString(System.getenv("JAVA_HOME"));
     }
 
     public static BString testGetUserHome() {
-        return StringUtils.fromString(System.getProperty("user.home"));
+        return BStringUtils.fromString(System.getProperty("user.home"));
     }
 
     public static BString testGetUserName() {
-        return StringUtils.fromString(System.getProperty("user.name"));
+        return BStringUtils.fromString(System.getProperty("user.name"));
     }
 
     public static boolean testOs() {
