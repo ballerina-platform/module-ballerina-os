@@ -23,7 +23,7 @@ import ballerina/java;
 #
 # + name - Name of the environment variable
 # + return - Environment variable value if it exists or else an empty string
-public function getEnv(@untainted string name) returns string {
+public isolated function getEnv(@untainted string name) returns string {
     var value = java:toString(nativeGetEnv(java:fromString(name)));
     if (value is string) {
         return value;
@@ -31,7 +31,7 @@ public function getEnv(@untainted string name) returns string {
     return "";
 }
 
-function nativeGetEnv(handle key) returns handle = @java:Method {
+isolated function nativeGetEnv(handle key) returns handle = @java:Method {
     name: "getenv",
     'class: "java.lang.System",
     paramTypes: ["java.lang.String"]
@@ -43,7 +43,7 @@ function nativeGetEnv(handle key) returns handle = @java:Method {
 # ```
 #
 # + return - Current user's name if it can be determined or else an empty string
-public function getUsername() returns string = @java:Method {
+public isolated function getUsername() returns string = @java:Method {
     name: "getUsername",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.GetUsername"
 } external;
@@ -54,7 +54,7 @@ public function getUsername() returns string = @java:Method {
 # ```
 #
 # + return - Current user's home directory if it can be determined or else an empty string
-public function getUserHome() returns string = @java:Method {
+public isolated function getUserHome() returns string = @java:Method {
     name: "getUserHome",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.GetUserHome"
 } external;
@@ -65,7 +65,7 @@ public function getUserHome() returns string = @java:Method {
 # ```
 #
 # + return - The random string
-public function uuid() returns string {
+public isolated function uuid() returns string {
     var result = java:toString(nativeUuid());
     if (result is string) {
         return result;
@@ -74,7 +74,7 @@ public function uuid() returns string {
     }
 }
 
-function nativeUuid() returns handle = @java:Method {
+isolated function nativeUuid() returns handle = @java:Method {
     name: "randomUUID",
     'class: "java.util.UUID"
 } external;
@@ -89,7 +89,7 @@ function nativeUuid() returns handle = @java:Method {
 # + dir - The current working directory to be set to the process
 # + args - Command arguments to be passed in
 # + return - A `system:Process` object if successful or else a `system:Error` if a failure occurs
-public function exec(@untainted string command, @untainted map<string> env = {},
+public isolated function exec(@untainted string command, @untainted map<string> env = {},
                      @untainted string? dir = (), @untainted string... args) returns Process|Error = @java:Method {
     name: "exec",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.Exec"

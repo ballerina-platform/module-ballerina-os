@@ -29,7 +29,7 @@ public class Process {
     # ```
     #
     # + return - Returns the exit code for the process or else an `Error` if a failure occurs
-    public function waitForExit() returns int|Error {
+    public isolated function waitForExit() returns int|Error {
         return nativeWaitForExit(self);
     }
 
@@ -40,7 +40,7 @@ public class Process {
     # ```
     #
     # + return - Returns the exit code of the process or else an `Error` if the process hasn't exited yet
-    public function exitCode() returns int|Error {
+    public isolated function exitCode() returns int|Error {
         return nativeExitCode(self);
     }
 
@@ -48,7 +48,7 @@ public class Process {
     # ```ballerina
     # process.destroy();
     # ```
-    public function destroy() {
+    public isolated function destroy() {
         return nativeDestroy(self);
     }
 
@@ -58,7 +58,7 @@ public class Process {
     # ```
     #
     # + return - The `io:WritableByteChannel`, which represents the process's 'standard input'
-    public function stdin() returns io:WritableByteChannel {
+    public isolated function stdin() returns io:WritableByteChannel {
         return nativeStdin(self);
     }
 
@@ -68,7 +68,7 @@ public class Process {
     # ```
     #
     # + return - The `io:ReadableByteChannel`, which represents the process's 'standard output'
-    public function stdout() returns io:ReadableByteChannel {
+    public isolated function stdout() returns io:ReadableByteChannel {
         return nativeStdout(self);
     }
 
@@ -78,7 +78,7 @@ public class Process {
     # ```
     #
     # + return - The `io:ReadableByteChannel`, which represents the process's 'standard error'
-    public function stderr() returns io:ReadableByteChannel {
+    public isolated function stderr() returns io:ReadableByteChannel {
         return nativeStderr(self);
     }
 
@@ -129,32 +129,32 @@ public class Process {
 
 }
 
-function nativeWaitForExit(Process process) returns int | Error = @java:Method {
+isolated function nativeWaitForExit(Process process) returns int | Error = @java:Method {
     name: "waitForExit",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.WaitForExit"
 } external;
 
-function nativeExitCode(Process process) returns int | Error = @java:Method {
+isolated function nativeExitCode(Process process) returns int | Error = @java:Method {
     name: "exitCode",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.ExitCode"
 } external;
 
-function nativeDestroy(Process process) = @java:Method {
+isolated function nativeDestroy(Process process) = @java:Method {
     name: "destroy",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.Destroy"
 } external;
 
-function nativeStdin(Process process) returns io:WritableByteChannel = @java:Method {
+isolated function nativeStdin(Process process) returns io:WritableByteChannel = @java:Method {
     name: "stdin",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.Stdin"
 } external;
 
-function nativeStdout(Process process) returns io:ReadableByteChannel = @java:Method {
+isolated function nativeStdout(Process process) returns io:ReadableByteChannel = @java:Method {
     name: "stdout",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.Stdout"
 } external;
 
-function nativeStderr(Process process) returns io:ReadableByteChannel = @java:Method {
+isolated function nativeStderr(Process process) returns io:ReadableByteChannel = @java:Method {
     name: "stderr",
     'class: "org.ballerinalang.stdlib.system.nativeimpl.Stderr"
 } external;
