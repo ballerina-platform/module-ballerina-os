@@ -1,31 +1,31 @@
 [project]
 org-name = "ballerina"
-version = "@toml.version@"
+version = "0.6.1"
 
 [dependencies]
-"ballerina/io" = "@stdlib.io.version@"
+"ballerina/io" = "0.5.1"
 
 [platform]
-target = "java8"
+target = "java11"
 
     [[platform.libraries]]
     artifactId = "system"
-    version = "@project.version@"
-    path = "../system-native/build/libs/system-native-@project.version@.jar"
+    version = "0.6.1-SNAPSHOT"
+    path = "../system-native/build/libs/system-native-0.6.1-SNAPSHOT.jar"
     groupId = "ballerina"
     modules = ["system"]
 
     [[platform.libraries]]
     artifactId = "io-native"
-    version = "@io.native.version@"
-    path = "./lib/io-native-@io.native.version@.jar"
+    version = "0.5.1-SNAPSHOT"
+    path = "./lib/io-native-0.5.1-SNAPSHOT.jar"
     groupId = "org.ballerinalang"
     modules = ["system"]
 
     [[platform.libraries]]
     artifactId = "system"
-    version = "@project.version@"
-    path = "../system-test-utils/build/libs/system-test-utils-@project.version@.jar"
+    version = "0.6.1-SNAPSHOT"
+    path = "../system-test-utils/build/libs/system-test-utils-0.6.1-SNAPSHOT.jar"
     groupId = "org.ballerinalang.stdlib.system"
     modules = ["system"]
     scope = "testOnly"

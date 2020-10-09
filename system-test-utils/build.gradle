@@ -26,3 +26,12 @@ dependencies {
     compile project(":system-native")
     compile group: 'org.apache.commons', name: 'commons-lang3', version: "${apacheCommonsVersion}"
 }
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
+}
