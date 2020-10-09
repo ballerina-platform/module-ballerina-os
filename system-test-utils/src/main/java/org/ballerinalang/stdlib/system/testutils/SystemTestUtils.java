@@ -35,4 +35,7 @@ public class SystemTestUtils {
         return BStringUtils.fromString(System.getProperty("user.name"));
     }
 
+    public static boolean testOs() {
+        return org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
+    }
 }
