@@ -26,3 +26,12 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
     compile group: 'org.ballerinalang', name: 'io-native', version: "${stdlibIoVersion}"
 }
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
+}
