@@ -16,7 +16,8 @@
  * under the License.
  */
 
-module io.ballerina.stdlib.system {
+module io.ballerina.stdlib.system.testutils {
     requires io.ballerina.jvm;
+    requires org.apache.commons.lang3;
     exports org.ballerinalang.stdlib.system.testutils;
 }
