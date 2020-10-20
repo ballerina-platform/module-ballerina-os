@@ -17,7 +17,7 @@
  */
 
 module io.ballerina.stdlib.system.testutils {
-    requires io.ballerina.jvm;
+    requires io.ballerina.runtime;
     requires org.apache.commons.lang3;
     exports org.ballerinalang.stdlib.system.testutils;
 }
