@@ -17,7 +17,7 @@
  */
 
 module io.ballerina.stdlib.system {
-    requires io.ballerina.jvm;
+    requires io.ballerina.runtime;
     requires org.slf4j;
     requires io.ballerina.stdlib.io;
     exports org.ballerinalang.stdlib.system.nativeimpl;
