@@ -17,12 +17,12 @@
  */
 package org.ballerinalang.stdlib.system.utils;
 
-import org.ballerinalang.jvm.api.BErrorCreator;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BError;
-import org.ballerinalang.jvm.api.values.BObject;
-import org.ballerinalang.jvm.api.values.BString;
+import io.ballerina.runtime.api.ErrorCreator;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.values.BError;
+import io.ballerina.runtime.api.values.BObject;
+import io.ballerina.runtime.api.values.BString;
 
 import java.io.IOException;
 
@@ -35,7 +35,7 @@ import static org.ballerinalang.stdlib.system.utils.SystemConstants.SYSTEM_PACKA
  */
 public class SystemUtils {
 
-    private static final BString UNKNOWN_MESSAGE = BStringUtils.fromString("Unknown Error");
+    private static final BString UNKNOWN_MESSAGE = StringUtils.fromString("Unknown Error");
 
     /**
      * Returns error object  with message. Error type is generic ballerina error type. This utility to construct
@@ -47,7 +47,7 @@ public class SystemUtils {
      * @return Ballerina error object.
      */
     public static BError getBallerinaError(String typeId, Throwable ex) {
-        BString errorMsg = ex != null && ex.getMessage() != null ? BStringUtils.fromString(ex.getMessage()) :
+        BString errorMsg = ex != null && ex.getMessage() != null ? StringUtils.fromString(ex.getMessage()) :
                 UNKNOWN_MESSAGE;
         return getBallerinaError(typeId, errorMsg);
     }
@@ -62,11 +62,11 @@ public class SystemUtils {
      * @return Ballerina error object.
      */
     public static BError getBallerinaError(String typeId, BString message) {
-        return BErrorCreator.createDistinctError(typeId, SYSTEM_PACKAGE_ID, message);
+        return ErrorCreator.createDistinctError(typeId, SYSTEM_PACKAGE_ID, message);
     }
 
     public static BObject getProcessObject(Process process) throws IOException {
-        BObject obj = (BObject) BValueCreator.createObjectValue(SYSTEM_PACKAGE_ID, PROCESS_TYPE);
+        BObject obj = (BObject) ValueCreator.createObjectValue(SYSTEM_PACKAGE_ID, PROCESS_TYPE);
         obj.addNativeData(PROCESS_FIELD, process);
         return obj;
     }
@@ -79,13 +79,13 @@ public class SystemUtils {
      * Returns the system property which corresponds to the given key.
      *
      * @param key system property key
-     * @return system property as a {@link String} or {@code BTypes.typeString.getZeroValue()} if the property does not
+     * @return system property as a {@link String} or {@code PredefinedTypes.TYPE_STRING.getZeroValue()} if the property does not
      * exist.
      */
     public static String getSystemProperty(String key) {
         String value = System.getProperty(key);
         if (value == null) {
-            return org.ballerinalang.jvm.types.BTypes.typeString.getZeroValue();
+            return io.ballerina.runtime.api.PredefinedTypes.TYPE_STRING.getZeroValue();
         }
         return value;
     }
