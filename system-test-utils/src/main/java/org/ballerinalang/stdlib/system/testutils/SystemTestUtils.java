@@ -18,7 +18,7 @@
 
 package org.ballerinalang.stdlib.system.testutils;
 
-import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BString;
 
 public class SystemTestUtils {
