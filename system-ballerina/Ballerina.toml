@@ -1,31 +1,30 @@
-[project]
-org-name = "ballerina"
+[package]
+org = "ballerina"
+name = "system"
 version = "@toml.version@"
 
-[dependencies]
-"ballerina/io" = "@stdlib.io.version@"
+[[dependency]]
+org = "ballerina"
+name = "io"
+version = "@stdlib.io.version@"
 
-[platform]
-target = "java11"
+[[platform.java11.dependency]]
+path = "../system-native/build/libs/system-native-@project.version@.jar"
+groupId = "ballerina"
+artifactId = "system"
+version = "@project.version@"
 
-    [[platform.libraries]]
-    artifactId = "system"
-    version = "@project.version@"
-    path = "../system-native/build/libs/system-native-@project.version@.jar"
-    groupId = "ballerina"
-    modules = ["system"]
 
-    [[platform.libraries]]
-    artifactId = "io-native"
-    version = "@io.native.version@"
-    path = "./lib/io-native-@io.native.version@.jar"
-    groupId = "org.ballerinalang"
-    modules = ["system"]
+[[platform.java11.dependency]]
+path = "./lib/io-native-@io.native.version@.jar"
+groupId = "org.ballerinalang"
+artifactId = "io-native"
+version = "@io.native.version@"
 
-    [[platform.libraries]]
-    artifactId = "system"
-    version = "@project.version@"
-    path = "../system-test-utils/build/libs/system-test-utils-@project.version@.jar"
-    groupId = "org.ballerinalang.stdlib.system"
-    modules = ["system"]
-    scope = "testOnly"
+
+[[platform.java11.dependency]]
+path = "../system-test-utils/build/libs/system-test-utils-@project.version@.jar"
+groupId = "org.ballerinalang.stdlib.system"
+scope = "testOnly"
+artifactId = "system"
+version = "@project.version@"
