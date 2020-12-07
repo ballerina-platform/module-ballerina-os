@@ -42,7 +42,7 @@ public class SystemConstants {
     /**
      * Package version.
      */
-    public static final String PACKAGE_VERSION = "0.6.3";
+    public static final String PACKAGE_VERSION = "0.6.4";
 
     /**
      * Package path.
