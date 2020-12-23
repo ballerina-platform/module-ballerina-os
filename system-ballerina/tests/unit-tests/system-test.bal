@@ -40,11 +40,6 @@ function testGetUsername() {
 }
 
 @test:Config {}
-function testRandomString() {
-    test:assertEquals(uuid().length(), 36);
-}
-
-@test:Config {}
 function testExecInUnixLike1() returns error? {
     Process x1 = check exec("env", { "BAL_EXEC_TEST_VAR":"X" });
     Process x2 = check exec("grep", {}, (), "BAL_EXEC_TEST_VAR");
