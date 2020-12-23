@@ -18,11 +18,6 @@
 
 package org.ballerinalang.stdlib.system.utils;
 
-import io.ballerina.runtime.api.Module;
-
-import static io.ballerina.runtime.api.constants.RuntimeConstants.BALLERINA_BUILTIN_PKG_PREFIX;
-import static io.ballerina.runtime.api.constants.RuntimeConstants.ORG_NAME_SEPARATOR;
-
 /**
  * Constants for system package functions.
  *
@@ -38,22 +33,6 @@ public class SystemConstants {
      * Package name.
      */
     public static final String PACKAGE_NAME = "system";
-
-    /**
-     * Package version.
-     */
-    public static final String PACKAGE_VERSION = "0.6.5";
-
-    /**
-     * Package path.
-     */
-    static final String SYSTEM_PACKAGE_PATH = ORG_NAME + ORG_NAME_SEPARATOR + PACKAGE_NAME;
-
-    static final Module SYSTEM_PACKAGE_ID = new Module(BALLERINA_BUILTIN_PKG_PREFIX, PACKAGE_NAME, PACKAGE_VERSION);
-
-    static final String ERROR_REASON_PREFIX = "{ballerina/system}";
-
-    static final String FILE_INFO_TYPE = "FileInfo";
 
     static final String PROCESS_TYPE = "Process";
 

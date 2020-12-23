@@ -59,26 +59,6 @@ public isolated function getUserHome() returns string = @java:Method {
     'class: "org.ballerinalang.stdlib.system.nativeimpl.GetUserHome"
 } external;
 
-# Returns a random UUID string.
-# ```ballerina
-# string providerId = system:uuid();
-# ```
-#
-# + return - The random string
-public isolated function uuid() returns string {
-    var result = java:toString(nativeUuid());
-    if (result is string) {
-        return result;
-    } else {
-        panic error("Error occured when converting the UUID to string.");
-    }
-}
-
-isolated function nativeUuid() returns handle = @java:Method {
-    name: "randomUUID",
-    'class: "java.util.UUID"
-} external;
-
 # Executes an operating system command as a subprocess of the current process.
 # ```ballerina
 # system:Process|system:Error proc = system:exec("ls", {}, "/", "-la")

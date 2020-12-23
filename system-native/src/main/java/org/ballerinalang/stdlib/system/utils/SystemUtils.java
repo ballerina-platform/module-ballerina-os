@@ -18,17 +18,17 @@
 package org.ballerinalang.stdlib.system.utils;
 
 import io.ballerina.runtime.api.creators.ErrorCreator;
-import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 
 import java.io.IOException;
 
+import static org.ballerinalang.stdlib.system.nativeimpl.ModuleUtils.getModule;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_FIELD;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_TYPE;
-import static org.ballerinalang.stdlib.system.utils.SystemConstants.SYSTEM_PACKAGE_ID;
 
 /**
  * @since 0.94.1
@@ -62,11 +62,11 @@ public class SystemUtils {
      * @return Ballerina error object.
      */
     public static BError getBallerinaError(String typeId, BString message) {
-        return ErrorCreator.createDistinctError(typeId, SYSTEM_PACKAGE_ID, message);
+        return ErrorCreator.createDistinctError(typeId, getModule(), message);
     }
 
     public static BObject getProcessObject(Process process) throws IOException {
-        BObject obj = (BObject) ValueCreator.createObjectValue(SYSTEM_PACKAGE_ID, PROCESS_TYPE);
+        BObject obj = (BObject) ValueCreator.createObjectValue(getModule(), PROCESS_TYPE);
         obj.addNativeData(PROCESS_FIELD, process);
         return obj;
     }
@@ -79,8 +79,8 @@ public class SystemUtils {
      * Returns the system property which corresponds to the given key.
      *
      * @param key system property key
-     * @return system property as a {@link String} or {@code PredefinedTypes.TYPE_STRING.getZeroValue()} if the property does not
-     * exist.
+     * @return system property as a {@link String} or {@code PredefinedTypes.TYPE_STRING.getZeroValue()} if the
+     * property does not exist.
      */
     public static String getSystemProperty(String key) {
         String value = System.getProperty(key);
