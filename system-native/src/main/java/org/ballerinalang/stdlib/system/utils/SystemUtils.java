@@ -18,15 +18,15 @@
 package org.ballerinalang.stdlib.system.utils;
 
 import io.ballerina.runtime.api.creators.ErrorCreator;
-import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
-import org.ballerinalang.stdlib.system.nativeimpl.ModuleUtils;
 
 import java.io.IOException;
 
+import static org.ballerinalang.stdlib.system.nativeimpl.ModuleUtils.getModule;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_FIELD;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_TYPE;
 
@@ -62,11 +62,11 @@ public class SystemUtils {
      * @return Ballerina error object.
      */
     public static BError getBallerinaError(String typeId, BString message) {
-        return ErrorCreator.createDistinctError(typeId, getSystemPackage(), message);
+        return ErrorCreator.createDistinctError(typeId, getModule(), message);
     }
 
     public static BObject getProcessObject(Process process) throws IOException {
-        BObject obj = (BObject) ValueCreator.createObjectValue(getSystemPackage(), PROCESS_TYPE);
+        BObject obj = (BObject) ValueCreator.createObjectValue(getModule(), PROCESS_TYPE);
         obj.addNativeData(PROCESS_FIELD, process);
         return obj;
     }
@@ -79,8 +79,8 @@ public class SystemUtils {
      * Returns the system property which corresponds to the given key.
      *
      * @param key system property key
-     * @return system property as a {@link String} or {@code PredefinedTypes.TYPE_STRING.getZeroValue()} if the property does not
-     * exist.
+     * @return system property as a {@link String} or {@code PredefinedTypes.TYPE_STRING.getZeroValue()} if the
+     * property does not exist.
      */
     public static String getSystemProperty(String key) {
         String value = System.getProperty(key);
@@ -91,14 +91,5 @@ public class SystemUtils {
     }
 
     private SystemUtils() {
-    }
-
-    /**
-     * Gets ballerina system package.
-     *
-     * @return system package.
-     */
-    public static Module getSystemPackage() {
-        return ModuleUtils.getModule();
     }
 }
