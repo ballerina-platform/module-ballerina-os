@@ -40,20 +40,16 @@ public class SystemConstants {
     public static final String PACKAGE_NAME = "system";
 
     /**
-     * Package version.
+     * System standard library version.
+     * @deprecated Use SystemUtils.getSystemPackage().getVersion().
      */
     public static final String PACKAGE_VERSION = "0.6.5";
 
     /**
-     * Package path.
+     * System standard library package ID.
+     * @deprecated Use SystemUtils.getSystemPackage().
      */
-    static final String SYSTEM_PACKAGE_PATH = ORG_NAME + ORG_NAME_SEPARATOR + PACKAGE_NAME;
-
     static final Module SYSTEM_PACKAGE_ID = new Module(BALLERINA_BUILTIN_PKG_PREFIX, PACKAGE_NAME, PACKAGE_VERSION);
-
-    static final String ERROR_REASON_PREFIX = "{ballerina/system}";
-
-    static final String FILE_INFO_TYPE = "FileInfo";
 
     static final String PROCESS_TYPE = "Process";
 

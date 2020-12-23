@@ -23,12 +23,12 @@ import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+import org.ballerinalang.stdlib.system.nativeimpl.ModuleUtils;
 
 import java.io.IOException;
 
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_FIELD;
 import static org.ballerinalang.stdlib.system.utils.SystemConstants.PROCESS_TYPE;
-import static org.ballerinalang.stdlib.system.utils.SystemConstants.SYSTEM_PACKAGE_ID;
 
 /**
  * @since 0.94.1
@@ -62,11 +62,11 @@ public class SystemUtils {
      * @return Ballerina error object.
      */
     public static BError getBallerinaError(String typeId, BString message) {
-        return ErrorCreator.createDistinctError(typeId, SYSTEM_PACKAGE_ID, message);
+        return ErrorCreator.createDistinctError(typeId, getSystemPackage(), message);
     }
 
     public static BObject getProcessObject(Process process) throws IOException {
-        BObject obj = (BObject) ValueCreator.createObjectValue(SYSTEM_PACKAGE_ID, PROCESS_TYPE);
+        BObject obj = (BObject) ValueCreator.createObjectValue(getSystemPackage(), PROCESS_TYPE);
         obj.addNativeData(PROCESS_FIELD, process);
         return obj;
     }
@@ -91,5 +91,14 @@ public class SystemUtils {
     }
 
     private SystemUtils() {
+    }
+
+    /**
+     * Gets ballerina system package.
+     *
+     * @return system package.
+     */
+    public static Module getSystemPackage() {
+        return ModuleUtils.getModule();
     }
 }
