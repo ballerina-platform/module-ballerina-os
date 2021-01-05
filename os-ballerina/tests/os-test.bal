@@ -25,7 +25,7 @@ function testValidEnv() {
 }
 
 @test:Config {}
-function testEmptyEnv() {
+isolated function testEmptyEnv() {
     test:assertEquals(getEnv("JAVA_XXXX"), "");
 }
 
@@ -81,7 +81,7 @@ function testExecInUnixLike4() returns error? {
 }
 
 @test:Config {}
-function testExecWithError() {
+isolated function testExecWithError() {
     string expected = "Cannot run program \"eee\": error=2, No such file or directory";
     Process|error x1 = exec("eee", {}, (), "BAL_EXEC_TEST_VAR");
     if (x1 is error) {
