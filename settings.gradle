@@ -11,9 +11,9 @@ plugins {
     id "com.gradle.enterprise" version "3.2"
 }
 
-rootProject.name = 'system'
+rootProject.name = 'os'
 include(':build-config:checkstyle')
-include ':system-native', ':system-test-utils', ':system-ballerina'
+include ':os-native', ':os-test-utils', ':os-ballerina'
 
 gradleEnterprise {
     buildScan {
