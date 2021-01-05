@@ -1,16 +1,16 @@
-Ballerina System Library
+Ballerina OS Library
 ===================
 
-  [![Build](https://github.com/ballerina-platform/module-ballerina-system/workflows/Build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-system/actions?query=workflow%3ABuild)
-  [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-system.svg)](https://github.com/ballerina-platform/module-ballerina-system/commits/master)
-  [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/system.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fsystem)
+  [![Build](https://github.com/ballerina-platform/module-ballerina-os/workflows/Build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-os/actions?query=workflow%3ABuild)
+  [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-os.svg)](https://github.com/ballerina-platform/module-ballerina-os/commits/master)
+  [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/os.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fos)
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-The System library is one of the standard library modules of the<a target="_blank" href="https://ballerina.io/"> Ballerina</a> language.
+The OS library is one of the standard library modules of the<a target="_blank" href="https://ballerina.io/"> Ballerina</a> language.
 
-This module provides functions to retrieve information about the system and the current users of the system.
+This module provides functions to retrieve information about the os and the current users of the os.
 
-For more information go to [The System Module](https://ballerina.io/swan-lake/learn/api-docs/ballerina/system/).
+For more information go to [The OS Module](https://ballerina.io/swan-lake/learn/api-docs/ballerina/os/).
 
 For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/swan-lake/learn/by-example/).
 
