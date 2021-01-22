@@ -3,11 +3,6 @@ org = "ballerina"
 name = "os"
 version = "@toml.version@"
 
-[[dependency]]
-org = "ballerina"
-name = "io"
-version = "@stdlib.io.version@"
-
 [[platform.java11.dependency]]
 path = "../os-native/build/libs/os-native-@project.version@.jar"
 groupId = "ballerina"
