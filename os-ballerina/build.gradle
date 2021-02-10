@@ -139,12 +139,6 @@ task initializeVariables {
 }
 
 task ballerinaTest {
-    dependsOn(copyStdlibs)
-    dependsOn(":os-native:build")
-    dependsOn(":os-test-utils:build")
-    dependsOn(updateTomlVerions)
-    dependsOn(initializeVariables)
-    finalizedBy(revertTomlFile)
 
     doLast {
         exec {
@@ -159,15 +153,8 @@ task ballerinaTest {
     }
 }
 
-test {
-    dependsOn(ballerinaTest)
-}
-
 task ballerinaBuild {
     inputs.dir file(project.projectDir)
-    dependsOn(test)
-    dependsOn(initializeVariables)
-    finalizedBy(revertTomlFile)
 
     def testParams = "--skip-tests"
     gradle.taskGraph.whenReady { graph ->
@@ -263,11 +250,23 @@ publishing {
     }
 }
 
-ballerinaBuild.dependsOn ":os-native:build"
-ballerinaBuild.dependsOn ":os-test-utils:build"
 unpackJballerinaTools.dependsOn copyToLib
 unpackStdLibs.dependsOn unpackJballerinaTools
 copyStdlibs.dependsOn unpackStdLibs
 updateTomlVerions.dependsOn copyStdlibs
+
+ballerinaTest.dependsOn copyStdlibs
+ballerinaTest.dependsOn ":os-native:build"
+ballerinaTest.dependsOn ":os-test-utils:build"
+ballerinaTest.dependsOn updateTomlVerions
+ballerinaTest.dependsOn initializeVariables
+ballerinaTest.finalizedBy revertTomlFile
+test.dependsOn ballerinaTest
+
+ballerinaBuild.dependsOn ":os-native:build"
+ballerinaBuild.dependsOn ":os-test-utils:build"
+ballerinaBuild.dependsOn test
+ballerinaBuild.dependsOn initializeVariables
 ballerinaBuild.dependsOn updateTomlVerions
+ballerinaBuild.finalizedBy revertTomlFile
 build.dependsOn ballerinaBuild
