@@ -28,10 +28,11 @@ def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
 def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
 def artifactLibParent = file("$project.projectDir/build/lib_parent/")
 def artifactCodeCoverageReport = file("$project.projectDir/target/cache/tests_cache/coverage/ballerina.exec")
+def artifactTestableJar = file("$project.projectDir/target/cache/${packageOrg}/${packageName}/${tomlVersion}/java11/")
 def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
 def originalConfig = ballerinaConfigFile.text
 def originalDependencies = ballerinaDependencyFile.text
-def distributionBinPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
+def distributionBinPath = project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}/bin"
 
 configurations {
     jbalTools
@@ -98,7 +99,7 @@ task copyToLib(type: Copy) {
     from configurations.externalJars
 }
 
-task updateTomlVerions {
+task updateTomlVersions {
     doLast {
         def stdlibDependentIoVersion = project.stdlibIoVersion.replace("-SNAPSHOT", "")
         def stdlibNativeIoVersion = project.stdlibIoVersion
@@ -139,8 +140,12 @@ task initializeVariables {
         balJavaDebugParam = "BAL_JAVA_DEBUG=${project.findProperty("balJavaDebug")}"
     }
     gradle.taskGraph.whenReady { graph ->
-        if (graph.hasTask(":${packageName}-ballerina:build") || graph.hasTask(":${packageName}-ballerina:publish"))  {
+        if (graph.hasTask(":${packageName}-ballerina:build") ||
+                graph.hasTask(":${packageName}-ballerina:publish") ||
+                graph.hasTask(":${packageName}-ballerina:publishToMavenLocal")) {
             ballerinaTest.enabled = false
+        } else {
+            ballerinaTest.enabled = true
         }
 
         if (graph.hasTask(":${packageName}-ballerina:test")) {
@@ -218,6 +223,9 @@ task ballerinaBuild {
 
 task ballerinaPublish {
     doLast {
+        if (project.version.endsWith('-SNAPSHOT')) {
+            return
+        }
         if (ballerinaCentralAccessToken != null) {
             println("Publishing to the ballerina central..")
             exec {
@@ -229,7 +237,8 @@ task ballerinaPublish {
                     commandLine 'sh', '-c', "$distributionBinPath/bal push"
                 }
             }
-
+        } else {
+            throw new InvalidUserDataException("Central Access Token is not present")
         }
     }
 }
@@ -239,11 +248,21 @@ task createArtifactZip(type: Zip) {
     from ballerinaBuild
 }
 
+task createTestableJarZip(type: Zip) {
+    dependsOn(ballerinaBuild)
+    archiveName("${packageOrg}-${packageName}-${project.version}-testable-jars.zip")
+    destinationDir(file("${buildDir}/distributions"))
+    from("${artifactTestableJar}") {
+        include '**/*-testable.jar'
+    }
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
             artifact source: createArtifactZip, extension: 'zip'
             artifact source: artifactCodeCoverageReport, classifier: 'jacoco'
+            artifact source: createTestableJarZip, classifier: 'testable-jars', extension: 'zip'
         }
     }
 
@@ -262,9 +281,9 @@ publishing {
 unpackJballerinaTools.dependsOn copyToLib
 unpackStdLibs.dependsOn unpackJballerinaTools
 copyStdlibs.dependsOn unpackStdLibs
-updateTomlVerions.dependsOn copyStdlibs
+updateTomlVersions.dependsOn copyStdlibs
 
-ballerinaTest.dependsOn updateTomlVerions
+ballerinaTest.dependsOn updateTomlVersions
 ballerinaTest.dependsOn initializeVariables
 ballerinaTest.dependsOn ":${packageName}-native:build"
 ballerinaTest.dependsOn ":${packageName}-test-utils:build"
@@ -272,12 +291,16 @@ ballerinaTest.finalizedBy revertTomlFile
 test.dependsOn ballerinaTest
 
 ballerinaBuild.dependsOn test
-ballerinaBuild.dependsOn updateTomlVerions
+ballerinaBuild.dependsOn updateTomlVersions
 ballerinaBuild.dependsOn initializeVariables
 ballerinaBuild.dependsOn ":${packageName}-native:build"
 ballerinaBuild.dependsOn ":${packageName}-test-utils:build"
 ballerinaBuild.finalizedBy revertTomlFile
 build.dependsOn ballerinaBuild
 
+ballerinaPublish.finalizedBy revertTomlFile
+ballerinaPublish.dependsOn initializeVariables
+ballerinaPublish.dependsOn updateTomlVersions
+ballerinaPublish.dependsOn ":${packageName}-native:build"
 ballerinaPublish.dependsOn ballerinaBuild
 publish.dependsOn ballerinaPublish
