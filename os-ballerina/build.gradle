@@ -168,7 +168,7 @@ task ballerinaTest {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams}"
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams} && exit %%ERRORLEVEL%%"
             } else {
                 commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal test --code-coverage --includes=* ${groupParams} ${disableGroups} ${debugParams}"
             }
@@ -185,7 +185,7 @@ task ballerinaBuild {
             workingDir project.projectDir
             environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat build ${testParams} ${debugParams} "
+                commandLine 'cmd', '/c', "$balJavaDebugParam $distributionBinPath/bal.bat build ${testParams} ${debugParams} && exit %%ERRORLEVEL%%"
             } else {
                 commandLine 'sh', '-c', "$balJavaDebugParam $distributionBinPath/bal build ${testParams} ${debugParams}"
             }

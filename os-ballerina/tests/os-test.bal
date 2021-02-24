@@ -57,7 +57,11 @@ function testExecInUnixLike2() returns error? {
     Process x1 = check exec("pwd", {}, "/");
     var x1out = x1.stdout();
     string result = check toString(x1out);
-    test:assertEquals(result.trim(), "/");
+    if (isWindowsEnvironment()) {
+        test:assertEquals(result.trim(), "/d");
+    } else {
+        test:assertEquals(result.trim(), "/");
+    }
 }
 
 @test:Config {}
@@ -83,6 +87,9 @@ function testExecInUnixLike4() returns error? {
 @test:Config {}
 isolated function testExecWithError() {
     string expected = "Cannot run program \"eee\": error=2, No such file or directory";
+    if (isWindowsEnvironment()) {
+        expected = "Cannot run program \"eee\": CreateProcess error=2, The system cannot find the file specified";
+    }
     Process|error x1 = exec("eee", {}, (), "BAL_EXEC_TEST_VAR");
     if (x1 is error) {
        test:assertEquals(x1.message(), expected);
@@ -116,4 +123,9 @@ function getExpectedUserHome() returns string = @java:Method {
 function getExpectedUserName() returns string = @java:Method {
     name: "testGetUserName",
     'class: "org.ballerinalang.stdlib.os.testutils.OSTestUtils"
+} external;
+
+isolated function isWindowsEnvironment() returns boolean = @java:Method {
+    name: "isWindowsEnvironment",
+    'class: "org.ballerinalang.stdlib.system.testutils.EnvironmentTestUtils"
 } external;
