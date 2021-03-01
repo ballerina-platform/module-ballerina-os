@@ -1,0 +1,10 @@
+codecov:
+  require_ci_to_pass: no
+
+fixes:
+  - "ballerina/os/*/::os-ballerina/"
+
+ignore:
+  - "**/tests"
+  - "os-test-utils"
+
