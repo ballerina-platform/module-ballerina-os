@@ -6,5 +6,5 @@ fixes:
 
 ignore:
   - "**/tests"
-  - "**/os-test-utils"
+  - "os-test-utils"
 
