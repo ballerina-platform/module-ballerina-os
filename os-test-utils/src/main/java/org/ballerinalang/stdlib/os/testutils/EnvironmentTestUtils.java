@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.ballerinalang.stdlib.system.testutils;
+package org.ballerinalang.stdlib.os.testutils;
 
 import java.util.Locale;
 
