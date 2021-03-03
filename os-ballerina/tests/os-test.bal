@@ -68,5 +68,5 @@ function getExpectedUserName() returns string = @java:Method {
 
 isolated function isWindowsEnvironment() returns boolean = @java:Method {
     name: "isWindowsEnvironment",
-    'class: "org.ballerinalang.stdlib.system.testutils.EnvironmentTestUtils"
+    'class: "org.ballerinalang.stdlib.os.testutils.EnvironmentTestUtils"
 } external;
