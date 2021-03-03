@@ -27,53 +27,11 @@ import io.ballerina.runtime.api.values.BString;
 import java.io.IOException;
 
 import static org.ballerinalang.stdlib.os.nativeimpl.ModuleUtils.getModule;
-import static org.ballerinalang.stdlib.os.utils.OSConstants.PROCESS_FIELD;
-import static org.ballerinalang.stdlib.os.utils.OSConstants.PROCESS_TYPE;
 
 /**
  * @since 0.94.1
  */
 public class OSUtils {
-
-    private static final BString UNKNOWN_MESSAGE = StringUtils.fromString("Unknown Error");
-
-    /**
-     * Returns error object  with message. Error type is generic ballerina error type. This utility to construct
-     * error object from message.
-     *
-     * @param typeId The string type ID of the particular error object.
-     * @param ex    Java throwable object to capture description of error struct. If throwable object is null,
-     *              "Unknown Error" sets to message by default.
-     * @return Ballerina error object.
-     */
-    public static BError getBallerinaError(String typeId, Throwable ex) {
-        BString errorMsg = ex != null && ex.getMessage() != null ? StringUtils.fromString(ex.getMessage()) :
-                UNKNOWN_MESSAGE;
-        return getBallerinaError(typeId, errorMsg);
-    }
-
-    /**
-     * Returns error object with message. Error type is generic ballerina error type. This utility to construct error
-     * object from message.
-     *
-     * @param typeId  The specific error type ID.
-     * @param message Java throwable object to capture description of error struct. If throwable object is null,
-     *                "Unknown Error" is set to message by default.
-     * @return Ballerina error object.
-     */
-    public static BError getBallerinaError(String typeId, BString message) {
-        return ErrorCreator.createDistinctError(typeId, getModule(), message);
-    }
-
-    public static BObject getProcessObject(Process process) throws IOException {
-        BObject obj = (BObject) ValueCreator.createObjectValue(getModule(), PROCESS_TYPE);
-        obj.addNativeData(PROCESS_FIELD, process);
-        return obj;
-    }
-    
-    public static Process processFromObject(BObject objVal) {
-        return (Process) objVal.getNativeData(PROCESS_FIELD);
-    }
 
     /**
      * Returns the os property which corresponds to the given key.

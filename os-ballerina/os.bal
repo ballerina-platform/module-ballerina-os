@@ -58,19 +58,3 @@ public isolated function getUserHome() returns string = @java:Method {
     name: "getUserHome",
     'class: "org.ballerinalang.stdlib.os.nativeimpl.GetUserHome"
 } external;
-
-# Executes an operating system command as a subprocess of the current process.
-# ```ballerina
-# os:Process|os:Error proc = os:exec("ls", {}, "/", "-la")
-# ```
-#
-# + command - The name of the command to be executed
-# + env - Environment variables to be set to the process
-# + dir - The current working directory to be set to the process
-# + args - Command arguments to be passed in
-# + return - A `os:Process` object if successful or else a `os:Error` if a failure occurs
-public isolated function exec(@untainted string command, @untainted map<string> env = {},
-                     @untainted string? dir = (), @untainted string... args) returns Process|Error = @java:Method {
-    name: "exec",
-    'class: "org.ballerinalang.stdlib.os.nativeimpl.Exec"
-} external;
