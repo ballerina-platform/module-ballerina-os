@@ -28,6 +28,10 @@ import org.ballerinalang.stdlib.os.utils.OSUtils;
  */
 public class GetUserHome {
 
+    private GetUserHome() {
+        
+    }
+
     private static final String PROPERTY_NAME = "user.home";
 
     public static BString getUserHome() {

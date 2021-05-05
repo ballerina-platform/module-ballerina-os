@@ -39,6 +39,11 @@ function testGetUsername() {
     test:assertEquals(getUsername(), getExpectedUserName());
 }
 
+@test:Config {}
+function testGetSystemPropertyNegative() {
+    test:assertEquals(getSystemPropertyExtern("non-existing-key"), "");
+}
+
 function toString(io:ReadableByteChannel input) returns string|error {
     string result = "";
     io:ReadableCharacterChannel charIn = new(input, "UTF-8");
@@ -69,4 +74,9 @@ function getExpectedUserName() returns string = @java:Method {
 isolated function isWindowsEnvironment() returns boolean = @java:Method {
     name: "isWindowsEnvironment",
     'class: "org.ballerinalang.stdlib.os.testutils.EnvironmentTestUtils"
+} external;
+
+function getSystemPropertyExtern(string key) returns string = @java:Method {
+    name: "getSystemPropertyExtern",
+    'class: "org.ballerinalang.stdlib.os.utils.OSUtils"
 } external;
