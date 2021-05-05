@@ -28,6 +28,10 @@ import org.ballerinalang.stdlib.os.utils.OSUtils;
  */
 public class GetUsername {
 
+    private GetUsername() {
+
+    }
+
     private static final String PROPERTY_NAME = "user.name";
 
     public static BString getUsername() {

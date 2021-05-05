@@ -17,10 +17,16 @@
  */
 package org.ballerinalang.stdlib.os.utils;
 
+import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BString;
+
 /**
  * @since 0.8.0
  */
 public class OSUtils {
+
+    private OSUtils() {
+    }
 
     /**
      * Returns the os property which corresponds to the given key.
@@ -32,11 +38,12 @@ public class OSUtils {
     public static String getSystemProperty(String key) {
         String value = System.getProperty(key);
         if (value == null) {
-            return io.ballerina.runtime.api.PredefinedTypes.TYPE_STRING.getZeroValue();
+            return io.ballerina.runtime.api.PredefinedTypes.TYPE_STRING.getZeroValue().toString();
         }
         return value;
     }
 
-    private OSUtils() {
+    public static BString getSystemPropertyExtern(BString key) {
+        return StringUtils.fromString(getSystemProperty(key.getValue()));
     }
 }
