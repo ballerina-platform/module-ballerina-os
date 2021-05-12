@@ -22,7 +22,7 @@ import ballerina/jballerina.java;
 # ```
 #
 # + name - Name of the environment variable
-# + return - Environment variable value if it exists, or else an empty string
+# + return - Environment variable value if it exists or else an empty string
 public isolated function getEnv(@untainted string name) returns string {
     var value = java:toString(nativeGetEnv(java:fromString(name)));
     if (value is string) {
@@ -42,7 +42,7 @@ isolated function nativeGetEnv(handle key) returns handle = @java:Method {
 # string username = os:getUsername();
 # ```
 #
-# + return - Current user's name if it can be determined, or else an empty string
+# + return - Current user's name if it can be determined or else an empty string
 public isolated function getUsername() returns string = @java:Method {
     name: "getUsername",
     'class: "org.ballerinalang.stdlib.os.nativeimpl.GetUsername"
@@ -53,7 +53,7 @@ public isolated function getUsername() returns string = @java:Method {
 # string userHome = os:getUserHome();
 # ```
 #
-# + return - Current user's home directory if it can be determined, or else an empty string
+# + return - Current user's home directory if it can be determined or else an empty string
 public isolated function getUserHome() returns string = @java:Method {
     name: "getUserHome",
     'class: "org.ballerinalang.stdlib.os.nativeimpl.GetUserHome"
