@@ -4,7 +4,6 @@ The OS library is one of the standard library packages of the <a target="_blank"
 
 This package provides functions to retrieve information about the os and the current users of the os.
 
-For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/).
 
 ## Report Issues
 
