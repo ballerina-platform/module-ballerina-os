@@ -7,7 +7,7 @@ Ballerina OS Package
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
   [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-os/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-os)
 
-The OS library is one of the standard library packages of the <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
+The `os` library is one of the standard library packages of the <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
 
 This package provides functions to retrieve information about the os and the current users of the os.
 
