@@ -69,7 +69,6 @@ ballerina {
     packageOrganization = packageOrg
     module = packageName
     langVersion = ballerinaLangVersion
-    testCoverageParam = "--code-coverage --jacoco-xml --includes=*"
 }
 
 task updateTomlFiles {
