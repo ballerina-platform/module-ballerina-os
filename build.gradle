@@ -29,7 +29,7 @@ ext.slf4jVersion = "1.7.30"
 ext.apacheCommonsVersion = "3.8.1"
 
 allprojects {
-    group = 'org.ballerinalang'
+    group = 'io.ballerina'
     version = project.version
 
     apply plugin: 'jacoco'
@@ -72,7 +72,7 @@ subprojects {
 
     dependencies {
         /* Standard libraries */
-        ballerinaStdLibs "org.ballerinalang:io-ballerina:${project.stdlibIoVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${project.stdlibIoVersion}"
     }
 }
 def moduleVersion = project.version.replace("-SNAPSHOT", "")

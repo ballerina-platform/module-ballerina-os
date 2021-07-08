@@ -1,5 +1,5 @@
 ignore:
-  - "os-test-utils"
+  - "test-utils"
 
 coverage:
   precision: 2
