@@ -22,9 +22,9 @@ apply plugin: "checkstyle"
 description = 'Ballerina - OS Test Utils'
 
 dependencies {
-    compile group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
-    compile project(":os-native")
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: "${apacheCommonsVersion}"
+    implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
+    implementation project(":os-native")
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: "${apacheCommonsVersion}"
     checkstyle project(":build-config:checkstyle")
     checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
 }
