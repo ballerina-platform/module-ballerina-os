@@ -12,8 +12,16 @@ plugins {
 }
 
 rootProject.name = 'os'
-include(':build-config:checkstyle')
-include ':os-native', ':os-test-utils', ':os-ballerina'
+
+include ':checkstyle'
+include ':os-native'
+include ':os-test-utils'
+include ':os-ballerina'
+
+project(':checkstyle').projectDir = file("build-config${File.separator}checkstyle")
+project(':os-native').projectDir = file('native')
+project(':os-test-utils').projectDir = file('test-utils')
+project(':os-ballerina').projectDir = file('ballerina')
 
 gradleEnterprise {
     buildScan {
