@@ -29,7 +29,7 @@ ext.slf4jVersion = "1.7.30"
 ext.apacheCommonsVersion = "3.8.1"
 
 allprojects {
-    group = 'io.ballerina'
+    group = project.group
     version = project.version
 
     apply plugin: 'jacoco'
