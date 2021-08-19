@@ -35,9 +35,7 @@ def packageName = "os"
 def packageOrg = "ballerina"
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
-def ballerinaDependencyFile = new File("$project.projectDir/Dependencies.toml")
 def originalConfig = ballerinaConfigFile.text
-def originalDependencies = ballerinaDependencyFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
@@ -73,22 +71,17 @@ ballerina {
 
 task updateTomlFiles {
     doLast {
-        def stdlibDependentIoVersion = stripBallerinaExtensionVersion(project.stdlibIoVersion)
         def stdlibNativeIoVersion = project.stdlibIoVersion
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
         newConfig = newConfig.replace("@io.native.version@", stdlibNativeIoVersion)
         ballerinaConfigFile.text = newConfig
-
-        def newDependencyConfig = ballerinaDependencyFile.text.replace("@stdlib.io.version@", stdlibDependentIoVersion)
-        ballerinaDependencyFile.text = newDependencyConfig
     }
 }
 
 task revertTomlFiles {
     doLast {
         ballerinaConfigFile.text = originalConfig
-        ballerinaDependencyFile.text = originalDependencies
     }
 }
 
