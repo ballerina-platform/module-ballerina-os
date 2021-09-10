@@ -1,0 +1,14 @@
+[package]
+org = "ballerina"
+name = "os"
+version = "@toml.version@"
+distribution = "slbeta3"
+
+[[platform.java11.dependency]]
+path = "../native/build/libs/os-native-@project.version@.jar"
+
+[[platform.java11.dependency]]
+path = "./lib/io-native-@io.native.version@.jar"
+
+[[platform.java11.dependency]]
+path = "../test-utils/build/libs/os-test-utils-@project.version@.jar"
