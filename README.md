@@ -2,9 +2,9 @@ Ballerina OS Package
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml)
+  [![Trivy](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/trivy-scan.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/trivy-scan.yml)
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-os.svg)](https://github.com/ballerina-platform/module-ballerina-os/commits/master)
   [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/os.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fos)
-  [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
   [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-os/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-os)
 
 The `os` library is one of the standard library packages of the <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
