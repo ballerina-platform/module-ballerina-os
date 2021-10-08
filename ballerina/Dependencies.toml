@@ -11,7 +11,6 @@ org = "ballerina"
 name = "io"
 version = "1.0.0"
 scope = "testOnly"
-transitive = false
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.value"}
@@ -23,8 +22,7 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "jballerina.java"
-version = "0.9.0"
-transitive = false
+version = "0.0.0"
 modules = [
 	{org = "ballerina", packageName = "jballerina.java", moduleName = "jballerina.java"}
 ]
@@ -32,19 +30,30 @@ modules = [
 [[package]]
 org = "ballerina"
 name = "lang.value"
-version = "1.0.0"
+version = "0.0.0"
 scope = "testOnly"
-transitive = true
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
 
 [[package]]
 org = "ballerina"
+name = "os"
+version = "1.0.0"
+dependencies = [
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "test"}
+]
+modules = [
+	{org = "ballerina", packageName = "os", moduleName = "os"}
+]
+
+[[package]]
+org = "ballerina"
 name = "test"
-version = "0.8.0"
+version = "0.0.0"
 scope = "testOnly"
-transitive = false
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
