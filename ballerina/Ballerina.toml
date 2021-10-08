@@ -8,7 +8,7 @@ distribution = "slbeta3"
 path = "../native/build/libs/os-native-1.0.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/io-native-1.0.0-20210902-221900-de7dba2.jar"
+path = "./lib/io-native-1.0.0-20211007-182000-9f89315.jar"
 
 [[platform.java11.dependency]]
 path = "../test-utils/build/libs/os-test-utils-1.0.0-SNAPSHOT.jar"
