@@ -35,6 +35,6 @@ public class GetUsername {
     private static final String PROPERTY_NAME = "user.name";
 
     public static BString getUsername() {
-        return StringUtils.fromString(OSUtils.getSystemProperty(PROPERTY_NAME));
+        return OSUtils.getSystemProperty(StringUtils.fromString(PROPERTY_NAME));
     }
 }

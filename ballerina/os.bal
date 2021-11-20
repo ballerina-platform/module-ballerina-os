@@ -25,7 +25,7 @@ import ballerina/jballerina.java;
 # + return - Environment variable value if it exists or else an empty string
 public isolated function getEnv(@untainted string name) returns string {
     var value = java:toString(nativeGetEnv(java:fromString(name)));
-    if (value is string) {
+    if value is string {
         return value;
     }
     return "";
