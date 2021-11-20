@@ -23,7 +23,7 @@ import ballerina/jballerina.java;
 #
 # + name - Name of the environment variable
 # + return - Environment variable value if it exists or else an empty string
-public isolated function getEnv(@untainted string name) returns string {
+public isolated function getEnv(string name) returns string {
     var value = java:toString(nativeGetEnv(java:fromString(name)));
     if value is string {
         return value;
