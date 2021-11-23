@@ -14,18 +14,17 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/io;
 import ballerina/jballerina.java;
 import ballerina/test;
 
 @test:Config {}
-function testValidEnv() {
+function testGetEnv() {
     string expectedValue = getExpectedValidEnv();
     test:assertEquals(getEnv("JAVA_HOME"), expectedValue);
 }
 
 @test:Config {}
-isolated function testEmptyEnv() {
+isolated function testGetEnvNegative() {
     test:assertEquals(getEnv("JAVA_XXXX"), "");
 }
 
@@ -41,19 +40,7 @@ function testGetUsername() {
 
 @test:Config {}
 function testGetSystemPropertyNegative() {
-    test:assertEquals(getSystemPropertyExtern("non-existing-key"), "");
-}
-
-function toString(io:ReadableByteChannel input) returns string|error {
-    string result = "";
-    io:ReadableCharacterChannel charIn = new(input, "UTF-8");
-    while (true) {
-        var x = charIn.read(1);
-        if (x is error) { break; }
-        else { result = result + x; }
-    }
-    check charIn.close();
-    return <@untainted> result;
+    test:assertEquals(getSystemProperty("non-existing-key"), "");
 }
 
 function getExpectedValidEnv() returns string = @java:Method {
@@ -76,7 +63,7 @@ isolated function isWindowsEnvironment() returns boolean = @java:Method {
     'class: "io.ballerina.stdlib.os.testutils.EnvironmentTestUtils"
 } external;
 
-function getSystemPropertyExtern(string key) returns string = @java:Method {
-    name: "getSystemPropertyExtern",
+function getSystemProperty(string key) returns string = @java:Method {
+    name: "getSystemProperty",
     'class: "io.ballerina.stdlib.os.utils.OSUtils"
 } external;

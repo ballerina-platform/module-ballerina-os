@@ -35,15 +35,12 @@ public class OSUtils {
      * @return os property as a {@link String} or {@code PredefinedTypes.TYPE_STRING.getZeroValue()} if the
      * property does not exist.
      */
-    public static String getSystemProperty(String key) {
-        String value = System.getProperty(key);
+    public static BString getSystemProperty(BString key) {
+        String value = System.getProperty(key.toString());
         if (value == null) {
-            return io.ballerina.runtime.api.PredefinedTypes.TYPE_STRING.getZeroValue().toString();
+            return StringUtils.fromString(
+                    io.ballerina.runtime.api.PredefinedTypes.TYPE_STRING.getZeroValue().toString());
         }
-        return value;
-    }
-
-    public static BString getSystemPropertyExtern(BString key) {
-        return StringUtils.fromString(getSystemProperty(key.getValue()));
+        return StringUtils.fromString(value);
     }
 }
