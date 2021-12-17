@@ -1,7 +1,7 @@
 [package]
 org = "ballerina"
 name = "os"
-version = "1.1.0"
+version = "1.2.0"
 authors = ["Ballerina"]
 keywords = ["environment"]
 repository = "https://github.com/ballerina-platform/module-ballerina-os"
@@ -9,10 +9,10 @@ license = ["Apache-2.0"]
 distribution = "2201.0.0"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/os-native-1.1.0.jar"
+path = "../native/build/libs/os-native-1.2.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/io-native-1.1.0.jar"
+path = "./lib/io-native-1.2.0-20211217-122300-af1510f.jar"
 
 [[platform.java11.dependency]]
-path = "../test-utils/build/libs/os-test-utils-1.1.0.jar"
+path = "../test-utils/build/libs/os-test-utils-1.2.0-SNAPSHOT.jar"
