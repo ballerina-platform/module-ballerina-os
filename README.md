@@ -1,4 +1,4 @@
-Ballerina OS Package
+Ballerina OS Library
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml)
@@ -7,13 +7,9 @@ Ballerina OS Package
   [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/os.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fos)
   [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-os/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-os)
 
-The `os` library is one of the standard library packages of the <a target="_blank" href="https://ballerina.io/">Ballerina</a> language.
+This library provides APIs to retrieve information about the environment variables and the current users of the Operating System.
 
-This package provides functions to retrieve information about the os and the current users of the os.
-
-For more information go to [The OS Package](https://ballerina.io/learn/api-docs/ballerina/os/).
-
-For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/learn/by-example/).
+The APIs are platform-independent, i.e., uniform across all operating systems.
 
 ## Issues and Projects
 
@@ -94,3 +90,5 @@ All contributors are encouraged to read the [Ballerina Code of Conduct](https://
 
 * Chat live with us via our [Slack channel](https://ballerina.io/community/slack/).
 * Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
+* For more information go to the [`os` library](https://lib.ballerina.io/ballerina/os/latest).
+* For example demonstrations of the usage, go to [Ballerina By Examples](https://ballerina.io/swan-lake/learn/by-example/).
