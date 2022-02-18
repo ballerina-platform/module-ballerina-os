@@ -27,7 +27,7 @@ To allow users to manipulate environment variables programmatically.
 # + key - Key of the environment variable
 # + value - Value of the environment variable
 # + return - error if setting the environment variable fails
-public isolated function setEnv(string key, string value) returns Error
+public isolated function setEnv(string key, string value) returns Error;
 ```
 
 - Users can remove any particular environment variable from the system using the `unsetEnv` function.
@@ -39,7 +39,7 @@ public isolated function setEnv(string key, string value) returns Error
 # ```
 #
 # + name - Name of the environment variable
-public isolated function unsetEnv(string key)
+public isolated function unsetEnv(string key);
 ```
 
 - To list the existing environment variables of the system, the `listEnv` function can be used. This would return the environment variables as a map.
@@ -51,7 +51,7 @@ public isolated function unsetEnv(string key)
 # ```
 #
 # + return - map of environment variables
-public isolated function listEnv() returns map<string>
+public isolated function listEnv() returns map<string>;
 ```
 
 ## Testing
