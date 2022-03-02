@@ -16,6 +16,12 @@ To support setting, unsettling, and listing environment variables.
 To allow users to manipulate environment variables programmatically.
 
 ## Description
+
+```ballerina
+# Represents OS module related errors.
+public type Error distinct error;
+```
+
 - The `setEnv` function can be used to set any environment variable programmatically.
 
 ```ballerina
