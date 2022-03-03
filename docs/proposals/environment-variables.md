@@ -27,13 +27,13 @@ public type Error distinct error;
 ```ballerina
 # Sets the value of the environment variable named by the key. 
 # ```ballerina
-# os:Error err = os:setEnv("BALCONFIGFILE", "/path/to/Config.toml");
+# os:Error? err = os:setEnv("BALCONFIGFILE", "/path/to/Config.toml");
 # ```
 #
 # + key - Key of the environment variable
 # + value - Value of the environment variable
-# + return - error if setting the environment variable fails
-public isolated function setEnv(string key, string value) returns Error;
+# + return - error if setting the environment variable fails, () otherwise
+public isolated function setEnv(string key, string value) returns Error?;
 ```
 
 - Users can remove any particular environment variable from the system using the `unsetEnv` function.
