@@ -41,11 +41,12 @@ public isolated function setEnv(string key, string value) returns Error?;
 ```ballerina
 # Removes a single environment variable from the system if it exists.
 # ```ballerina
-# var env = os:unsetEnv("BALCONFIGFILE");
+# os:Error? err = os:unsetEnv("BALCONFIGFILE");
 # ```
 #
 # + name - Name of the environment variable
-public isolated function unsetEnv(string key);
+# + return - error if unsetting the environment variable fails, () otherwise
+public isolated function unsetEnv(string key) returns Error?;
 ```
 
 - To list the existing environment variables of the system, the `listEnv` function can be used. This would return the environment variables as a map.
