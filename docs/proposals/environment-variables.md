@@ -63,5 +63,7 @@ public isolated function listEnv() returns map<string>;
 
 ## Testing
 - Set an environment variable using the `setEnv` function and validate if it was set correctly.
+- Pass an invalid variable (an empty string, an initial hexadecimal zero character (0x00), or an equal sign ("=")) as key to `setEnv` and validate if it returned an error correctly.
 - Remove the previously created environment variable using the `unsetEnv` function can check whether it had been removed from the system correctly.
+- Pass a non-existing key to `unsetEnv` and validate that it did not return an error.
 - Retrieve the list of environment variables by calling the `listEnv` function and check whether this returns a valid `map<string>`. 
