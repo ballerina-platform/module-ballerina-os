@@ -22,7 +22,7 @@ To allow users to manipulate environment variables programmatically.
 public type Error distinct error;
 ```
 
-- The `setEnv` function can be used to set any environment variable programmatically. An `os:Error` will be returned if the `key` is an empty string, an initial hexadecimal zero character (0x00), or an equal sign ("="). An `os:Error` will also be returned if an error occurs during the execution of this operation. 
+- The `setEnv` function can be used to set any environment variable programmatically. An `os:Error` will be returned if the `key` is an empty string, an initial hexadecimal zero character (0x00), or an equal sign ("="). An `os:Error` will also be returned  if a security exception occurs, i.e. the caller does not have the required permission to perform this operation, or an error occurs during the execution of this operation. 
 
 ```ballerina
 # Sets the value of the environment variable named by the key. 
@@ -36,7 +36,7 @@ public type Error distinct error;
 public isolated function setEnv(string key, string value) returns Error?;
 ```
 
-- Users can remove any particular environment variable from the system using the `unsetEnv` function. If a key of a non-existing environment variable is passed, no change will happen and an error will not be thrown. An `os:Error` will be returned if an error occurs during the execution of this operation.
+- Users can remove any particular environment variable from the system using the `unsetEnv` function. If a key of a non-existing environment variable is passed, no change will happen and an error will not be thrown. An `os:Error` will be returned if a security exception occurs, i.e. the caller does not have the required permission to perform this operation, or an error occurs during the execution of this operation.
 
 ```ballerina
 # Removes a single environment variable from the system if it exists.
