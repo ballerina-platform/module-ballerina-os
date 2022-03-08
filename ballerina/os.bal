@@ -94,3 +94,18 @@ isolated function setEnvExtern(string key, string value) returns Error? = @java:
     name: "setEnv",
     'class: "io.ballerina.stdlib.os.nativeimpl.SetEnv"
 } external;
+
+# Returns a map of environment variables.
+# ```ballerina
+# map<string> envs = os:listEnv();
+# ```
+#
+# + return - map of environment variables
+public isolated function listEnv() returns map<string> {
+    return listEnvExtern();
+}
+
+isolated function listEnvExtern() returns map<string> = @java:Method {
+    name: "listEnv",
+    'class: "io.ballerina.stdlib.os.nativeimpl.ListEnv"
+} external;

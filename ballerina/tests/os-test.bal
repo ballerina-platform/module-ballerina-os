@@ -65,6 +65,12 @@ function testUnsetEnv() {
 }
 
 @test:Config {}
+function testListEnv() {
+    map<string> env = listEnv();
+    test:assertTrue(env.length() > 0);
+}
+
+@test:Config {}
 function testGetSystemPropertyNegative() {
     test:assertEquals(getSystemProperty("non-existing-key"), "");
 }
