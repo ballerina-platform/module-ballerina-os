@@ -49,6 +49,16 @@ function testSetEnv() {
 }
 
 @test:Config {}
+function testSetEnvNegative() {
+    Error? result = setEnv("", "bar");
+    if result is Error {
+        test:assertEquals(result.message(), "key cannot be an empty string");
+    } else {
+        test:assertFail("setEnv did not return an error for empty string as key");
+    }
+}
+
+@test:Config {}
 function testUnsetEnv() {
     Error? result = setEnv("foo", "bar");
     if result is Error {
