@@ -49,6 +49,22 @@ function testSetEnv() {
 }
 
 @test:Config {}
+function testUnsetEnv() {
+    Error? result = setEnv("foo", "bar");
+    if result is Error {
+        test:assertFail("failed to set environment variable: " + result.message());
+    } else {
+        test:assertEquals(getEnv("foo"), "bar");
+        result = unsetEnv("foo");
+        if result is Error {
+            test:assertFail("failed to unset environment variable: " + result.message());
+        } else {
+            test:assertEquals(getEnv("foo"), "");
+        }
+    }
+}
+
+@test:Config {}
 function testGetSystemPropertyNegative() {
     test:assertEquals(getSystemProperty("non-existing-key"), "");
 }

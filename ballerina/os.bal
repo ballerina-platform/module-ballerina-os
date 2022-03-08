@@ -75,6 +75,21 @@ public isolated function setEnv(string key, string value) returns Error? {
     }
 }
 
+# Removes a single environment variable from the system if it exists.
+# ```ballerina
+# os:Error? err = os:unsetEnv("BALCONFIGFILE");
+# ```
+#
+# + key - Key of the environment variable
+# + return - error if unsetting the environment variable fails, () otherwise
+public isolated function unsetEnv(string key) returns Error? {
+    if key == "" {
+        return error Error("key cannot be an empty string");
+    } else {
+        return setEnvExtern(key, "");
+    }
+}
+
 isolated function setEnvExtern(string key, string value) returns Error? = @java:Method {
     name: "setEnv",
     'class: "io.ballerina.stdlib.os.nativeimpl.SetEnv"

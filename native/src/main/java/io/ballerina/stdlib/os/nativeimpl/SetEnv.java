@@ -55,9 +55,9 @@ public class SetEnv {
                 writableEnv.put(key.toString(), value.toString());
             }
         } catch (RuntimeException e) {
-            return ErrorGenerator.createError("runtime exception occurred" + e.getMessage());
+            return ErrorGenerator.createError("runtime exception occurred: " + e.getMessage());
         } catch (Exception e) {
-            return ErrorGenerator.createError("exception occurred" + e.getMessage());
+            return ErrorGenerator.createError("exception occurred: " + e.getMessage());
         }
         return null;
     }
