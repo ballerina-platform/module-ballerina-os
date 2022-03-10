@@ -34,26 +34,15 @@ public class SetEnv {
     @SuppressWarnings("unchecked")
     public static Object setEnv(BString key, BString value) {
         try {
-            if (System.getProperty("os.name").startsWith("Windows")) {
-                Class<?> sc = Class.forName("java.lang.ProcessEnvironment");
-                Field caseInsensitiveField = sc.getDeclaredField("theCaseInsensitiveEnvironment");
-                AccessController.doPrivileged((PrivilegedAction) () -> {
-                    caseInsensitiveField.setAccessible(true);
-                    return null;
-                });
-                Map<String, String> writableEnv = (Map<String, String>) caseInsensitiveField.get(null);
-                writableEnv.put(key.toString(), value.toString());
-            } else {
-                Map<String, String> env = System.getenv();
-                Class<?> cl = env.getClass();
-                Field field = cl.getDeclaredField("m");
-                AccessController.doPrivileged((PrivilegedAction) () -> {
-                    field.setAccessible(true);
-                    return null;
-                });
-                Map<String, String> writableEnv = (Map<String, String>) field.get(env);
-                writableEnv.put(key.toString(), value.toString());
-            }
+            Map<String, String> env = System.getenv();
+            Class<?> cl = env.getClass();
+            Field field = cl.getDeclaredField("m");
+            AccessController.doPrivileged((PrivilegedAction) () -> {
+                field.setAccessible(true);
+                return null;
+            });
+            Map<String, String> writableEnv = (Map<String, String>) field.get(env);
+            writableEnv.put(key.toString(), value.toString());
         } catch (RuntimeException e) {
             return ErrorGenerator.createError("runtime exception occurred: " + e.getMessage());
         } catch (Exception e) {
