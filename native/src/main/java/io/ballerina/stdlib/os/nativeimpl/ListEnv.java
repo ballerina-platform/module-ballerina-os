@@ -34,6 +34,10 @@ import java.util.Map;
  */
 public class ListEnv {
 
+    private ListEnv() {
+
+    }
+
     public static BMap<BString, Object> listEnv() {
         MapType mapType = TypeCreator.createMapType(PredefinedTypes.TYPE_STRING);
         BMap<BString, Object> envMap =  ValueCreator.createMapValue(mapType);

@@ -31,6 +31,10 @@ import java.util.Map;
  */
 public class SetEnv {
 
+    private SetEnv() {
+
+    }
+
     @SuppressWarnings("unchecked")
     public static Object setEnv(BString key, BString value) {
         try {
