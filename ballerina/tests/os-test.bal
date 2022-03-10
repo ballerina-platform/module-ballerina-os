@@ -100,11 +100,6 @@ function getExpectedUserName() returns string = @java:Method {
     'class: "io.ballerina.stdlib.os.testutils.OSTestUtils"
 } external;
 
-isolated function isWindowsEnvironment() returns boolean = @java:Method {
-    name: "isWindowsEnvironment",
-    'class: "io.ballerina.stdlib.os.testutils.EnvironmentTestUtils"
-} external;
-
 function getSystemProperty(string key) returns string = @java:Method {
     name: "getSystemProperty",
     'class: "io.ballerina.stdlib.os.utils.OSUtils"
