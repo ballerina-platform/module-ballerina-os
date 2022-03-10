@@ -30,6 +30,22 @@ The environment variable value associated with a provided name can be retrieved 
 ```ballerina
 string port = os:getEnv("HTTP_PORT");
 ```
+
+An environment variable can be set using the `setEnv` function.
+```ballerina
+os:Error? err = os:setEnv("BALCONFIGFILE", "/path/to/Config.toml");
+```
+
+An environment variable can be removed from the system using the `unsetEnv` function.
+```ballerina
+os:Error? err = os:unsetEnv("BALCONFIGFILE");
+```
+
+The existing environment variables of the system can be listed using the `listEnv` function.
+```ballerina
+map<string> envs = os:listEnv();
+```
+
 ## 3. Operating System Users Information
 The current user's name can be retrieved using the `os:getUsername()` function.
 ```ballerina
