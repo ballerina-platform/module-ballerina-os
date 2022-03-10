@@ -56,6 +56,20 @@ function testSetEnvNegative() {
     } else {
         test:assertFail("setEnv did not return an error for empty string as key");
     }
+
+    result = setEnv("==", "bar");
+    if result is Error {
+        test:assertEquals(result.message(), "key cannot be == sign");
+    } else {
+        test:assertFail("setEnv did not return an error for == sign as key");
+    }
+
+    result = setEnv("0x00", "bar");
+    if result is Error {
+        test:assertEquals(result.message(), "key cannot be initial hexadecimal zero character (0x00)");
+    } else {
+        test:assertFail("setEnv did not return an error for initial hexadecimal zero character (0x00) as key");
+    }
 }
 
 @test:Config {}
@@ -71,6 +85,30 @@ function testUnsetEnv() {
         } else {
             test:assertEquals(getEnv("foo"), "");
         }
+    }
+}
+
+@test:Config {}
+function testUnsetEnvNegative() {
+    Error? result = unsetEnv("");
+    if result is Error {
+        test:assertEquals(result.message(), "key cannot be an empty string");
+    } else {
+        test:assertFail("setEnv did not return an error for empty string as key");
+    }
+
+    result = unsetEnv("==");
+    if result is Error {
+        test:assertEquals(result.message(), "key cannot be == sign");
+    } else {
+        test:assertFail("setEnv did not return an error for == sign as key");
+    }
+
+    result = unsetEnv("0x00");
+    if result is Error {
+        test:assertEquals(result.message(), "key cannot be initial hexadecimal zero character (0x00)");
+    } else {
+        test:assertFail("setEnv did not return an error for initial hexadecimal zero character (0x00) as key");
     }
 }
 

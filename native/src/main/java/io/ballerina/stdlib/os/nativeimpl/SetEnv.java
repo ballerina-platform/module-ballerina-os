@@ -38,6 +38,7 @@ public class SetEnv {
     @SuppressWarnings("unchecked")
     public static Object setEnv(BString key, BString value) {
         try {
+            Map<String, String> writableEnv;
             if (System.getProperty("os.name").startsWith("Windows")) {
                 Class<?> sc = Class.forName("java.lang.ProcessEnvironment");
                 Field caseInsensitiveField = sc.getDeclaredField("theCaseInsensitiveEnvironment");
@@ -45,8 +46,7 @@ public class SetEnv {
                     caseInsensitiveField.setAccessible(true);
                     return null;
                 });
-                Map<String, String> writableEnv = (Map<String, String>) caseInsensitiveField.get(null);
-                writableEnv.put(key.toString(), value.toString());
+                writableEnv = (Map<String, String>) caseInsensitiveField.get(null);
             } else {
                 Map<String, String> env = System.getenv();
                 Class<?> cl = env.getClass();
@@ -55,9 +55,9 @@ public class SetEnv {
                     field.setAccessible(true);
                     return null;
                 });
-                Map<String, String> writableEnv = (Map<String, String>) field.get(env);
-                writableEnv.put(key.toString(), value.toString());
+                writableEnv = (Map<String, String>) field.get(env);
             }
+            writableEnv.put(key.toString(), value.toString());
         } catch (RuntimeException e) {
             return ErrorGenerator.createError("runtime exception occurred: " + e.getMessage());
         } catch (Exception e) {
