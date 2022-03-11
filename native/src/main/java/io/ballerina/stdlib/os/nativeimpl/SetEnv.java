@@ -31,6 +31,9 @@ import java.util.Map;
  */
 public class SetEnv {
 
+    private static final String JAVA_LANG_PROCESS_ENVIRONMENT = "java.lang.ProcessEnvironment";
+    private static final String CASE_INSENSITIVE_ENV = "theCaseInsensitiveEnvironment";
+
     private SetEnv() {
 
     }
@@ -42,12 +45,10 @@ public class SetEnv {
             Map<String, String> writableEnv;
             Field field;
             if (System.getProperty("os.name").startsWith("Windows")) {
-                Class<?> sc = Class.forName("java.lang.ProcessEnvironment");
-                field = sc.getDeclaredField("theCaseInsensitiveEnvironment");
+                field = Class.forName(JAVA_LANG_PROCESS_ENVIRONMENT).getDeclaredField(CASE_INSENSITIVE_ENV);
             } else {
                 env = System.getenv();
-                Class<?> cl = env.getClass();
-                field = cl.getDeclaredField("m");
+                field = env.getClass().getDeclaredField("m");
             }
             AccessController.doPrivileged((PrivilegedAction) () -> {
                 field.setAccessible(true);
