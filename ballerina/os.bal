@@ -69,11 +69,11 @@ public isolated function getUserHome() returns string = @java:Method {
 # + return - error if setting the environment variable fails, () otherwise
 public isolated function setEnv(string key, string value) returns Error? {
     if key == "" {
-        return error Error("key cannot be an empty string");
+        return error Error("Environment key cannot be an empty string");
     } else if key == "==" {
-        return error Error("key cannot be == sign");
+        return error Error("Environment key cannot be == sign");
     } else if key == "0x00" {
-        return error Error("key cannot be initial hexadecimal zero character (0x00)");
+        return error Error("Environment key cannot be initial hexadecimal zero character (0x00)");
     } else {
         return setEnvExtern(key, value);
     }

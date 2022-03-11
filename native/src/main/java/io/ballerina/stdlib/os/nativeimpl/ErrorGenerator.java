@@ -35,7 +35,6 @@ public class ErrorGenerator {
 
     public static BError createError(String errorMsg) {
 
-        return ErrorCreator.createError(ModuleUtils.getModule(), ERROR,
-                StringUtils.fromString(errorMsg), null, null);
+        return ErrorCreator.createError(ModuleUtils.getModule(), ERROR, StringUtils.fromString(errorMsg), null, null);
     }
 }
