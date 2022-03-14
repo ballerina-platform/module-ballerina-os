@@ -123,31 +123,9 @@ function testUnsetEnvNegative() {
     }
 }
 
-function listEnvDataProvider() returns (string[][]) {
-    return [
-        ["foo1", "bar1"],
-        ["foo2", "bar2"],
-        ["foo3", "bar3"]
-    ];
-}
-
-@test:Config {
-    dataProvider: listEnvDataProvider
-}
-function testListEnv(string key, string value) {
-    boolean envExists = false;
-    Error? result = setEnv(key, value);
-    if result is Error {
-        test:assertFail("failed to set environment variable with key " + key + " : " + result.message());
-    } else {
-        map<string> env = listEnv();
-        foreach [string, string] [k, v] in env.entries() {
-            if k == key && v == value {
-                envExists = true;
-            }
-        }
-        test:assertTrue(envExists);
-    }
+function testListEnv() {
+    map<string> env = listEnv();
+    test:assertTrue(env.length() > 0);
 }
 
 @test:Config {}
