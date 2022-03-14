@@ -69,9 +69,11 @@ public isolated function getUserHome() returns string = @java:Method {
 # + return - error if setting the environment variable fails, () otherwise
 public isolated function setEnv(string key, string value) returns Error? {
     if key == "" {
-        return error Error("Environment key cannot be an empty string");
+        return error Error("The parameter key cannot be an empty string");
+    } else if key == "=="  {
+        return error Error("The parameter key cannot be == sign");
     } else {
-        return setEnvExtern(key, value);
+        return setEnvExtern(key, value, false);
     }
 }
 
@@ -83,10 +85,14 @@ public isolated function setEnv(string key, string value) returns Error? {
 # + key - Key of the environment variable
 # + return - error if unsetting the environment variable fails, () otherwise
 public isolated function unsetEnv(string key) returns Error? {
-    return setEnv(key, "");
+    if key == "" {
+        return error Error("The parameter key cannot be an empty string");
+    } else {
+        return setEnvExtern(key, "", true);
+    }
 }
 
-isolated function setEnvExtern(string key, string value) returns Error? = @java:Method {
+isolated function setEnvExtern(string key, string value, boolean remove) returns Error? = @java:Method {
     name: "setEnv",
     'class: "io.ballerina.stdlib.os.nativeimpl.SetEnv"
 } external;

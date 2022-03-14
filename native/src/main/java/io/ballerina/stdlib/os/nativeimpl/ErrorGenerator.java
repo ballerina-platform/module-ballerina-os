@@ -33,8 +33,9 @@ public class ErrorGenerator {
 
     private ErrorGenerator() {}
 
-    public static BError createError(String errorMsg) {
+    public static BError createError(String errorMsg, Exception e) {
 
-        return ErrorCreator.createError(ModuleUtils.getModule(), ERROR, StringUtils.fromString(errorMsg), null, null);
+        return ErrorCreator.createError(ModuleUtils.getModule(), ERROR,
+                StringUtils.fromString(errorMsg + ": " + e.getMessage()), null, null);
     }
 }

@@ -38,56 +38,116 @@ function testGetUsername() {
     test:assertEquals(getUsername(), getExpectedUserName());
 }
 
-@test:Config {}
-function testSetEnv() {
-    Error? result = setEnv("foo", "bar");
+function setEnvDataProvider() returns (string[][]) {
+    return [
+        ["foo", "test1"],
+        ["0x00", "test2"],
+        ["!@#$%^&*()_+~", "test3"]
+    ];
+}
+
+@test:Config {
+    dataProvider: setEnvDataProvider
+}
+function testSetEnv(string key, string value) {
+    Error? result = setEnv(key, value);
     if result is Error {
-        test:assertFail("failed to set environment variable: " + result.message());
+        test:assertFail("failed to set environment variable with key " + key + " : " + result.message());
     } else {
-        test:assertEquals(getEnv("foo"), "bar");
+        test:assertEquals(getEnv(key), value);
     }
 }
 
-@test:Config {}
-function testSetEnvNegative() {
-    Error? result = setEnv("", "bar");
+function setEnvDataProviderNegative() returns (string[][]) {
+    return [
+        ["", "test1", "The parameter key cannot be an empty string"],
+        ["==", "test2", "The parameter key cannot be == sign"]
+    ];
+}
+
+@test:Config {
+    dataProvider: setEnvDataProviderNegative
+}
+function testSetEnvNegative(string key, string value, string errorMessage) {
+    Error? result = setEnv(key, value);
     if result is Error {
-        test:assertEquals(result.message(), "Environment key cannot be an empty string");
+        test:assertEquals(result.message(), errorMessage);
     } else {
-        test:assertFail("setEnv did not return an error for empty string as key");
+        test:assertFail("setEnv did not return an error for " + key + " as key");
     }
 }
 
-@test:Config {}
-function testUnsetEnv() {
-    Error? result = setEnv("foo", "bar");
+function unsetEnvDataProvider() returns (string[][]) {
+    return [
+        ["foo", "test1"],
+        ["0x00", "test2"],
+        ["!@#$%^&*()_+~", "test3"]
+    ];
+}
+
+@test:Config {
+    dataProvider: unsetEnvDataProvider
+}
+function testUnsetEnv(string key, string value) {
+    Error? result = setEnv(key, value);
     if result is Error {
-        test:assertFail("failed to set environment variable: " + result.message());
+        test:assertFail("failed to set environment variable with key " + key + " : " + result.message());
     } else {
-        test:assertEquals(getEnv("foo"), "bar");
-        result = unsetEnv("foo");
+        test:assertEquals(getEnv(key), value);
+        result = unsetEnv(key);
         if result is Error {
-            test:assertFail("failed to unset environment variable: " + result.message());
+            test:assertFail("failed to unset environment variable with key " + key + " : " + result.message());
         } else {
-            test:assertEquals(getEnv("foo"), "");
+            test:assertFalse(envVariableExists(key), "environment variable with key " + key + " has not been removed");
         }
     }
+}
+
+function envVariableExists(string key) returns boolean {
+    map<string> env = listEnv();
+    foreach [string, string] [k, v] in env.entries() {
+        if k == key && v != "" {
+            return true;
+        }
+    }
+    return false;
 }
 
 @test:Config {}
 function testUnsetEnvNegative() {
     Error? result = unsetEnv("");
     if result is Error {
-        test:assertEquals(result.message(), "Environment key cannot be an empty string");
+        test:assertEquals(result.message(), "The parameter key cannot be an empty string");
     } else {
         test:assertFail("setEnv did not return an error for empty string as key");
     }
 }
 
-@test:Config {}
-function testListEnv() {
-    map<string> env = listEnv();
-    test:assertTrue(env.length() > 0);
+function listEnvDataProvider() returns (string[][]) {
+    return [
+        ["foo1", "bar1"],
+        ["foo2", "bar2"],
+        ["foo3", "bar3"]
+    ];
+}
+
+@test:Config {
+    dataProvider: listEnvDataProvider
+}
+function testListEnv(string key, string value) {
+    boolean envExists = false;
+    Error? result = setEnv(key, value);
+    if result is Error {
+        test:assertFail("failed to set environment variable with key " + key + " : " + result.message());
+    } else {
+        map<string> env = listEnv();
+        foreach [string, string] [k, v] in env.entries() {
+            if k == key && v == value {
+                envExists = true;
+            }
+        }
+        test:assertTrue(envExists);
+    }
 }
 
 @test:Config {}

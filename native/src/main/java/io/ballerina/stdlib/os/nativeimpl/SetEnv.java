@@ -39,27 +39,40 @@ public class SetEnv {
     }
 
     @SuppressWarnings("unchecked")
-    public static Object setEnv(BString key, BString value) {
-        try {
-            Map<String, String> env = null;
-            Map<String, String> writableEnv;
-            Field field;
-            if (System.getProperty("os.name").startsWith("Windows")) {
+    public static Object setEnv(BString key, BString value, boolean remove) {
+        Map<String, String> env = null;
+        Map<String, String> writableEnv;
+        Field field;
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            try {
                 field = Class.forName(JAVA_LANG_PROCESS_ENVIRONMENT).getDeclaredField(CASE_INSENSITIVE_ENV);
-            } else {
-                env = System.getenv();
-                field = env.getClass().getDeclaredField("m");
+            } catch (NoSuchFieldException e) {
+                return ErrorGenerator.createError("Error while accessing the environment variable map" , e);
+            } catch (ClassNotFoundException e) {
+                return ErrorGenerator.createError("Error while accessing the environment variable map", e);
             }
-            AccessController.doPrivileged((PrivilegedAction) () -> {
-                field.setAccessible(true);
-                return null;
-            });
+        } else {
+            env = System.getenv();
+            try {
+                field = env.getClass().getDeclaredField("m");
+            } catch (NoSuchFieldException e) {
+                return ErrorGenerator.createError("Error while accessing the environment variable map", e);
+            }
+        }
+        Field finalField = field;
+        AccessController.doPrivileged((PrivilegedAction) () -> {
+            finalField.setAccessible(true);
+            return null;
+        });
+        try {
             writableEnv = (Map<String, String>) field.get(env);
+        } catch (IllegalAccessException e) {
+            return ErrorGenerator.createError("Error while modifying the environment variable map", e);
+        }
+        if (remove) {
+            writableEnv.remove(key.toString());
+        } else {
             writableEnv.put(key.toString(), value.toString());
-        } catch (RuntimeException e) {
-            return ErrorGenerator.createError("runtime exception occurred: " + e.getMessage());
-        } catch (Exception e) {
-            return ErrorGenerator.createError("exception occurred: " + e.getMessage());
         }
         return null;
     }
