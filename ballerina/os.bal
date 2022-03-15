@@ -58,3 +58,58 @@ public isolated function getUserHome() returns string = @java:Method {
     name: "getUserHome",
     'class: "io.ballerina.stdlib.os.nativeimpl.GetUserHome"
 } external;
+
+# Sets the value of the environment variable named by the key. 
+# Note that the parameter key cannot be an empty string or "==" sign.
+# ```ballerina
+# os:Error? err = os:setEnv("BALCONFIGFILE", "/path/to/Config.toml");
+# ```
+#
+# + key - Key of the environment variable
+# + value - Value of the environment variable
+# + return - An `os:Error` if setting the environment variable fails, () otherwise
+public isolated function setEnv(string key, string value) returns Error? {
+    if key == "" {
+        return error Error("The parameter key cannot be an empty string");
+    } else if key == "=="  {
+        return error Error("The parameter key cannot be == sign");
+    } else {
+        return setEnvExtern(key, value);
+    }
+}
+
+# Removes a single environment variable from the system if it exists.
+# Note that the parameter key cannot be an empty string.
+# ```ballerina
+# os:Error? err = os:unsetEnv("BALCONFIGFILE");
+# ```
+#
+# + key - Key of the environment variable
+# + return - An `os:Error` if unsetting the environment variable fails, () otherwise
+public isolated function unsetEnv(string key) returns Error? {
+    if key == "" {
+        return error Error("The parameter key cannot be an empty string");
+    } else {
+        return setEnvExtern(key, ());
+    }
+}
+
+isolated function setEnvExtern(string key, string? value) returns Error? = @java:Method {
+    name: "setEnv",
+    'class: "io.ballerina.stdlib.os.nativeimpl.SetEnv"
+} external;
+
+# Returns a map of environment variables.
+# ```ballerina
+# map<string> envs = os:listEnv();
+# ```
+#
+# + return - Map of environment variables
+public isolated function listEnv() returns map<string> {
+    return listEnvExtern();
+}
+
+isolated function listEnvExtern() returns map<string> = @java:Method {
+    name: "listEnv",
+    'class: "io.ballerina.stdlib.os.nativeimpl.ListEnv"
+} external;

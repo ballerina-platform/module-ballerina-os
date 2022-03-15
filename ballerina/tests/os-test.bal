@@ -38,9 +38,101 @@ function testGetUsername() {
     test:assertEquals(getUsername(), getExpectedUserName());
 }
 
+function setEnvDataProvider() returns (string[][]) {
+    return [
+        ["foo", "test1"],
+        ["0x00", "test2"],
+        ["!@#$%^&*()_+~", "test3"],
+        ["key with spaces", "test 4"]
+    ];
+}
+
+@test:Config {
+    dataProvider: setEnvDataProvider
+}
+function testSetEnv(string key, string value) {
+    Error? result = setEnv(key, value);
+    if result is Error {
+        test:assertFail("failed to set environment variable with key " + key + " : " + result.message());
+    } else {
+        test:assertEquals(getEnv(key), value);
+    }
+}
+
+function setEnvDataProviderNegative() returns (string[][]) {
+    return [
+        ["", "test1", "The parameter key cannot be an empty string"],
+        ["==", "test2", "The parameter key cannot be == sign"]
+    ];
+}
+
+@test:Config {
+    dataProvider: setEnvDataProviderNegative
+}
+function testSetEnvNegative(string key, string value, string errorMessage) {
+    Error? result = setEnv(key, value);
+    if result is Error {
+        test:assertEquals(result.message(), errorMessage);
+    } else {
+        test:assertFail("setEnv did not return an error for " + key + " as key");
+    }
+}
+
+function unsetEnvDataProvider() returns (string[][]) {
+    return [
+        ["foo", "test1"],
+        ["0x00", "test2"],
+        ["!@#$%^&*()_+~", "test3"],
+        ["key with spaces", "test 4"]
+    ];
+}
+
+@test:Config {
+    dataProvider: unsetEnvDataProvider
+}
+function testUnsetEnv(string key, string value) {
+    Error? result = setEnv(key, value);
+    if result is Error {
+        test:assertFail("failed to set environment variable with key " + key + " : " + result.message());
+    } else {
+        test:assertEquals(getEnv(key), value);
+        result = unsetEnv(key);
+        if result is Error {
+            test:assertFail("failed to unset environment variable with key " + key + " : " + result.message());
+        } else {
+            test:assertFalse(envVariableExists(key), "environment variable with key " + key + " has not been removed");
+        }
+    }
+}
+
+@test:Config {}
+function testUnsetEnvNegative() {
+    Error? result = unsetEnv("");
+    if result is Error {
+        test:assertEquals(result.message(), "The parameter key cannot be an empty string");
+    } else {
+        test:assertFail("setEnv did not return an error for empty string as key");
+    }
+}
+
+function testListEnv() {
+    map<string> env = listEnv();
+    test:assertTrue(env.length() > 0);
+}
+
 @test:Config {}
 function testGetSystemPropertyNegative() {
     test:assertEquals(getSystemProperty("non-existing-key"), "");
+}
+
+function envVariableExists(string key) returns boolean {
+    map<string> env = listEnv();
+    foreach [string, string] [k, v] in env.entries() {
+        if k == key && v != "" {
+            return true;
+        }
+    }
+    return false;
 }
 
 function getExpectedValidEnv() returns string = @java:Method {
@@ -56,11 +148,6 @@ function getExpectedUserHome() returns string = @java:Method {
 function getExpectedUserName() returns string = @java:Method {
     name: "testGetUserName",
     'class: "io.ballerina.stdlib.os.testutils.OSTestUtils"
-} external;
-
-isolated function isWindowsEnvironment() returns boolean = @java:Method {
-    name: "isWindowsEnvironment",
-    'class: "io.ballerina.stdlib.os.testutils.EnvironmentTestUtils"
 } external;
 
 function getSystemProperty(string key) returns string = @java:Method {
