@@ -74,7 +74,7 @@ public isolated function setEnv(string key, string value) returns Error? {
     } else if key == "=="  {
         return error Error("The parameter key cannot be == sign");
     } else {
-        return setEnvExtern(key, value, false);
+        return setEnvExtern(key, value);
     }
 }
 
@@ -90,11 +90,11 @@ public isolated function unsetEnv(string key) returns Error? {
     if key == "" {
         return error Error("The parameter key cannot be an empty string");
     } else {
-        return setEnvExtern(key, "", true);
+        return setEnvExtern(key, ());
     }
 }
 
-isolated function setEnvExtern(string key, string value, boolean remove) returns Error? = @java:Method {
+isolated function setEnvExtern(string key, string? value) returns Error? = @java:Method {
     name: "setEnv",
     'class: "io.ballerina.stdlib.os.nativeimpl.SetEnv"
 } external;

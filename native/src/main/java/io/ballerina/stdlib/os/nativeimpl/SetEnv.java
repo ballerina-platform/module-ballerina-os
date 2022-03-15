@@ -39,7 +39,7 @@ public class SetEnv {
     }
 
     @SuppressWarnings("unchecked")
-    public static Object setEnv(BString key, BString value, boolean remove) {
+    public static Object setEnv(BString key, Object value) {
         Map<String, String> env = null;
         Map<String, String> writableEnv;
         Field field;
@@ -67,7 +67,7 @@ public class SetEnv {
         } catch (IllegalAccessException e) {
             return ErrorGenerator.createError("Access denied when trying to modify the environment variable map", e);
         }
-        if (remove) {
+        if (value == null) {
             writableEnv.remove(key.toString());
         } else {
             writableEnv.put(key.toString(), value.toString());
