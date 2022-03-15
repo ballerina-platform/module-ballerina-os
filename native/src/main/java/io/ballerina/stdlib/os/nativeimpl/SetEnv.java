@@ -67,7 +67,7 @@ public class SetEnv {
         try {
             writableEnv = (Map<String, String>) field.get(env);
         } catch (IllegalAccessException e) {
-            return ErrorGenerator.createError("Error while modifying the environment variable map", e);
+            return ErrorGenerator.createError("Access denied when trying to modify the environment variable map", e);
         }
         if (remove) {
             writableEnv.remove(key.toString());

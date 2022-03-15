@@ -42,7 +42,8 @@ function setEnvDataProvider() returns (string[][]) {
     return [
         ["foo", "test1"],
         ["0x00", "test2"],
-        ["!@#$%^&*()_+~", "test3"]
+        ["!@#$%^&*()_+~", "test3"],
+        ["key with spaces", "test 4"]
     ];
 }
 

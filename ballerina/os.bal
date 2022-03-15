@@ -60,6 +60,7 @@ public isolated function getUserHome() returns string = @java:Method {
 } external;
 
 # Sets the value of the environment variable named by the key. 
+# Note that the parameter key cannot be an empty string or "==" sign.
 # ```ballerina
 # os:Error? err = os:setEnv("BALCONFIGFILE", "/path/to/Config.toml");
 # ```
@@ -78,6 +79,7 @@ public isolated function setEnv(string key, string value) returns Error? {
 }
 
 # Removes a single environment variable from the system if it exists.
+# Note that the parameter key cannot be an empty string.
 # ```ballerina
 # os:Error? err = os:unsetEnv("BALCONFIGFILE");
 # ```
