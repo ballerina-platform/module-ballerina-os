@@ -82,7 +82,8 @@ function unsetEnvDataProvider() returns (string[][]) {
     return [
         ["foo", "test1"],
         ["0x00", "test2"],
-        ["!@#$%^&*()_+~", "test3"]
+        ["!@#$%^&*()_+~", "test3"],
+        ["key with spaces", "test 4"]
     ];
 }
 
@@ -104,16 +105,6 @@ function testUnsetEnv(string key, string value) {
     }
 }
 
-function envVariableExists(string key) returns boolean {
-    map<string> env = listEnv();
-    foreach [string, string] [k, v] in env.entries() {
-        if k == key && v != "" {
-            return true;
-        }
-    }
-    return false;
-}
-
 @test:Config {}
 function testUnsetEnvNegative() {
     Error? result = unsetEnv("");
@@ -132,6 +123,16 @@ function testListEnv() {
 @test:Config {}
 function testGetSystemPropertyNegative() {
     test:assertEquals(getSystemProperty("non-existing-key"), "");
+}
+
+function envVariableExists(string key) returns boolean {
+    map<string> env = listEnv();
+    foreach [string, string] [k, v] in env.entries() {
+        if k == key && v != "" {
+            return true;
+        }
+    }
+    return false;
 }
 
 function getExpectedValidEnv() returns string = @java:Method {
