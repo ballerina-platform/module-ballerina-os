@@ -67,7 +67,7 @@ public isolated function getUserHome() returns string = @java:Method {
 #
 # + key - Key of the environment variable
 # + value - Value of the environment variable
-# + return - error if setting the environment variable fails, () otherwise
+# + return - An `os:Error` if setting the environment variable fails, () otherwise
 public isolated function setEnv(string key, string value) returns Error? {
     if key == "" {
         return error Error("The parameter key cannot be an empty string");
@@ -85,7 +85,7 @@ public isolated function setEnv(string key, string value) returns Error? {
 # ```
 #
 # + key - Key of the environment variable
-# + return - error if unsetting the environment variable fails, () otherwise
+# + return - An `os:Error` if unsetting the environment variable fails, () otherwise
 public isolated function unsetEnv(string key) returns Error? {
     if key == "" {
         return error Error("The parameter key cannot be an empty string");
@@ -104,7 +104,7 @@ isolated function setEnvExtern(string key, string value, boolean remove) returns
 # map<string> envs = os:listEnv();
 # ```
 #
-# + return - map of environment variables
+# + return - Map of environment variables
 public isolated function listEnv() returns map<string> {
     return listEnvExtern();
 }

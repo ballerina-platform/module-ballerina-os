@@ -46,10 +46,8 @@ public class SetEnv {
         if (System.getProperty("os.name").startsWith("Windows")) {
             try {
                 field = Class.forName(JAVA_LANG_PROCESS_ENVIRONMENT).getDeclaredField(CASE_INSENSITIVE_ENV);
-            } catch (NoSuchFieldException e) {
+            } catch (NoSuchFieldException | ClassNotFoundException e) {
                 return ErrorGenerator.createError("Error while accessing the environment variable map" , e);
-            } catch (ClassNotFoundException e) {
-                return ErrorGenerator.createError("Error while accessing the environment variable map", e);
             }
         } else {
             env = System.getenv();
