@@ -20,6 +20,7 @@ module io.ballerina.stdlib.os {
     requires io.ballerina.runtime;
     requires org.slf4j;
     requires io.ballerina.stdlib.io;
+    requires jdk.unsupported;
     exports io.ballerina.stdlib.os.nativeimpl;
     exports io.ballerina.stdlib.os.utils;
 }
