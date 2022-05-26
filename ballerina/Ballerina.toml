@@ -13,7 +13,7 @@ distribution = "2201.0.1"
 path = "../native/build/libs/os-native-1.3.0-SNAPSHOT.jar"
 
 [[platform.java11.dependency]]
-path = "./lib/io-native-1.2.2-20220407-142300-7060eb4.jar"
+path = "./lib/io-native-1.2.2-20220512-114900-0d9af6e.jar"
 
 [[platform.java11.dependency]]
 path = "../test-utils/build/libs/os-test-utils-1.3.0-SNAPSHOT.jar"
