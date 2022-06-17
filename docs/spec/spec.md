@@ -7,7 +7,7 @@ _Updated_: 2022/02/08
 _Edition_: Swan Lake  
 _Issue_: [#2339](https://github.com/ballerina-platform/ballerina-standard-library/issues/2339)
 
-# Introduction
+## Introduction
 This is the specification for the OS standard library of [Ballerina language](https://ballerina.io/), which provides APIs to retrieve information about the operating system and its current users.
 
 The OS library specification has evolved and may continue to evolve in the future. The released versions of the specification can be found under the relevant Github tag.
@@ -16,7 +16,7 @@ If you have any feedback or suggestions about the library, start a discussion vi
 
 The conforming implementation of the specification is released and included in the distribution. Any deviation from the specification is considered a bug.
 
-# Contents
+## Contents
 
 1. [Overview](#1-overview)
 2. [Environment Variable Values](#2-environment-variable-values)
