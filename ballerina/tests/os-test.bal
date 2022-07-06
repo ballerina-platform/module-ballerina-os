@@ -16,6 +16,7 @@
 
 import ballerina/jballerina.java;
 import ballerina/test;
+import ballerina/io;
 
 @test:Config {}
 function testGetEnv() {
@@ -154,3 +155,57 @@ function getSystemProperty(string key) returns string = @java:Method {
     name: "getSystemProperty",
     'class: "io.ballerina.stdlib.os.utils.OSUtils"
 } external;
+
+@test:Config {}
+function testExec() returns error? {
+    Process process = check exec({value: "echo", arguments: ["hello world"]});
+    int exitCode = check process.waitForExit();
+    test:assertEquals(exitCode, 0);
+
+    byte[] outputBytes = check process.output();
+    string outputString = check string:fromBytes(outputBytes);
+    test:assertEquals(outputString.trim(), "hello world");
+}
+
+@test:Config {}
+function testExecWithOutputStdOut() returns error? {
+    Process process = check exec({value: "bal", arguments: ["run", "tests/resources/hello1.bal"]});
+    int exitCode = check process.waitForExit();
+    test:assertEquals(exitCode, 0);
+
+    byte[] stdOutBytes = check process.output(io:stdout);
+    string stdOutString = check string:fromBytes(stdOutBytes);
+    test:assertTrue(stdOutString.includes("hello world"));
+
+    byte[] stdErrBytes = check process.output(io:stderr);
+    string stdErrString = check string:fromBytes(stdErrBytes);
+    test:assertFalse(stdErrString.includes("hello world"));
+}
+
+@test:Config {}
+function testExecWithOutputStdErr() returns error? {
+    Process process = check exec({value: "bal", arguments: ["run", "tests/resources/hello2.bal"]});
+    int exitCode = check process.waitForExit();
+    test:assertEquals(exitCode, 0);
+
+    byte[] stdOutBytes = check process.output(io:stdout);
+    string stdOutString = check string:fromBytes(stdOutBytes);
+    test:assertFalse(stdOutString.includes("hello world"));
+
+    byte[] stdErrBytes = check process.output(io:stderr);
+    string stdErrString = check string:fromBytes(stdErrBytes);
+    test:assertTrue(stdErrString.includes("hello world"));
+}
+
+@test:Config {}
+function testExecWithEnvironmentVariable() returns error? {
+    Process process = check exec({value: "bal", arguments: ["run", "tests/resources/hello3.bal"]}, BAL_CONFIG_FILES = "tests/resources/config/Config.toml");
+    int exitCode = check process.waitForExit();
+    test:assertEquals(exitCode, 0);
+
+    byte[] outputBytes = check process.output(io:stderr);
+    string outputString = check string:fromBytes(outputBytes);
+    test:assertTrue(outputString.includes("{\"time\":\""));
+    test:assertTrue(outputString.includes("\", \"level\":\"DEBUG\", \"module\":\"\", \"message\":\"debug message\"}"));
+}
+  
