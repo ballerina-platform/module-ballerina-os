@@ -208,4 +208,3 @@ function testExecWithEnvironmentVariable() returns error? {
     test:assertTrue(outputString.includes("{\"time\":\""));
     test:assertTrue(outputString.includes("\", \"level\":\"DEBUG\", \"module\":\"\", \"message\":\"debug message\"}"));
 }
-  

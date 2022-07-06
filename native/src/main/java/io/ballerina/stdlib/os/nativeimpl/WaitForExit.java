@@ -21,8 +21,6 @@ package io.ballerina.stdlib.os.nativeimpl;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.stdlib.os.utils.OSConstants;
 import io.ballerina.stdlib.os.utils.OSUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * External function for ballerina.os:Process.waitForExit.
@@ -31,14 +29,11 @@ import org.slf4j.LoggerFactory;
  */
 public class WaitForExit {
 
-    private static final Logger log = LoggerFactory.getLogger(WaitForExit.class);
-
     public static Object waitForExit(BObject objVal) {
         Process process = OSUtils.processFromObject(objVal);
         try {
             return process.waitFor();
         } catch (InterruptedException e) {
-            log.error("Interrupted error while process wait for exit", e);
             return OSUtils.getBallerinaError(OSConstants.PROCESS_EXEC_ERROR, e);
         }
     }
