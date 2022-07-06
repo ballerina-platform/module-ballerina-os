@@ -219,19 +219,37 @@ function testExecExit() returns error? {
     int _ = check process.waitForExit();
 
     byte[]|Error outputBytes = process.output();
-    if outputBytes is error {
-        test:assertEquals(outputBytes.message(), "Failed to read the output of the process: Stream closed");
+    if isWindowsEnvironment() {
+        if outputBytes is error {
+            test:assertFail("Expected output does not match");
+        } else {
+            test:assertEquals(string:fromBytes(outputBytes), "hello world");
+        }    
     } else {
-        test:assertFail("Expected error message does not match");
+        if outputBytes is error {
+            test:assertEquals(outputBytes.message(), "Failed to read the output of the process: Stream closed");
+        } else {
+            test:assertFail("Expected error message does not match");
+        }
     }
-}   
+}
 
 @test:Config {}
 function testExecNegative() returns error? {
     Process|Error process = exec({value: "foo"});
     if process is Error {
-        test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": error=2, No such file or directory");
+        if isWindowsEnvironment() {
+            test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": error=2, No such file or directory");
+        } else {
+            test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": CreateProcess error=2, " +
+            "The system cannot find the file specified");
+        }
     } else {
         test:assertFail("Expected error message does not match");
     }
-}    
+}
+
+isolated function isWindowsEnvironment() returns boolean = @java:Method {
+    name: "isWindowsEnvironment",
+    'class: "io.ballerina.stdlib.os.testutils.OSTestUtils"
+} external;
