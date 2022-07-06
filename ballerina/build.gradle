@@ -38,6 +38,7 @@ def packageOrg = "ballerina"
 def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaTomlFilePlaceHolder = new File("${project.rootDir}/build-config/resources/Ballerina.toml")
 def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
+def configTOMLFile = new File("$project.projectDir/tests/Config.toml")
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
@@ -75,10 +76,23 @@ task updateTomlFiles {
     doLast {
         def stdlibNativeIoVersion = project.stdlibIoVersion
         def newConfig = ballerinaTomlFilePlaceHolder.text.replace("@project.version@", project.version)
+        def distributionBinPath =  "$project.rootDir/target/ballerina-runtime/bin"
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
         newConfig = newConfig.replace("@io.native.version@", stdlibNativeIoVersion)
         ballerinaTomlFile.text = newConfig
+        setExecPath(configTOMLFile,distributionBinPath)
     }
+}
+
+def setExecPath(configTOMLFile, distributionBinPath) {
+    def distributionPath
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        distributionPath = (distributionBinPath + "/bal.bat").replace("/", "\\")
+        distributionPath = distributionPath.replace("\\", "\\\\")
+    } else {
+        distributionPath = distributionBinPath + "/bal"
+    }
+    configTOMLFile.text = configTOMLFile.text.replace("@exec.path@", distributionPath)
 }
 
 task commitTomlFiles {

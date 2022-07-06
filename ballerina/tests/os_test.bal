@@ -18,6 +18,8 @@ import ballerina/jballerina.java;
 import ballerina/test;
 import ballerina/io;
 
+configurable string bal_exec_path = ?;
+
 @test:Config {}
 function testGetEnv() {
     string expectedValue = getExpectedValidEnv();
@@ -169,7 +171,7 @@ function testExec() returns error? {
 
 @test:Config {}
 function testExecWithOutputStdOut() returns error? {
-    Process process = check exec({value: "bal", arguments: ["run", "tests/resources/hello1.bal"]});
+    Process process = check exec({value: bal_exec_path, arguments: ["run", "tests/resources/hello1.bal"]});
     int exitCode = check process.waitForExit();
     test:assertEquals(exitCode, 0);
 
@@ -184,7 +186,7 @@ function testExecWithOutputStdOut() returns error? {
 
 @test:Config {}
 function testExecWithOutputStdErr() returns error? {
-    Process process = check exec({value: "bal", arguments: ["run", "tests/resources/hello2.bal"]});
+    Process process = check exec({value: bal_exec_path, arguments: ["run", "tests/resources/hello2.bal"]});
     int exitCode = check process.waitForExit();
     test:assertEquals(exitCode, 0);
 
@@ -199,7 +201,7 @@ function testExecWithOutputStdErr() returns error? {
 
 @test:Config {}
 function testExecWithEnvironmentVariable() returns error? {
-    Process process = check exec({value: "bal", arguments: ["run", "tests/resources/hello3.bal"]}, BAL_CONFIG_FILES = "tests/resources/config/Config.toml");
+    Process process = check exec({value: bal_exec_path, arguments: ["run", "tests/resources/hello3.bal"]}, BAL_CONFIG_FILES = "tests/resources/config/Config.toml");
     int exitCode = check process.waitForExit();
     test:assertEquals(exitCode, 0);
 
