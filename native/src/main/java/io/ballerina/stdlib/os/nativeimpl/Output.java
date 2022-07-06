@@ -37,6 +37,10 @@ import java.io.InputStream;
  */
 public class Output {
 
+    private Output() {
+
+    }
+
     private static final ArrayType BYTE_ARRAY_TYPE = TypeCreator.createArrayType(PredefinedTypes.TYPE_BYTE);
 
     public static Object output(BObject objVal, long fileOutputStream) {

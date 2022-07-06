@@ -29,6 +29,10 @@ import io.ballerina.stdlib.os.utils.OSUtils;
  */
 public class WaitForExit {
 
+    private WaitForExit() {
+
+    }
+
     public static Object waitForExit(BObject objVal) {
         Process process = OSUtils.processFromObject(objVal);
         try {

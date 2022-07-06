@@ -28,6 +28,10 @@ import io.ballerina.stdlib.os.utils.OSUtils;
  */
 public class Exit {
 
+    private Exit() {
+
+    }
+
     public static void exit(BObject objVal) {
         Process process = OSUtils.processFromObject(objVal);
         process.destroy();
