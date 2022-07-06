@@ -16,3 +16,6 @@
 
 # Represents OS module related errors.
 public type Error distinct error;
+
+# Process Execution error that returns when the os:Exec function fails.
+public type ProcessExecError distinct Error;

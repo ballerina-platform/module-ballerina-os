@@ -18,10 +18,10 @@
 
 package io.ballerina.stdlib.os.nativeimpl;
 
+import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import io.ballerina.stdlib.os.utils.OSConstants;
 import io.ballerina.stdlib.os.utils.OSUtils;
 
 import java.io.IOException;
@@ -30,6 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static io.ballerina.stdlib.os.nativeimpl.Errors.ProcessExecError;
 
 /**
  * Extern function os:exec.
@@ -60,7 +62,9 @@ public class Exec {
         try {
             return OSUtils.getProcessObject(pb.start());
         } catch (IOException e) {
-            return OSUtils.getBallerinaError(OSConstants.PROCESS_EXEC_ERROR, e);
+            return ErrorCreator.createError(ModuleUtils.getModule(), String.valueOf(ProcessExecError),
+                    StringUtils.fromString("Failed to retrieve the process object" + ": " + e.getMessage()),
+                    null, null);
         }
     }
 }

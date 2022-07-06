@@ -18,9 +18,12 @@
 
 package io.ballerina.stdlib.os.nativeimpl;
 
+import io.ballerina.runtime.api.creators.ErrorCreator;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.stdlib.os.utils.OSConstants;
 import io.ballerina.stdlib.os.utils.OSUtils;
+
+import static io.ballerina.stdlib.os.nativeimpl.Errors.ProcessExecError;
 
 /**
  * External function for ballerina.os:Process.waitForExit.
@@ -38,7 +41,9 @@ public class WaitForExit {
         try {
             return process.waitFor();
         } catch (InterruptedException e) {
-            return OSUtils.getBallerinaError(OSConstants.PROCESS_EXEC_ERROR, e);
+            return ErrorCreator.createError(ModuleUtils.getModule(), String.valueOf(ProcessExecError),
+                    StringUtils.fromString("Failed to wait for process to exit" + ": " + e.getMessage()),
+                    null, null);
         }
     }
 }

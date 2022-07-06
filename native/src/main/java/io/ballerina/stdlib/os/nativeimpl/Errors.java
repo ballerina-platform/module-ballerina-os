@@ -6,29 +6,23 @@
  * in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
 
-package io.ballerina.stdlib.os.utils;
+package io.ballerina.stdlib.os.nativeimpl;
 
 /**
- * Constants for os package functions.
+ * Java enumeration of the errors of the os library.
  *
  * @since 1.3.1
  */
-public class OSConstants {
-
-    static final String PROCESS_TYPE = "Process";
-
-    static final String PROCESS_FIELD = "ProcessField";
-
-    private OSConstants() {
-    }
+public enum Errors {
+    ProcessExecError
 }

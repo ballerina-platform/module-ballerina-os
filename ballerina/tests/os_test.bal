@@ -215,4 +215,23 @@ function testExecWithEnvironmentVariable() returns error? {
 function testExecExit() returns error? {
     Process process = check exec({value: "echo", arguments: ["hello world"]});
     process.exit();
+
+    int _ = check process.waitForExit();
+
+    byte[]|Error outputBytes = process.output();
+    if outputBytes is error {
+        test:assertEquals(outputBytes.message(), "Failed to read the output of the process: Stream closed");
+    } else {
+        test:assertFail("Expected error message does not match");
+    }
+}   
+
+@test:Config {}
+function testExecNegative() returns error? {
+    Process|Error process = exec({value: "foo"});
+    if process is Error {
+        test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": error=2, No such file or directory");
+    } else {
+        test:assertFail("Expected error message does not match");
+    }
 }    

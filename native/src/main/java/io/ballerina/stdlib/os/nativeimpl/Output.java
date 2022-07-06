@@ -19,16 +19,19 @@
 package io.ballerina.stdlib.os.nativeimpl;
 
 import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.ArrayType;
+import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BObject;
-import io.ballerina.stdlib.os.utils.OSConstants;
 import io.ballerina.stdlib.os.utils.OSUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import static io.ballerina.stdlib.os.nativeimpl.Errors.ProcessExecError;
 
 /**
  * External function for ballerina.os:Process.output.
@@ -56,7 +59,9 @@ public class Output {
         try {
             result = in.readAllBytes();
         } catch (IOException e) {
-            return OSUtils.getBallerinaError(OSConstants.PROCESS_EXEC_ERROR, e);
+            return ErrorCreator.createError(ModuleUtils.getModule(), String.valueOf(ProcessExecError),
+                    StringUtils.fromString("Failed to read the output of the process" + ": " + e.getMessage()),
+                    null, null);
         }
         for (int i = 0; i < result.length; i++) {
             byteDataArray.add(i, result[i]);
