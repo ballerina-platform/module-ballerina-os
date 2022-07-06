@@ -210,3 +210,9 @@ function testExecWithEnvironmentVariable() returns error? {
     test:assertTrue(outputString.includes("{\"time\":\""));
     test:assertTrue(outputString.includes("\", \"level\":\"DEBUG\", \"module\":\"\", \"message\":\"debug message\"}"));
 }
+
+@test:Config {}
+function testExecExit() returns error? {
+    Process process = check exec({value: "echo", arguments: ["hello world"]});
+    process.exit();
+}    
