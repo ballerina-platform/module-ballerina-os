@@ -223,8 +223,8 @@ function testExecExit() returns error? {
         if outputBytes is error {
             test:assertFail("Expected output does not match");
         } else {
-            test:assertEquals(string:fromBytes(outputBytes), "hello world");
-        }    
+            test:assertEquals(string:fromBytes(outputBytes), "");
+        }
     } else {
         if outputBytes is error {
             test:assertEquals(outputBytes.message(), "Failed to read the output of the process: Stream closed");
@@ -239,10 +239,10 @@ function testExecNegative() returns error? {
     Process|Error process = exec({value: "foo"});
     if process is Error {
         if isWindowsEnvironment() {
-            test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": error=2, No such file or directory");
-        } else {
             test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": CreateProcess error=2, " +
             "The system cannot find the file specified");
+        } else {
+            test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": error=2, No such file or directory");
         }
     } else {
         test:assertFail("Expected error message does not match");

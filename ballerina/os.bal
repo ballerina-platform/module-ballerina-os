@@ -84,7 +84,7 @@ public isolated function getUserHome() returns string = @java:Method {
 public isolated function setEnv(string key, string value) returns Error? {
     if key == "" {
         return error Error("The parameter key cannot be an empty string");
-    } else if key == "=="  {
+    } else if key == "==" {
         return error Error("The parameter key cannot be == sign");
     } else {
         return setEnvExtern(key, value);
@@ -136,7 +136,7 @@ isolated function listEnvExtern() returns map<string> = @java:Method {
 # + envProperties - The environment properties
 #
 # + return - Process object in success, or an Error if a failure occurs
-public isolated function  exec(Command command, *EnvProperties envProperties) returns Process | Error = @java:Method {
+public isolated function exec(Command command, *EnvProperties envProperties) returns Process|Error = @java:Method {
     name: "exec",
     'class: "io.ballerina.stdlib.os.nativeimpl.Exec"
 } external;
