@@ -221,7 +221,7 @@ function testExecExit() returns error? {
     if isWindowsEnvironment() {
         test:assertEquals(exitCode, 1);
     } else {
-        test:assertEquals(exitCode, 0);
+        test:assertEquals(exitCode, 143);
     }
 
     byte[]|Error outputBytes = process.output();
@@ -256,5 +256,15 @@ function testExecNegative() returns error? {
 }
 
 isolated function isWindowsEnvironment() returns boolean {
-    return getEnv("os.name").toLowerAscii().includes("win");
+    var osType = java:toString(nativeGetSystemPropery(java:fromString("os.name")));
+    if osType is string {
+        return osType.toLowerAscii().includes("win");
+    }
+    return false;
 }
+
+isolated function nativeGetSystemPropery(handle key) returns handle = @java:Method {
+    name: "getProperty",
+    'class: "java.lang.System",
+    paramTypes: ["java.lang.String"]
+} external;
