@@ -16,9 +16,6 @@
 
 import ballerina/jballerina.java;
 
-# A value of `anydata` type.
-public type Value anydata;
-
 public type Command record {|
     string value;
     string[] arguments = [];
@@ -26,7 +23,7 @@ public type Command record {|
 
 public type EnvProperties record {|
     never command?;
-    Value...;
+    anydata...;
 |};
 
 # Returns the environment variable value associated with the provided name.
