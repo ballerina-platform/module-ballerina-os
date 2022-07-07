@@ -36,7 +36,7 @@ public class Process {
     # byte[]|os:Error err = process.output(io:stderr);
     # ```
     #
-    # + return - The `stream<string, Error?>`, which represents the process's 'standard error', or the 'standard out', or an Error
+    # + return - The `byte[]`, which represents the process's 'standard error', or the 'standard out', or an Error
     public isolated function output(io:FileOutputStream fileOutputStream = io:stdout) returns byte[]|Error {
         return nativeOutput(self, fileOutputStream);
     }
