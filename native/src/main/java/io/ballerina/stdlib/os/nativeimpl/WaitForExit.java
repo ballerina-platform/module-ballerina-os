@@ -42,8 +42,7 @@ public class WaitForExit {
             return process.waitFor();
         } catch (InterruptedException e) {
             return ErrorCreator.createError(ModuleUtils.getModule(), String.valueOf(ProcessExecError),
-                    StringUtils.fromString("Failed to wait for process to exit" + ": " + e.getMessage()),
-                    null, null);
+                    StringUtils.fromString("Failed to wait for process to exit" + ": " + e.getMessage()), null, null);
         }
     }
 }
