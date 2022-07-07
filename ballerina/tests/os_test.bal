@@ -205,6 +205,7 @@ function testExecWithEnvironmentVariable() returns error? {
     int exitCode = check process.waitForExit();
     test:assertEquals(exitCode, 0);
 
+    // Todo: json
     byte[] outputBytes = check process.output(io:stderr);
     string outputString = check string:fromBytes(outputBytes);
     test:assertTrue(outputString.includes("{\"time\":\""));
@@ -216,7 +217,8 @@ function testExecExit() returns error? {
     Process process = check exec({value: "echo", arguments: ["hello world"]});
     process.exit();
 
-    int _ = check process.waitForExit();
+    int exitCode = check process.waitForExit();
+    test:assertEquals(exitCode, 0);
 
     byte[]|Error outputBytes = process.output();
     if isWindowsEnvironment() {
@@ -249,7 +251,6 @@ function testExecNegative() returns error? {
     }
 }
 
-isolated function isWindowsEnvironment() returns boolean = @java:Method {
-    name: "isWindowsEnvironment",
-    'class: "io.ballerina.stdlib.os.testutils.OSTestUtils"
-} external;
+isolated function isWindowsEnvironment() returns boolean {
+    return getEnv("os.name").toLowerAscii().includes("win");
+}

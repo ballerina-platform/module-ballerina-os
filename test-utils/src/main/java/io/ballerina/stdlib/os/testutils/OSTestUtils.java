@@ -21,8 +21,6 @@ package io.ballerina.stdlib.os.testutils;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BString;
 
-import java.util.Locale;
-
 /**
  * @since 0.6.5
  */
@@ -42,9 +40,5 @@ public class OSTestUtils {
 
     public static boolean testOs() {
         return org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
-    }
-
-    public static boolean isWindowsEnvironment() {
-        return System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win");
     }
 }

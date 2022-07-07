@@ -62,6 +62,14 @@ public class Output {
             return ErrorCreator.createError(ModuleUtils.getModule(), String.valueOf(ProcessExecError),
                     StringUtils.fromString("Failed to read the output of the process" + ": " + e.getMessage()),
                     null, null);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                return ErrorCreator.createError(ModuleUtils.getModule(), String.valueOf(ProcessExecError),
+                        StringUtils.fromString("Failed to close the output stream of the process" + ": " +
+                                e.getMessage()), null, null);
+            }
         }
         for (int i = 0; i < result.length; i++) {
             byteDataArray.add(i, result[i]);

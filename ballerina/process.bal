@@ -21,7 +21,8 @@ import ballerina/jballerina.java;
 # This is returned from the `exec` function in the `os` module.
 public class Process {
 
-    # Waits for the process to finish its work and exit.
+    # Waits for the process to finish its work and exit. 
+    # This will return 0 if successful, or a different value during failure depending on the operating system.
     # ```ballerina
     # int|os:Error exitCode = process.waitForExit();
     # ```
@@ -31,11 +32,14 @@ public class Process {
         return nativeWaitForExit(self);
     }
 
+    // Todo: check without wait for exit and change to run waitforexit if not done already
     # Returns the standard output as default. Option provided to return standard error by providing file descriptor.
     # ```ballerina
     # byte[]|os:Error err = process.output(io:stderr);
     # ```
     #
+    # + fileOutputStream - The output stream (`io:stdout` or `io:stderr`) content needs to be returned
+    # 
     # + return - The `byte[]`, which represents the process's 'standard error', or the 'standard out', or an Error
     public isolated function output(io:FileOutputStream fileOutputStream = io:stdout) returns byte[]|Error {
         return nativeOutput(self, fileOutputStream);
