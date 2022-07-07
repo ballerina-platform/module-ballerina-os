@@ -84,6 +84,17 @@ This will return an `os:Process` object. To wait for the process to finish its w
 int|os:Error exitCode = process.waitForExit();
 ```
 
+To retrieve the output of the process, `process.output()` function can be used. This will return the standard output as default. 
+There is an option provided to return standard error by providing file descriptor.
+```ballerina
+byte[]|os:Error err = process.output(io:stderr);
+```
+
+To terminate a process, `process.exit()` function can be used.
+```ballerina
+process.exit();
+```
+
 The following is the definition of the `os:Process` object.
 ```ballerina
 # This object contains information on a process being created from Ballerina.
@@ -122,15 +133,4 @@ public class Process {
         return nativeExit(self);
     }
 }
-```
-
-To retrieve the output of the process, `process.output()` function can be used. This will return the standard output as default. 
-There is an option provided to return standard error by providing file descriptor.
-```ballerina
-byte[]|os:Error err = process.output(io:stderr);
-```
-
-To terminate a process, `process.exit()` function can be used.
-```ballerina
-process.exit();
 ```
