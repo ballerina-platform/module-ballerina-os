@@ -55,3 +55,25 @@ The current user's home directory path can be retrieved using the `os:getUserHom
 ```ballerina
 string userHome = os:getUserHome();
 ```
+
+## 4. Operating System Command execution
+The users can execute OS commands using the `os:exec()` function.
+```ballerina
+os:Process|os:Error result = os:exec({value: "bal", arguments: ["run", filepath]}, BAL_CONFIG_FILE = "/abc/Config.toml");
+```
+
+This will return an `os:Process` object. To wait for the process to finish its work and exit, `process.waitForExit()` function can be used.
+```ballerina
+int|os:Error exitCode = process.waitForExit();
+```
+
+To retrieve the output of the process, `process.output()` function can be used. This will return the standard output as default. 
+There is an option provided to return standard error by providing file descriptor.
+```ballerina
+byte[]|os:Error err = process.output(io:stderr);
+```
+
+To terminate a process, `process.exit()` function can be used.
+```ballerina
+process.exit();
+```

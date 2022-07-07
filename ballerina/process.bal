@@ -43,7 +43,7 @@ public class Process {
 
     # Terminates the process.
     # ```ballerina
-    # var result = process.exit();
+    # process.exit();
     # ```
     #
     public isolated function exit() {
