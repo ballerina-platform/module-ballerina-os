@@ -26,10 +26,9 @@ import io.ballerina.stdlib.os.utils.OSUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.ballerina.stdlib.os.nativeimpl.Errors.ProcessExecError;
 
@@ -48,12 +47,8 @@ public class Exec {
         List<String> commandList = new ArrayList<>();
         commandList.add(command.getStringValue(StringUtils.fromString("value")).getValue());
         String[] arguments = command.getArrayValue(StringUtils.fromString("arguments")).getStringArray();
-        BString[] args = new BString[arguments.length];
-        for (int i = 0; i < arguments.length; i++) {
-            args[i] = StringUtils.fromString(arguments[i]);
-        }
 
-        commandList.addAll(Arrays.stream(args).map(BString::getValue).collect(Collectors.toList()));
+        Collections.addAll(commandList, arguments);
         ProcessBuilder pb = new ProcessBuilder(commandList);
         if (env != null) {
             Map<String, String> pbEnv = pb.environment();
