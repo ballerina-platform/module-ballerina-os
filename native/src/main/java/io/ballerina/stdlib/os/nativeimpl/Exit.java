@@ -24,7 +24,7 @@ import io.ballerina.stdlib.os.utils.OSUtils;
 /**
  * External function for ballerina.os:Process.exit.
  *
- * @since 1.3.1
+ * @since 1.4.0
  */
 public class Exit {
 

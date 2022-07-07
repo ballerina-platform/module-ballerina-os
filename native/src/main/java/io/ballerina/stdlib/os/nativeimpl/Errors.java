@@ -21,7 +21,7 @@ package io.ballerina.stdlib.os.nativeimpl;
 /**
  * Java enumeration of the errors of the os library.
  *
- * @since 1.3.1
+ * @since 1.4.0
  */
 public enum Errors {
     ProcessExecError
