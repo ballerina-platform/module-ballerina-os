@@ -214,7 +214,6 @@ function testExecWithEnvironmentVariable() returns error? {
     int exitCode = check process.waitForExit();
     test:assertEquals(exitCode, 0);
 
-    // Todo: json
     byte[] outputBytes = check process.output(io:stderr);
     string outputString = check string:fromBytes(outputBytes);
     test:assertTrue(outputString.includes("{\"time\":\""));
