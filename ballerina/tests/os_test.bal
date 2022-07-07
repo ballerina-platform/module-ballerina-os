@@ -170,6 +170,15 @@ function testExec() returns error? {
 }
 
 @test:Config {}
+function testExecOutputWithoutWaitForExit() returns error? {
+    Process process = check exec({value: "echo", arguments: ["hello world"]});
+
+    byte[] outputBytes = check process.output();
+    string outputString = check string:fromBytes(outputBytes);
+    test:assertEquals(outputString.trim(), "hello world");
+}
+
+@test:Config {}
 function testExecWithOutputStdOut() returns error? {
     Process process = check exec({value: bal_exec_path, arguments: ["run", "tests/resources/hello1.bal"]});
     int exitCode = check process.waitForExit();
@@ -217,12 +226,7 @@ function testExecExit() returns error? {
     Process process = check exec({value: "echo", arguments: ["hello world"]});
     process.exit();
 
-    int exitCode = check process.waitForExit();
-    if isWindowsEnvironment() {
-        test:assertEquals(exitCode, 1);
-    } else {
-        test:assertEquals(exitCode, 143);
-    }
+    int _ = check process.waitForExit();
 
     byte[]|Error outputBytes = process.output();
     if isWindowsEnvironment() {

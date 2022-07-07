@@ -32,8 +32,8 @@ public class Process {
         return nativeWaitForExit(self);
     }
 
-    // Todo: check without wait for exit and change to run waitforexit if not done already
     # Returns the standard output as default. Option provided to return standard error by providing file descriptor.
+    # If the process was not finished and exited explicitly by running process.waitForExit(), then process.output() will finish the work and exit and return the output. 
     # ```ballerina
     # byte[]|os:Error err = process.output(io:stderr);
     # ```
