@@ -131,7 +131,6 @@ isolated function listEnvExtern() returns map<string> = @java:Method {
 #
 # + command - The command to be executed
 # + envProperties - The environment properties
-#
 # + return - Process object in success, or an Error if a failure occurs
 public isolated function exec(Command command, *EnvProperties envProperties) returns Process|Error = @java:Method {
     name: "exec",

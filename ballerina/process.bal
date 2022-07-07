@@ -39,7 +39,6 @@ public class Process {
     # ```
     #
     # + fileOutputStream - The output stream (`io:stdout` or `io:stderr`) content needs to be returned
-    # 
     # + return - The `byte[]`, which represents the process's 'standard error', or the 'standard out', or an Error
     public isolated function output(io:FileOutputStream fileOutputStream = io:stdout) returns byte[]|Error {
         return nativeOutput(self, fileOutputStream);

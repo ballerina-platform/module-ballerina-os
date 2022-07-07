@@ -23,8 +23,8 @@ To allow users to execute operating system commands programmatically.
 # + value - The value of the command
 # + arguments - The arguments of the command
 public type Command record {
-string value;
-string[] arguments;
+    string value;
+    string[] arguments;
 };
 
 # Executes an operating system command as a subprocess of the current process.
@@ -46,6 +46,7 @@ public isolated function  exec(Command command, *EnvProperties envProperties) re
 # + command - command which cannot be a key
 public type EnvProperties record {|
     never command?;
+    anydata...;
 |};
 ```
 
@@ -66,7 +67,7 @@ public class Process {
 
     # Provides a stream (to read from), which is made available as the 'standard error', or the 'standard out' of the process.
     # ```ballerina
-    # stream<string, os:Error?>|os:Error err = process.fread(io:stderr);
+    # byte[]|os:Error err = process.output(io:stderr);
     # ```
     #
     # + return - The `byte[]`, which represents the process's 'standard error', or the 'standard out', or an Error
@@ -74,7 +75,7 @@ public class Process {
 
     # Terminates the process.
     # ```ballerina
-    # var result = process.exit();
+    # process.exit();
     # ```
     #
     public isolated function exit();
