@@ -4,6 +4,11 @@ This file contains all the notable changes done to the Ballerina OS package thro
 ## [Unreleased]
 
 ### Added
+- [Introduce OS command execution support in Ballerina](https://github.com/ballerina-platform/ballerina-standard-library/issues/2852)
+
+## [1.3.0] - [2022-05-30]
+
+### Added
 - [Add functions to set and unset environment variables.](https://github.com/ballerina-platform/ballerina-standard-library/issues/2764)
 - [Add functions to list environment variables as a map.](https://github.com/ballerina-platform/ballerina-standard-library/issues/2764)
 
