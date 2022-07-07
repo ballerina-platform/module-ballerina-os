@@ -218,7 +218,11 @@ function testExecExit() returns error? {
     process.exit();
 
     int exitCode = check process.waitForExit();
-    test:assertEquals(exitCode, 0);
+    if isWindowsEnvironment() {
+        test:assertEquals(exitCode, 1);
+    } else {
+        test:assertEquals(exitCode, 0);
+    }
 
     byte[]|Error outputBytes = process.output();
     if isWindowsEnvironment() {
