@@ -39,14 +39,17 @@ import static io.ballerina.stdlib.os.nativeimpl.Errors.ProcessExecError;
  */
 public class Exec {
 
+    static final String VALUE = "value";
+    static final String ARGUMENTS = "arguments";
+
     private Exec() {
 
     }
     
     public static Object exec(BMap<BString, Object> command, BMap<BString, Object> env) {
         List<String> commandList = new ArrayList<>();
-        commandList.add(command.getStringValue(StringUtils.fromString("value")).getValue());
-        String[] arguments = command.getArrayValue(StringUtils.fromString("arguments")).getStringArray();
+        commandList.add(command.getStringValue(StringUtils.fromString(VALUE)).getValue());
+        String[] arguments = command.getArrayValue(StringUtils.fromString(ARGUMENTS)).getStringArray();
 
         Collections.addAll(commandList, arguments);
         ProcessBuilder pb = new ProcessBuilder(commandList);
