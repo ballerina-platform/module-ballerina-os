@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents OS module related errors.
-public type Error distinct error;
+import ballerina/log;
 
-# Process Execution error that returns when the os:Exec function fails.
-public type ProcessExecError distinct Error;
+public function main() {
+    log:printDebug("debug message");
+}

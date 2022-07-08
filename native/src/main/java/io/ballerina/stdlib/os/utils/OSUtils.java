@@ -17,15 +17,30 @@
  */
 package io.ballerina.stdlib.os.utils;
 
+import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
+
+import java.io.IOException;
+
+import static io.ballerina.stdlib.os.nativeimpl.ModuleUtils.getModule;
+import static io.ballerina.stdlib.os.utils.OSConstants.PROCESS_FIELD;
+import static io.ballerina.stdlib.os.utils.OSConstants.PROCESS_TYPE;
 
 /**
  * @since 0.8.0
  */
 public class OSUtils {
 
-    private OSUtils() {
+    public static BObject getProcessObject(Process process) throws IOException {
+        BObject obj = ValueCreator.createObjectValue(getModule(), PROCESS_TYPE);
+        obj.addNativeData(PROCESS_FIELD, process);
+        return obj;
+    }
+
+    public static Process processFromObject(BObject objVal) {
+        return (Process) objVal.getNativeData(PROCESS_FIELD);
     }
 
     /**

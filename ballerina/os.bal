@@ -16,6 +16,16 @@
 
 import ballerina/jballerina.java;
 
+public type Command record {|
+    string value;
+    string[] arguments = [];
+|};
+
+public type EnvProperties record {|
+    never command?;
+    anydata...;
+|};
+
 # Returns the environment variable value associated with the provided name.
 # ```ballerina
 # string port = os:getEnv("HTTP_PORT");
@@ -71,7 +81,7 @@ public isolated function getUserHome() returns string = @java:Method {
 public isolated function setEnv(string key, string value) returns Error? {
     if key == "" {
         return error Error("The parameter key cannot be an empty string");
-    } else if key == "=="  {
+    } else if key == "==" {
         return error Error("The parameter key cannot be == sign");
     } else {
         return setEnvExtern(key, value);
@@ -112,4 +122,17 @@ public isolated function listEnv() returns map<string> {
 isolated function listEnvExtern() returns map<string> = @java:Method {
     name: "listEnv",
     'class: "io.ballerina.stdlib.os.nativeimpl.ListEnv"
+} external;
+
+# Executes an operating system command as a subprocess of the current process.
+# ```ballerina
+# os:Process|os:Error result = os:exec({value: "bal", arguments: ["run", filepath]}, BAL_CONFIG_FILE = "/abc/Config.toml");
+# ```
+#
+# + command - The command to be executed
+# + envProperties - The environment properties
+# + return - Process object in success, or an Error if a failure occurs
+public isolated function exec(Command command, *EnvProperties envProperties) returns Process|Error = @java:Method {
+    name: "exec",
+    'class: "io.ballerina.stdlib.os.nativeimpl.Exec"
 } external;
