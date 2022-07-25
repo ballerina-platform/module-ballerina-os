@@ -10,6 +10,9 @@ license = ["Apache-2.0"]
 distribution = "2201.2.0"
 
 [[platform.java11.dependency]]
+groupId = "io.ballerina.stdlib"
+artifactId = "os-native"
+version = "@toml.version@"
 path = "../native/build/libs/os-native-@project.version@.jar"
 
 [[platform.java11.dependency]]
@@ -19,4 +22,7 @@ version = "@io.version@"
 path = "./lib/io-native-@io.native.version@.jar"
 
 [[platform.java11.dependency]]
+groupId = "io.ballerina.stdlib"
+artifactId = "os-test-utils"
+version = "@toml.version@"
 path = "../test-utils/build/libs/os-test-utils-@project.version@.jar"
