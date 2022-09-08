@@ -39,6 +39,7 @@ def tomlVersion = stripBallerinaExtensionVersion("${project.version}")
 def ballerinaTomlFilePlaceHolder = new File("${project.rootDir}/build-config/resources/Ballerina.toml")
 def ballerinaTomlFile = new File("$project.projectDir/Ballerina.toml")
 def configTOMLFile = new File("$project.projectDir/tests/Config.toml")
+def originalConfigTOMLFile = configTOMLFile.text
 
 def stripBallerinaExtensionVersion(String extVersion) {
     if (extVersion.matches(project.ext.timestampedVersionRegex)) {
@@ -100,6 +101,7 @@ def setExecPath(configTOMLFile, distributionBinPath) {
 
 task commitTomlFiles {
     doLast {
+        configTOMLFile.text = originalConfigTOMLFile
         project.exec {
             ignoreExitValue true
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
