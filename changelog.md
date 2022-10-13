@@ -3,6 +3,11 @@ This file contains all the notable changes done to the Ballerina OS package thro
 
 ## [Unreleased]
 
+### Changed
+- [API docs updated](https://github.com/ballerina-platform/ballerina-standard-library/issues/3463)
+
+## [1.4.0] - [2022-09-08]
+
 ### Added
 - [Introduce OS command execution support in Ballerina](https://github.com/ballerina-platform/ballerina-standard-library/issues/2852)
 
