@@ -1,4 +1,4 @@
-Ballerina OS Library
+Ballerina OS Librar
 ===================
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml)
