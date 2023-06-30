@@ -16,16 +16,16 @@ graalvmCompatible = true
 groupId = "io.ballerina.stdlib"
 artifactId = "os-native"
 version = "1.7.0"
-path = "../native/build/libs/os-native-1.7.0-SNAPSHOT.jar"
+path = "../native/build/libs/os-native-1.7.0.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "io-native"
 version = "1.5.0"
-path = "./lib/io-native-1.5.0-20230622-110500-8523dfe.jar"
+path = "./lib/io-native-1.5.0.jar"
 
 [[platform.java11.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
 version = "1.7.0"
-path = "../test-utils/build/libs/os-test-utils-1.7.0-SNAPSHOT.jar"
+path = "../test-utils/build/libs/os-test-utils-1.7.0.jar"
