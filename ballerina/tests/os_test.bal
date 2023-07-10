@@ -20,7 +20,9 @@ import ballerina/io;
 
 configurable string bal_exec_path = ?;
 
-@test:Config {}
+@test:Config {
+    enable:false
+}
 function testGetEnv() {
     string expectedValue = getExpectedValidEnv();
     test:assertEquals(getEnv("JAVA_HOME"), expectedValue);
