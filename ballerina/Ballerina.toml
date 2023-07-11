@@ -13,6 +13,11 @@ distribution = "2201.7.0"
 graalvmCompatible = true
 
 [[platform.java17.dependency]]
+groupId = "org.burningwave"
+artifactId = "core"
+version = "12.62.7"
+
+[[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-native"
 version = "1.7.0"
