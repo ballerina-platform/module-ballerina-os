@@ -16,6 +16,7 @@ graalvmCompatible = true
 groupId = "org.burningwave"
 artifactId = "core"
 version = "12.62.7"
+path = "./lib/core-12.62.7.jar"
 
 [[platform.java17.dependency]]
 groupId = "io.ballerina.stdlib"
