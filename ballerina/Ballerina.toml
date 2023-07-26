@@ -29,3 +29,9 @@ groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
 version = "1.7.1"
 path = "../test-utils/build/libs/os-test-utils-1.7.1-SNAPSHOT.jar"
+
+[[platform.java17.dependency]]
+groupId = "org.burningwave"
+artifactId = "core"
+version = "12.62.7"
+path = "./lib/core-12.62.7.jar"
