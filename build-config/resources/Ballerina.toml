@@ -29,3 +29,15 @@ groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
 version = "@toml.version@"
 path = "../test-utils/build/libs/os-test-utils-@project.version@.jar"
+
+[[platform.java17.dependency]]
+groupId = "org.burningwave"
+artifactId = "core"
+version = "@burningwave.core.version@"
+path = "./lib/core-@burningwave.core.version@.jar"
+
+[[platform.java17.dependency]]
+groupId = "io.github.toolfactory"
+artifactId = "jvm-driver"
+version = "@toolfactory.jvmdriver.version@"
+path = "./lib/jvm-driver-@toolfactory.jvmdriver.version@.jar"

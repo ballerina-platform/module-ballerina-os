@@ -21,6 +21,7 @@ module io.ballerina.stdlib.os {
     requires org.slf4j;
     requires io.ballerina.stdlib.io;
     requires jdk.unsupported;
+    requires org.burningwave.core;
     exports io.ballerina.stdlib.os.nativeimpl;
     exports io.ballerina.stdlib.os.utils;
 }

@@ -25,6 +25,7 @@ dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-runtime', version: "${ballerinaLangVersion}"
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
     implementation group: 'io.ballerina.stdlib', name: 'io-native', version: "${stdlibIoVersion}"
+    implementation group: 'org.burningwave', name: 'core', version: "${burningwaveCoreVersion}"
     checkstyle project(":checkstyle")
     checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
 }

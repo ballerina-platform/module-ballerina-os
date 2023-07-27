@@ -18,7 +18,7 @@
 package io.ballerina.stdlib.os.nativeimpl;
 
 import io.ballerina.runtime.api.values.BString;
-import sun.misc.Unsafe;
+import org.burningwave.core.assembler.StaticComponentContainer;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -37,6 +37,10 @@ public class SetEnv {
 
     private SetEnv() {
 
+    }
+
+    static {
+        StaticComponentContainer.Modules.exportPackageToAllUnnamed("java.base", "java.util");
     }
 
     @SuppressWarnings("unchecked")
@@ -58,11 +62,6 @@ public class SetEnv {
                 return ErrorGenerator.createError("Error while accessing the environment variable map", e);
             }
         }
-        try {
-            disableAccessWarning();
-        } catch (Exception e) {
-            return ErrorGenerator.createError("Error disabling illegal access warnings", e);
-        }
         Field finalField = field;
         AccessController.doPrivileged((PrivilegedAction) () -> {
             finalField.setAccessible(true);
@@ -79,19 +78,5 @@ public class SetEnv {
             writableEnv.put(key.toString(), value.toString());
         }
         return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void disableAccessWarning() throws Exception {
-        Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-        AccessController.doPrivileged((PrivilegedAction) () -> {
-            theUnsafe.setAccessible(true);
-            return null;
-        });
-        Unsafe u = (Unsafe) theUnsafe.get(null);
-
-        Class<?> cls = Class.forName("jdk.internal.module.IllegalAccessLogger");
-        Field logger = cls.getDeclaredField("logger");
-        u.putObjectVolatile(cls, u.staticFieldOffset(logger), null);
     }
 }

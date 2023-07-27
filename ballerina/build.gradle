@@ -63,6 +63,12 @@ dependencies {
     externalJars(group: 'io.ballerina.stdlib', name: 'io-native', version: "${stdlibIoVersion}") {
         transitive = false
     }
+    externalJars(group: 'org.burningwave', name: 'core', version: "${burningwaveCoreVersion}") {
+        transitive = false
+    }
+    externalJars(group: 'io.github.toolfactory', name: 'jvm-driver', version: "${toolfactoryJvmDriverVersion}") {
+        transitive = false
+    }
 }
 
 apply plugin: 'io.ballerina.plugin'
@@ -83,6 +89,8 @@ task updateTomlFiles {
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
         newConfig = newConfig.replace("@io.native.version@", stdlibNativeIoVersion)
         newConfig = newConfig.replace("@io.version@", stdlibIoVersion)
+        newConfig = newConfig.replace("@burningwave.core.version@", burningwaveCoreVersion)
+        newConfig = newConfig.replace("@toolfactory.jvmdriver.version@", toolfactoryJvmDriverVersion)
         ballerinaTomlFile.text = newConfig
         setExecPath(configTOMLFile,distributionBinPath)
     }
