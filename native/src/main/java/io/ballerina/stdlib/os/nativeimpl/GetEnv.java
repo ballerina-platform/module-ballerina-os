@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2023, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -31,28 +31,34 @@ import java.util.Map;
 import static io.ballerina.stdlib.os.utils.OSConstants.ENV_VAR_KEY;
 
 /**
- * Extern function of ballerina.os:listEnv.
+ * Extern function of ballerina.os:getEnv.
  *
- * @since 1.2.2
+ * @since 1.5.1
  */
-public class ListEnv {
+public class GetEnv {
 
-    private ListEnv() {
+    private GetEnv() {
 
     }
 
-    public static BMap<BString, Object> listEnv(Environment env) {
+    public static BString getEnv(Environment env, BString key) {
         Object envVarMap = env.getStrandLocal(ENV_VAR_KEY);
-        if (envVarMap != null) {
-            return (BMap<BString, Object>) envVarMap;
+        BMap<BString, Object> envMap;
+        if (envVarMap == null) {
+            MapType mapType = TypeCreator.createMapType(PredefinedTypes.TYPE_STRING);
+            envMap = ValueCreator.createMapValue(mapType);
+            Map<String, String> jEnvMap = System.getenv();
+            for (Map.Entry<String, String> entry : jEnvMap.entrySet()) {
+                envMap.put(StringUtils.fromString(entry.getKey()), StringUtils.fromString(entry.getValue()));
+            }
+            env.setStrandLocal(ENV_VAR_KEY, envMap);
+        } else {
+            envMap = (BMap<BString, Object>) envVarMap;
         }
-        MapType mapType = TypeCreator.createMapType(PredefinedTypes.TYPE_STRING);
-        BMap<BString, Object> envMap = ValueCreator.createMapValue(mapType);
-        Map<String, String> jEnvMap = System.getenv();
-        for (Map.Entry<String, String> entry : jEnvMap.entrySet()) {
-            envMap.put(StringUtils.fromString(entry.getKey()), StringUtils.fromString(entry.getValue()));
+        Object value = envMap.get(key);
+        if (value == null) {
+            return StringUtils.fromString("");
         }
-        env.setStrandLocal(ENV_VAR_KEY, envMap);
-        return envMap;
+        return (BString) value;
     }
 }

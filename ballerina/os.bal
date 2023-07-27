@@ -34,17 +34,12 @@ public type EnvProperties record {|
 # + name - Name of the environment variable
 # + return - Environment variable value if it exists or else, an empty string
 public isolated function getEnv(string name) returns string {
-    var value = java:toString(nativeGetEnv(java:fromString(name)));
-    if value is string {
-        return value;
-    }
-    return "";
+    return nativeGetEnv(name);
 }
 
-isolated function nativeGetEnv(handle key) returns handle = @java:Method {
-    name: "getenv",
-    'class: "java.lang.System",
-    paramTypes: ["java.lang.String"]
+isolated function nativeGetEnv(string key) returns string = @java:Method {
+    name: "getEnv",
+    'class: "io.ballerina.stdlib.os.nativeimpl.GetEnv"
 } external;
 
 # Returns the current user's name.
