@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/log;
+import ballerina/io;
 
 public function main() {
-    log:printDebug("debug message");
+    io:println("debug message");
 }

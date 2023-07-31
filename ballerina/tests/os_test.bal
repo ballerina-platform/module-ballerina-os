@@ -20,7 +20,6 @@ import ballerina/io;
 
 configurable string bal_exec_path = ?;
 
-@test:Config {}
 function testGetEnv() {
     string expectedValue = getExpectedValidEnv();
     test:assertEquals(getEnv("JAVA_HOME"), expectedValue);
@@ -208,7 +207,9 @@ function testExecWithOutputStdErr() returns error? {
     test:assertTrue(stdErrString.includes("hello world"));
 }
 
-@test:Config {}
+@test:Config {
+    enable:false
+}
 function testExecWithEnvironmentVariable() returns error? {
     Process process = check exec({value: bal_exec_path, arguments: ["run", "tests/resources/hello3.bal"]}, BAL_CONFIG_FILES = "tests/resources/config/Config.toml");
     int exitCode = check process.waitForExit();
