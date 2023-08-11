@@ -29,6 +29,8 @@ public class OSConstants {
 
     static final String PROCESS_FIELD = "ProcessField";
 
+    public static final String ENV_VAR_KEY = "io.ballerina.stdlib.os.environment.variables";
+
     private OSConstants() {
     }
 }

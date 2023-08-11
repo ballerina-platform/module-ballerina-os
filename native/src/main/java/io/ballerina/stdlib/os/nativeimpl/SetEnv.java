@@ -17,13 +17,18 @@
  */
 package io.ballerina.stdlib.os.nativeimpl;
 
+import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.creators.TypeCreator;
+import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.MapType;
+import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
-import sun.misc.Unsafe;
 
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Map;
+
+import static io.ballerina.stdlib.os.utils.OSConstants.ENV_VAR_KEY;
 
 /**
  * Extern function of ballerina.os:setEnv.
@@ -32,66 +37,29 @@ import java.util.Map;
  */
 public class SetEnv {
 
-    private static final String JAVA_LANG_PROCESS_ENVIRONMENT = "java.lang.ProcessEnvironment";
-    private static final String CASE_INSENSITIVE_ENV = "theCaseInsensitiveEnvironment";
-
     private SetEnv() {
 
     }
 
-    @SuppressWarnings("unchecked")
-    public static Object setEnv(BString key, Object value) {
-        Map<String, String> env = null;
-        Map<String, String> writableEnv;
-        Field field;
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            try {
-                field = Class.forName(JAVA_LANG_PROCESS_ENVIRONMENT).getDeclaredField(CASE_INSENSITIVE_ENV);
-            } catch (NoSuchFieldException | ClassNotFoundException e) {
-                return ErrorGenerator.createError("Error while accessing the environment variable map" , e);
+    public static Object setEnv(Environment env, BString key, Object value) {
+        Object envVarMap = env.getStrandLocal(ENV_VAR_KEY);
+        BMap<BString, Object> envMap;
+        if (envVarMap == null) {
+            MapType mapType = TypeCreator.createMapType(PredefinedTypes.TYPE_STRING);
+            envMap = ValueCreator.createMapValue(mapType);
+            Map<String, String> jEnvMap = System.getenv();
+            for (Map.Entry<String, String> entry : jEnvMap.entrySet()) {
+                envMap.put(StringUtils.fromString(entry.getKey()), StringUtils.fromString(entry.getValue()));
             }
+            env.setStrandLocal(ENV_VAR_KEY, envMap);
         } else {
-            env = System.getenv();
-            try {
-                field = env.getClass().getDeclaredField("m");
-            } catch (NoSuchFieldException e) {
-                return ErrorGenerator.createError("Error while accessing the environment variable map", e);
-            }
-        }
-        try {
-            disableAccessWarning();
-        } catch (Exception e) {
-            return ErrorGenerator.createError("Error disabling illegal access warnings", e);
-        }
-        Field finalField = field;
-        AccessController.doPrivileged((PrivilegedAction) () -> {
-            finalField.setAccessible(true);
-            return null;
-        });
-        try {
-            writableEnv = (Map<String, String>) field.get(env);
-        } catch (IllegalAccessException e) {
-            return ErrorGenerator.createError("Access denied when trying to modify the environment variable map", e);
+            envMap = (BMap<BString, Object>) envVarMap;
         }
         if (value == null) {
-            writableEnv.remove(key.toString());
+            envMap.remove(key);
         } else {
-            writableEnv.put(key.toString(), value.toString());
+            envMap.put(key, value);
         }
         return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void disableAccessWarning() throws Exception {
-        Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-        AccessController.doPrivileged((PrivilegedAction) () -> {
-            theUnsafe.setAccessible(true);
-            return null;
-        });
-        Unsafe u = (Unsafe) theUnsafe.get(null);
-
-        Class<?> cls = Class.forName("jdk.internal.module.IllegalAccessLogger");
-        Field logger = cls.getDeclaredField("logger");
-        u.putObjectVolatile(cls, u.staticFieldOffset(logger), null);
     }
 }
