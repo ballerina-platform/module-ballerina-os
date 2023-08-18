@@ -18,17 +18,10 @@
 package io.ballerina.stdlib.os.nativeimpl;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.creators.TypeCreator;
-import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.MapType;
-import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BString;
 
-import java.util.Map;
-
-import static io.ballerina.stdlib.os.utils.OSConstants.ENV_VAR_KEY;
+import static io.ballerina.stdlib.os.utils.OSUtils.getEnvVariablesMap;
 
 /**
  * Extern function of ballerina.os:listEnv.
@@ -42,17 +35,6 @@ public class ListEnv {
     }
 
     public static BMap<BString, Object> listEnv(Environment env) {
-        Object envVarMap = env.getStrandLocal(ENV_VAR_KEY);
-        if (envVarMap != null) {
-            return (BMap<BString, Object>) envVarMap;
-        }
-        MapType mapType = TypeCreator.createMapType(PredefinedTypes.TYPE_STRING);
-        BMap<BString, Object> envMap = ValueCreator.createMapValue(mapType);
-        Map<String, String> jEnvMap = System.getenv();
-        for (Map.Entry<String, String> entry : jEnvMap.entrySet()) {
-            envMap.put(StringUtils.fromString(entry.getKey()), StringUtils.fromString(entry.getValue()));
-        }
-        env.setStrandLocal(ENV_VAR_KEY, envMap);
-        return envMap;
+        return getEnvVariablesMap(env);
     }
 }
