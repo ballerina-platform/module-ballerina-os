@@ -17,14 +17,21 @@
  */
 package io.ballerina.stdlib.os.utils;
 
+import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
+import io.ballerina.runtime.api.types.MapType;
 import io.ballerina.runtime.api.utils.StringUtils;
+import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static io.ballerina.stdlib.os.nativeimpl.ModuleUtils.getModule;
+import static io.ballerina.stdlib.os.utils.OSConstants.ENV_VAR_KEY;
 import static io.ballerina.stdlib.os.utils.OSConstants.PROCESS_FIELD;
 import static io.ballerina.stdlib.os.utils.OSConstants.PROCESS_TYPE;
 
@@ -57,5 +64,21 @@ public class OSUtils {
                     io.ballerina.runtime.api.PredefinedTypes.TYPE_STRING.getZeroValue().toString());
         }
         return StringUtils.fromString(value);
+    }
+
+    public static BMap<BString, Object> getEnvVariablesMap(Environment env) {
+        Object envVarMap = env.getStrandLocal(ENV_VAR_KEY);
+        BMap<BString, Object> envMap;
+        if (envVarMap != null) {
+            return (BMap<BString, Object>) envVarMap;
+        }
+        MapType mapType = TypeCreator.createMapType(PredefinedTypes.TYPE_STRING);
+        envMap = ValueCreator.createMapValue(mapType);
+        Map<String, String> jEnvMap = System.getenv();
+        for (Map.Entry<String, String> entry : jEnvMap.entrySet()) {
+            envMap.put(StringUtils.fromString(entry.getKey()), StringUtils.fromString(entry.getValue()));
+        }
+        env.setStrandLocal(ENV_VAR_KEY, envMap);
+        return envMap;
     }
 }
