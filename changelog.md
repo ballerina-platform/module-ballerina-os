@@ -5,6 +5,7 @@ This file contains all the notable changes done to the Ballerina OS package thro
 
 ### Changed
 - [API docs updated](https://github.com/ballerina-platform/ballerina-standard-library/issues/3463)
+- [Make some of the Java classes proper utility classes](https://github.com/ballerina-platform/ballerina-standard-library/issues/5051)
 
 ## [1.4.0] - [2022-09-08]
 
