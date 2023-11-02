@@ -24,7 +24,9 @@ import io.ballerina.runtime.api.values.BString;
 /**
  * @since 0.6.5
  */
-public class OSTestUtils {
+public final class OSTestUtils {
+
+    private OSTestUtils() {}
 
     public static BString testValidEnv() {
         return StringUtils.fromString(System.getenv("JAVA_HOME"));
