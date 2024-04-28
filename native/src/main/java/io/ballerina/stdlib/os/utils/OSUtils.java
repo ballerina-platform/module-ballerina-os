@@ -38,7 +38,9 @@ import static io.ballerina.stdlib.os.utils.OSConstants.PROCESS_TYPE;
 /**
  * @since 0.8.0
  */
-public class OSUtils {
+public final class OSUtils {
+
+    private OSUtils() {}
 
     public static BObject getProcessObject(Process process) throws IOException {
         BObject obj = ValueCreator.createObjectValue(getModule(), PROCESS_TYPE);
