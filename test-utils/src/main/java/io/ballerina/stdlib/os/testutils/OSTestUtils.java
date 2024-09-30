@@ -29,7 +29,7 @@ public final class OSTestUtils {
     private OSTestUtils() {}
 
     public static BString testValidEnv() {
-        return StringUtils.fromString(System.getenv("JAVA_HOME"));
+        return StringUtils.fromString(System.getenv("java.home"));
     }
 
     public static BString testGetUserHome() {
