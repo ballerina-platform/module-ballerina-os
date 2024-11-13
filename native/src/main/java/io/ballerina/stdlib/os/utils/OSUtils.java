@@ -18,10 +18,10 @@
 package io.ballerina.stdlib.os.utils;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.MapType;
+import io.ballerina.runtime.api.types.PredefinedTypes;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BMap;
 import io.ballerina.runtime.api.values.BObject;
@@ -63,7 +63,7 @@ public final class OSUtils {
         String value = System.getProperty(key.toString());
         if (value == null) {
             return StringUtils.fromString(
-                    io.ballerina.runtime.api.PredefinedTypes.TYPE_STRING.getZeroValue().toString());
+                    io.ballerina.runtime.api.types.PredefinedTypes.TYPE_STRING.getZeroValue().toString());
         }
         return StringUtils.fromString(value);
     }
