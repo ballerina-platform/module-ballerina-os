@@ -1,7 +1,7 @@
 [package]
 org = "ballerina"
 name = "os"
-version = "1.8.1"
+version = "1.8.2"
 authors = ["Ballerina"]
 keywords = ["environment"]
 repository = "https://github.com/ballerina-platform/module-ballerina-os"
@@ -15,14 +15,14 @@ graalvmCompatible = true
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-native"
-version = "1.8.1"
-path = "../native/build/libs/os-native-1.8.1-SNAPSHOT.jar"
+version = "1.8.2"
+path = "../native/build/libs/os-native-1.8.2-SNAPSHOT.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "io-native"
-version = "1.6.2"
-path = "./lib/io-native-1.6.2-20241112-233100-995cf5f.jar"
+version = "1.6.0"
+path = "./lib/io-native-1.6.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
