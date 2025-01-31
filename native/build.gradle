@@ -26,7 +26,7 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
     implementation group: 'io.ballerina.stdlib', name: 'io-native', version: "${stdlibIoVersion}"
     checkstyle project(":checkstyle")
-    checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
+    checkstyle "com.puppycrawl.tools:checkstyle:${checkstylePluginVersion}"
 }
 
 spotbugsMain {
