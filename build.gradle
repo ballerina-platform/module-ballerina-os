@@ -17,14 +17,14 @@
  */
 
 plugins {
-    id "com.github.spotbugs" version "${githubSpotBugsVersion}"
-    id "com.github.johnrengelman.shadow" version "${shadowJarVersion}"
-    id "de.undercouch.download" version "${undercouchDownloadVersion}"
-    id "net.researchgate.release" version "${researchgateReleaseVersion}"
+    id "com.github.spotbugs"
+    id "com.github.johnrengelman.shadow"
+    id "de.undercouch.download"
+    id "net.researchgate.release"
 }
 
 ext.ballerinaLangVersion = project.ballerinaLangVersion
-ext.puppycrawlCheckstyleVersion = "${puppycrawlCheckstyleVersion}"
+ext.checkstylePluginVersion = "${checkstylePluginVersion}"
 ext.slf4jVersion = "1.7.30"
 ext.apacheCommonsVersion = "3.8.1"
 
@@ -68,9 +68,15 @@ subprojects {
 
     configurations {
         ballerinaStdLibs
+        jbalTools
     }
 
     dependencies {
+        /* JBallerina Tools */
+        jbalTools ("org.ballerinalang:jballerina-tools:${ballerinaLangVersion}") {
+            transitive = false
+        }
+
         /* Standard libraries */
         ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${project.stdlibIoVersion}"
     }

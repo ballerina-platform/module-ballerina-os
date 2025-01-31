@@ -26,7 +26,7 @@ dependencies {
     implementation project(":os-native")
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: "${apacheCommonsVersion}"
     checkstyle project(":checkstyle")
-    checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
+    checkstyle "com.puppycrawl.tools:checkstyle:${checkstylePluginVersion}"
 }
 
 spotbugsMain {
