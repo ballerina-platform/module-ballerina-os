@@ -20,7 +20,14 @@ package io.ballerina.stdlib.os.compiler.staticcodeanalyzer;
 
 import io.ballerina.compiler.api.SemanticModel;
 import io.ballerina.compiler.api.symbols.Symbol;
-import io.ballerina.compiler.api.tree.*;
+import io.ballerina.compiler.api.tree.BlockFunctionBodyNode;
+import io.ballerina.compiler.api.tree.ExpressionNode;
+import io.ballerina.compiler.api.tree.ExpressionStatementNode;
+import io.ballerina.compiler.api.tree.FunctionCallExpressionNode;
+import io.ballerina.compiler.api.tree.FunctionDefinitionNode;
+import io.ballerina.compiler.api.tree.ParameterNode;
+import io.ballerina.compiler.api.tree.StatementNode;
+import io.ballerina.compiler.api.tree.ModulePartNode;
 import io.ballerina.projects.plugins.CodeAnalysisContext;
 import io.ballerina.projects.plugins.CodeAnalyzer;
 import io.ballerina.projects.plugins.CodeAnalyzerTask;
@@ -91,7 +98,7 @@ public class OsStaticCodeAnalyzer extends CodeAnalyzer {
     }
 
     private boolean isExecCommand(ExpressionNode expr, SemanticModel model) {
-        if (expr instanceof CallExpressionNode callExpr) {
+        if (expr instanceof FunctionCallExpressionNode callExpr) {
             Optional<Symbol> symbol = model.symbol(callExpr.functionName());
             return symbol.filter(s -> s.getName().orElse("").equals("exec")
                     && s.getModule().orElse("").toString().contains("ballerina/os")).isPresent();
