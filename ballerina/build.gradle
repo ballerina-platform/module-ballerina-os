@@ -16,9 +16,22 @@
  */
 import org.apache.tools.ant.taskdefs.condition.Os
 
-plugins {
-    id 'io.ballerina.plugin'
+buildscript {
+    repositories {
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/plugin-gradle'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+    }
+    dependencies {
+        classpath "io.ballerina:plugin-gradle:${project.ballerinaGradlePluginVersion}"
+    }
 }
+
+apply plugin: 'io.ballerina.plugin'
 
 description = 'Ballerina - OS Ballerina Generator'
 
