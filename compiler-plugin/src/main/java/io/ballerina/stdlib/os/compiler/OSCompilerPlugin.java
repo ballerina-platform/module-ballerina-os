@@ -21,20 +21,20 @@ package io.ballerina.stdlib.os.compiler;
 import io.ballerina.projects.plugins.CompilerPlugin;
 import io.ballerina.projects.plugins.CompilerPluginContext;
 import io.ballerina.scan.ScannerContext;
-import io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OsStaticCodeAnalyzer;
+import io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSStaticCodeAnalyzer;
 
 import static io.ballerina.stdlib.os.compiler.Constants.SCANNER_CONTEXT;
 
 /**
  * The compiler plugin implementation for Ballerina Os package.
  */
-public class OsCompilerPlugin extends CompilerPlugin {
+public class OSCompilerPlugin extends CompilerPlugin {
 
     @Override
     public void init(CompilerPluginContext context) {
         Object object = context.userData().get(SCANNER_CONTEXT);
         if (object instanceof ScannerContext scannerContext) {
-            context.addCodeAnalyzer(new OsStaticCodeAnalyzer(scannerContext.getReporter()));
+            context.addCodeAnalyzer(new OSStaticCodeAnalyzer(scannerContext.getReporter()));
         }
     }
 }

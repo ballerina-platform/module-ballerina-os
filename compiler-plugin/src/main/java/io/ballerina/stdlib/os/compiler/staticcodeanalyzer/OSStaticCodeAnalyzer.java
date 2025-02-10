@@ -38,15 +38,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OsRule.AVOID_UNSANITIZED_CMD_ARGS;
+import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_CMD_ARGS;
 
 /**
  * The static code analyzer implementation for Ballerina Os package.
  */
-public class OsStaticCodeAnalyzer extends CodeAnalyzer {
+public class OSStaticCodeAnalyzer extends CodeAnalyzer {
     private final Reporter reporter;
 
-    public OsStaticCodeAnalyzer(Reporter reporter) {
+    public OSStaticCodeAnalyzer(Reporter reporter) {
         this.reporter = reporter;
     }
 
@@ -64,7 +64,7 @@ public class OsStaticCodeAnalyzer extends CodeAnalyzer {
                         .collect(Collectors.toList())) {
 
                     List<String> paramNames = functionNode.functionSignature().parameters().stream()
-                            .map(ParameterNode::paramName)
+                            .map(parameterNode -> parameterNode.name().orElse(null))
                             .filter(Optional::isPresent)
                             .map(Optional::get)
                             .map(Token::text)

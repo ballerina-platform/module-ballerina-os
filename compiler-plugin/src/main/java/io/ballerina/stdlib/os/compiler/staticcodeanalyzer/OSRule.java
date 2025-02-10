@@ -26,13 +26,13 @@ import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.RuleFactory.cre
 /**
  * Represents static code rules specific to the Ballerina Http package.
  */
-public enum OsRule {
+public enum OSRule {
     AVOID_UNSANITIZED_CMD_ARGS(createRule(1, "Avoid constructing system command arguments from user " +
             "input without proper sanitization", VULNERABILITY));
 
     private final Rule rule;
 
-    OsRule(Rule rule) {
+    OSRule(Rule rule) {
         this.rule = rule;
     }
 
