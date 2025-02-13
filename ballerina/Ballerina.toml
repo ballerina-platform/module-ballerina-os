@@ -1,13 +1,13 @@
 [package]
 org = "ballerina"
 name = "os"
-version = "1.8.2"
+version = "1.9.0"
 authors = ["Ballerina"]
 keywords = ["environment"]
 repository = "https://github.com/ballerina-platform/module-ballerina-os"
 icon = "icon.png"
 license = ["Apache-2.0"]
-distribution = "2201.8.0"
+distribution = "2201.11.0"
 
 [platform.java21]
 graalvmCompatible = true
@@ -15,17 +15,17 @@ graalvmCompatible = true
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-native"
-version = "1.8.2"
-path = "../native/build/libs/os-native-1.8.2-SNAPSHOT.jar"
+version = "1.9.0"
+path = "../native/build/libs/os-native-1.9.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "io-native"
-version = "1.6.0"
-path = "./lib/io-native-1.6.0.jar"
+version = "1.7.0"
+path = "./lib/io-native-1.7.0.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
-version = "1.8.1"
-path = "../test-utils/build/libs/os-test-utils-1.8.1-SNAPSHOT.jar"
+version = "1.9.0"
+path = "../test-utils/build/libs/os-test-utils-1.9.0.jar"
