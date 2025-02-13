@@ -26,7 +26,7 @@ import io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSStaticCodeAnalyzer;
 import static io.ballerina.stdlib.os.compiler.Constants.SCANNER_CONTEXT;
 
 /**
- * The compiler plugin implementation for Ballerina Os package.
+ * The compiler plugin implementation for Ballerina OS package.
  */
 public class OSCompilerPlugin extends CompilerPlugin {
 

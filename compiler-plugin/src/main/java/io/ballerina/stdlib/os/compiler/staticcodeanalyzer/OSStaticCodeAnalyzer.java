@@ -23,7 +23,7 @@ import io.ballerina.projects.plugins.CodeAnalyzer;
 import io.ballerina.scan.Reporter;
 
 /**
- * The static code analyzer implementation for Ballerina Os package.
+ * The static code analyzer implementation for Ballerina OS package.
  */
 public class OSStaticCodeAnalyzer extends CodeAnalyzer {
     private final Reporter reporter;

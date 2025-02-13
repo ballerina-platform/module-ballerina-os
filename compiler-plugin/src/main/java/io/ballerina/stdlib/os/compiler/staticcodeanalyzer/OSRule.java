@@ -24,7 +24,7 @@ import static io.ballerina.scan.RuleKind.VULNERABILITY;
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.RuleFactory.createRule;
 
 /**
- * Represents static code rules specific to the Ballerina Http package.
+ * Represents static code rules specific to the Ballerina OS package.
  */
 public enum OSRule {
     AVOID_UNSANITIZED_CMD_ARGS(createRule(1, "Avoid constructing system command arguments from user " +
