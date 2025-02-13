@@ -22,6 +22,10 @@ import io.ballerina.projects.plugins.CodeAnalysisContext;
 import io.ballerina.projects.plugins.CodeAnalyzer;
 import io.ballerina.scan.Reporter;
 
+import java.util.List;
+
+import static io.ballerina.compiler.syntax.tree.SyntaxKind.FUNCTION_CALL;
+
 /**
  * The static code analyzer implementation for Ballerina OS package.
  */
@@ -34,6 +38,6 @@ public class OSStaticCodeAnalyzer extends CodeAnalyzer {
 
     @Override
     public void init(CodeAnalysisContext analysisContext) {
-        analysisContext.addSyntaxNodeAnalysisTask();
+        analysisContext.addSyntaxNodeAnalysisTask(new OsCommandInjectionAnalyzer(reporter), List.of(FUNCTION_CALL));
     }
 }
