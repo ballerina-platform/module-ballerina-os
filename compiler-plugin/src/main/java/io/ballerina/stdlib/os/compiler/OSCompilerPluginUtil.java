@@ -27,6 +27,8 @@ import io.ballerina.projects.Package;
 
 public class OSCompilerPluginUtil {
 
+    private OSCompilerPluginUtil() {}
+
     public static boolean isOsExecCall(SyntaxNodeAnalysisContext context, FunctionCallExpressionNode functionCall) {
         if (!(functionCall.functionName() instanceof SimpleNameReferenceNode functionNameNode)) {
             return false;
