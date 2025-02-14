@@ -32,10 +32,10 @@ import io.ballerina.tools.diagnostics.Location;
 import static io.ballerina.stdlib.os.compiler.OSCompilerPluginUtil.isOsExecCall;
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_CMD_ARGS;
 
-public class OsCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
+public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
     private final Reporter reporter;
 
-    public OsCommandInjectionAnalyzer(Reporter reporter) {
+    public OSCommandInjectionAnalyzer(Reporter reporter) {
         this.reporter = reporter;
     }
 

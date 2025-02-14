@@ -50,4 +50,3 @@ public class OSCompilerPluginUtil {
         return context.currentModule().document(context.node().location().lineRange().filePath());
     }
 }
-

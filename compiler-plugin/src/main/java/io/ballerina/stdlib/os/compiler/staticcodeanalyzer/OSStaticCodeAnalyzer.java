@@ -38,6 +38,6 @@ public class OSStaticCodeAnalyzer extends CodeAnalyzer {
 
     @Override
     public void init(CodeAnalysisContext analysisContext) {
-        analysisContext.addSyntaxNodeAnalysisTask(new OsCommandInjectionAnalyzer(reporter), List.of(FUNCTION_CALL));
+        analysisContext.addSyntaxNodeAnalysisTask(new OSCommandInjectionAnalyzer(reporter), List.of(FUNCTION_CALL));
     }
 }
