@@ -1,0 +1,7 @@
+[
+  {
+    "id":  1,
+    "kind": "VULNERABILITY",
+    "description": "Avoid constructing system command arguments from user input without proper sanitization"
+  }
+]
