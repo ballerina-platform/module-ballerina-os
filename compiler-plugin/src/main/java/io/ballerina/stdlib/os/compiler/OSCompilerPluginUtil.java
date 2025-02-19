@@ -41,7 +41,7 @@ public class OSCompilerPluginUtil {
     private static boolean isOsModule(SyntaxNodeAnalysisContext context) {
         Package currentPackage = context.currentPackage();
         return currentPackage != null && currentPackage.moduleIds().stream()
-                .map(id -> currentPackage.module(id))
+                .map(currentPackage::module)
                 .map(Module::moduleName)
                 .anyMatch(name -> name.toString().equals("os"));
     }

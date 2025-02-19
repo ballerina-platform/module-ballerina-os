@@ -18,10 +18,11 @@
 
 package io.ballerina.stdlib.os.compiler.staticcodeanalyzer;
 
+import io.ballerina.compiler.api.symbols.SymbolKind;
+import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.Node;
-import io.ballerina.compiler.syntax.tree.NodeList;
-import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.projects.Document;
 import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
@@ -45,29 +46,30 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
             return;
         }
 
-        if (!isOsExecCall(context.semanticModel(), functionCall)) {
+        if (!isOsExecCall(context, functionCall)) {
             return;
         }
 
         Document document = OSCompilerPluginUtil.getDocument(context);
 
-        if (containsUserControlledInput(functionCall.arguments())) {
+        if (containsUserControlledInput(functionCall.arguments(), context)) {
             Location location = functionCall.location();
             this.reporter.reportIssue(document, location, AVOID_UNSANITIZED_CMD_ARGS.getId());
         }
     }
 
-    private boolean containsUserControlledInput(NodeList<Node> arguments) {
+    private boolean containsUserControlledInput(SeparatedNodeList<FunctionArgumentNode> arguments, SyntaxNodeAnalysisContext context) {
         for (Node arg : arguments) {
-            if (arg instanceof SimpleNameReferenceNode nameReference) {
-                String variableName = nameReference.name().text();
-
-                if (variableName.contains("input") || variableName.contains("request")) {
-                    return true;
-                }
+            if (isUserControlledInput(arg, context)) {
+                return true;
             }
         }
         return false;
     }
-}
 
+    private boolean isUserControlledInput(Node node, SyntaxNodeAnalysisContext context) {
+        // Use the semantic model to check if the node is derived from user input
+        return context.semanticModel().symbol(node).isPresent()
+                && context.semanticModel().symbol(node).get().kind() == SymbolKind.PARAMETER;
+    }
+}
