@@ -47,6 +47,6 @@ public class OSCompilerPluginUtil {
     }
 
     public static Document getDocument(SyntaxNodeAnalysisContext context) {
-        return context.currentModule().document(context.node().location().lineRange().filePath());
+        return context.currentPackage().module(context.moduleId()).document(context.documentId());
     }
 }
