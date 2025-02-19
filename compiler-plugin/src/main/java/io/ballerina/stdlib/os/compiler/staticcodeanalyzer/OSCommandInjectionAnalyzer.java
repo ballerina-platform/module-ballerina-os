@@ -109,11 +109,9 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
     private boolean isDerivedFromParameter(Node node) {
         Node parent = node.parent();
         while (parent != null) {
-            if (parent instanceof FunctionDefinitionNode functionNode) {
-                if (isInsidePublicFunction(functionNode)) {
-                    return functionNode.functionSignature().parameters().stream()
-                            .anyMatch(param -> param.toSourceCode().equals(node.toSourceCode()));
-                }
+            if (parent instanceof FunctionDefinitionNode functionNode && isInsidePublicFunction(functionNode)) {
+                return functionNode.functionSignature().parameters().stream()
+                        .anyMatch(param -> param.toSourceCode().equals(node.toSourceCode()));
             }
             parent = parent.parent();
         }
