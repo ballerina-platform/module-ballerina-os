@@ -58,7 +58,8 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         }
     }
 
-    private boolean containsUserControlledInput(SeparatedNodeList<FunctionArgumentNode> arguments, SyntaxNodeAnalysisContext context) {
+    private boolean containsUserControlledInput(SeparatedNodeList<FunctionArgumentNode> arguments,
+                                                SyntaxNodeAnalysisContext context) {
         for (Node arg : arguments) {
             if (isUserControlledInput(arg, context)) {
                 return true;
