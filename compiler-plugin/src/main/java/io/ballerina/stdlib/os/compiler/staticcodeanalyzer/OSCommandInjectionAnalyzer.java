@@ -18,9 +18,12 @@
 
 package io.ballerina.stdlib.os.compiler.staticcodeanalyzer;
 
+import io.ballerina.compiler.api.SemanticModel;
+import io.ballerina.compiler.api.symbols.Symbol;
 import io.ballerina.compiler.api.symbols.SymbolKind;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
+import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.projects.Document;
@@ -69,8 +72,52 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
     }
 
     private boolean isUserControlledInput(Node node, SyntaxNodeAnalysisContext context) {
-        // Use the semantic model to check if the node is derived from user input
-        return context.semanticModel().symbol(node).isPresent()
-                && context.semanticModel().symbol(node).get().kind() == SymbolKind.PARAMETER;
+        SemanticModel semanticModel = context.semanticModel();
+        if (semanticModel == null) {
+            return false;
+        }
+
+        if (semanticModel.symbol(node).isEmpty()) {
+            return false;
+        }
+
+        Symbol symbol = semanticModel.symbol(node).get();
+
+        if (symbol.kind() == SymbolKind.PARAMETER && isInsidePublicFunction(node)) {
+            return true;
+        }
+
+        if (symbol.kind() == SymbolKind.VARIABLE) {
+            return isDerivedFromParameter(node);
+        }
+
+        return false;
     }
+
+    private boolean isInsidePublicFunction(Node node) {
+        Node parent = node.parent();
+        while (parent != null) {
+            if (parent instanceof FunctionDefinitionNode functionNode) {
+                return functionNode.qualifierList().stream()
+                        .anyMatch(q -> q.text().equals("public"));
+            }
+            parent = parent.parent();
+        }
+        return false;
+    }
+
+    private boolean isDerivedFromParameter(Node node) {
+        Node parent = node.parent();
+        while (parent != null) {
+            if (parent instanceof FunctionDefinitionNode functionNode) {
+                if (isInsidePublicFunction(functionNode)) {
+                    return functionNode.functionSignature().parameters().stream()
+                            .anyMatch(param -> param.toSourceCode().equals(node.toSourceCode()));
+                }
+            }
+            parent = parent.parent();
+        }
+        return false;
+    }
+
 }
