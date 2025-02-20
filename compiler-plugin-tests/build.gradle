@@ -20,9 +20,18 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'com.github.spotbugs'
+    id 'jacoco'
 }
 
-description = 'Ballerina - OS Compiler Plugin'
+jacoco {
+    toolVersion = "${jacocoVersion}"
+    reportsDirectory = file("$project.buildDir/reports/jacoco")
+}
+
+description = 'Ballerina - OS Compiler Plugin Tests'
+
+group = 'io.ballerina.stdlib'
+version = '1.9.0-SNAPSHOT'
 
 configurations {
     externalJars
@@ -32,10 +41,14 @@ dependencies {
     checkstyle project(':checkstyle')
     checkstyle "com.puppycrawl.tools:checkstyle:${puppycrawlCheckstyleVersion}"
 
-    implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
-    implementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
-    implementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
-    implementation group: 'io.ballerina.scan', name: 'scan-command', version: "${balScanVersion}"
+    implementation project(':os-compiler-plugin')
+
+    testImplementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
+    testImplementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
+    testImplementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
+    testImplementation group: 'io.ballerina.scan', name: 'scan-command', version: "${balScanVersion}"
+    testImplementation group: 'org.testng', name: 'testng', version: "${testngVersion}"
+    testImplementation group: 'com.google.code.gson', name: 'gson', version: "${gsonVersion}"
 }
 
 tasks.withType(Checkstyle) {
@@ -82,3 +95,32 @@ compileJava {
         classpath = files()
     }
 }
+
+test {
+    useTestNG() {
+        suites 'src/test/resources/testng.xml'
+    }
+    testLogging.showStandardStreams = true
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+    }
+    sourceSets project(':os-compiler-plugin').sourceSets.main
+}
+
+test.dependsOn ":os-ballerina:build"

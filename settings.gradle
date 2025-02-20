@@ -39,12 +39,14 @@ include ':os-native'
 include ':os-test-utils'
 include ':os-ballerina'
 include 'os-compiler-plugin'
+include 'os-compiler-plugin-tests'
 
 project(':checkstyle').projectDir = file("build-config${File.separator}checkstyle")
 project(':os-native').projectDir = file('native')
 project(':os-test-utils').projectDir = file('test-utils')
 project(':os-ballerina').projectDir = file('ballerina')
 project(':os-compiler-plugin').projectDir = file('compiler-plugin')
+project(':os-compiler-plugin-tests').projectDir = file('compiler-plugin-tests')
 
 gradleEnterprise {
     buildScan {
