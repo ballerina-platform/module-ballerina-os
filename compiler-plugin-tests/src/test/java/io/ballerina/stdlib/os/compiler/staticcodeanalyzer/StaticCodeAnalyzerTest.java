@@ -82,7 +82,7 @@ public class StaticCodeAnalyzerTest {
         }
     }
 
-    public static String executeScanProcess(String targetPackage) throws IOException, InterruptedException {
+    private static String executeScanProcess(String targetPackage) throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder(BALLERINA_PATH.toString(), SCAN_COMMAND);
         processBuilder.directory(RESOURCE_PACKAGES_DIRECTORY.resolve(targetPackage).toFile());
         ProcessOutputGobbler output = getOutput(processBuilder.start());
@@ -118,9 +118,9 @@ public class StaticCodeAnalyzerTest {
                 .replaceAll("\\s*}\\s*", "}")
                 .replaceAll("\\s*\\[\\s*", "[")
                 .replaceAll("\\s*]\\s*", "]")
-                .replaceAll("\\n", "")
+                .replaceAll("\n", "")
                 .replaceAll(":\".*module-ballerina-os", ":\"module-ballerina-os");
-        return isWindows() ? normalizedJson.replaceAll("/", "\\\\") : normalizedJson;
+        return isWindows() ? normalizedJson.replaceAll("/", "\\\\\\\\") : normalizedJson;
     }
 
     private static boolean isWindows() {
