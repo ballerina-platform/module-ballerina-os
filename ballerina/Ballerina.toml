@@ -29,9 +29,3 @@ groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
 version = "1.9.1"
 path = "../test-utils/build/libs/os-test-utils-1.9.1-SNAPSHOT.jar"
-
-[[platform.java21.dependency]]
-groupId = "io.ballerina.stdlib"
-artifactId = "os-compiler-plugin"
-version = "1.9.1"
-path = "../compiler-plugin/build/libs/os-compiler-plugin-1.9.1-SNAPSHOT.jar"
