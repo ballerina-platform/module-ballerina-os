@@ -128,3 +128,4 @@ compileJava {
 }
 
 test.dependsOn ":os-ballerina:build"
+build.dependsOn ":os-ballerina:build"
