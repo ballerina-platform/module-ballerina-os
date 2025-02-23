@@ -20,10 +20,10 @@ package io.ballerina.stdlib.os.compiler;
 
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
-import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.projects.Document;
 import io.ballerina.projects.Module;
 import io.ballerina.projects.Package;
+import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 
 public class OSCompilerPluginUtil {
 
