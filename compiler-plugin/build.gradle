@@ -24,10 +24,6 @@ plugins {
 
 description = 'Ballerina - OS Compiler Plugin'
 
-configurations {
-    externalJars
-}
-
 dependencies {
     checkstyle project(':checkstyle')
     checkstyle "com.puppycrawl.tools:checkstyle:${checkstylePluginVersion}"
@@ -35,12 +31,13 @@ dependencies {
     implementation group: 'org.ballerinalang', name: 'ballerina-lang', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-tools-api', version: "${ballerinaLangVersion}"
     implementation group: 'org.ballerinalang', name: 'ballerina-parser', version: "${ballerinaLangVersion}"
-
     implementation group: 'io.ballerina.scan', name: 'scan-command', version: "${balScanVersion}"
+    implementation project(":os-native")
 }
 
+def excludePattern = '**/module-info.java'
 tasks.withType(Checkstyle) {
-    exclude '**/module-info.java'
+    exclude excludePattern
 }
 
 checkstyle {
@@ -48,9 +45,10 @@ checkstyle {
     configFile rootProject.file("build-config/checkstyle/build/checkstyle.xml")
     configProperties = ["suppressionFile" : file("${rootDir}/build-config/checkstyle/build/suppressions.xml")]
 }
-checkstyleTest.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
 
-spotbugsTest {
+checkstyleMain.dependsOn(":checkstyle:downloadCheckstyleRuleFiles")
+
+spotbugsMain {
     def classLoader = plugins["com.github.spotbugs"].class.classLoader
     def SpotBugsConfidence = classLoader.findLoadedClass("com.github.spotbugs.snom.Confidence")
     def SpotBugsEffort = classLoader.findLoadedClass("com.github.spotbugs.snom.Effort")
@@ -61,18 +59,10 @@ spotbugsTest {
         html.enabled true
         text.enabled = true
     }
-    def excludeFile = file("${project.projectDir}/spotbugs-exclude.xml")
+    def excludeFile = file("${rootDir}/spotbugs-exclude.xml")
     if(excludeFile.exists()) {
         excludeFilter = excludeFile
     }
-}
-
-spotbugsMain {
-    enabled false
-}
-
-checkstyleMain {
-    enabled false
 }
 
 compileJava {
@@ -83,3 +73,5 @@ compileJava {
         classpath = files()
     }
 }
+
+build.dependsOn ":os-native:build"
