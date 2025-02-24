@@ -25,4 +25,7 @@ public class Constants {
     private Constants() {}
 
     public static final String SCANNER_CONTEXT = "ScannerContext";
+    public static final String PUBLIC_QUALIFIER = "public";
+    public static final String OS = "os";
+    public static final String EXEC = "exec";
 }

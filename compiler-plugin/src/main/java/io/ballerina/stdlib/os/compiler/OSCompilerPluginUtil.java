@@ -18,35 +18,7 @@
 
 package io.ballerina.stdlib.os.compiler;
 
-import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
-import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
-import io.ballerina.projects.Document;
-import io.ballerina.projects.Module;
-import io.ballerina.projects.Package;
-import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
-
 public class OSCompilerPluginUtil {
 
     private OSCompilerPluginUtil() {}
-
-    public static boolean isOsExecCall(SyntaxNodeAnalysisContext context, FunctionCallExpressionNode functionCall) {
-        if (!(functionCall.functionName() instanceof SimpleNameReferenceNode functionNameNode)) {
-            return false;
-        }
-
-        String functionName = functionNameNode.name().text();
-        return functionName.equals("exec") && isOsModule(context);
-    }
-
-    private static boolean isOsModule(SyntaxNodeAnalysisContext context) {
-        Package currentPackage = context.currentPackage();
-        return currentPackage != null && currentPackage.moduleIds().stream()
-                .map(currentPackage::module)
-                .map(Module::moduleName)
-                .anyMatch(name -> name.toString().equals("os"));
-    }
-
-    public static Document getDocument(SyntaxNodeAnalysisContext context) {
-        return context.currentPackage().module(context.moduleId()).document(context.documentId());
-    }
 }

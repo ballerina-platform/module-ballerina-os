@@ -21,22 +21,38 @@ package io.ballerina.stdlib.os.compiler.staticcodeanalyzer;
 import io.ballerina.compiler.api.SemanticModel;
 import io.ballerina.compiler.api.symbols.Symbol;
 import io.ballerina.compiler.api.symbols.SymbolKind;
+import io.ballerina.compiler.syntax.tree.AssignmentStatementNode;
+import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
+import io.ballerina.compiler.syntax.tree.FunctionBodyBlockNode;
+import io.ballerina.compiler.syntax.tree.FunctionBodyNode;
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
+import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
+import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
+import io.ballerina.compiler.syntax.tree.MappingFieldNode;
+import io.ballerina.compiler.syntax.tree.NamedArgumentNode;
 import io.ballerina.compiler.syntax.tree.Node;
+import io.ballerina.compiler.syntax.tree.PositionalArgumentNode;
+import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
+import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
+import io.ballerina.compiler.syntax.tree.SpecificFieldNode;
+import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import io.ballerina.projects.Document;
 import io.ballerina.projects.plugins.AnalysisTask;
 import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.scan.Reporter;
-import io.ballerina.stdlib.os.compiler.OSCompilerPluginUtil;
 import io.ballerina.tools.diagnostics.Location;
 
-import static io.ballerina.stdlib.os.compiler.OSCompilerPluginUtil.isOsExecCall;
+import static io.ballerina.stdlib.os.compiler.Constants.EXEC;
+import static io.ballerina.stdlib.os.compiler.Constants.OS;
+import static io.ballerina.stdlib.os.compiler.Constants.PUBLIC_QUALIFIER;
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_CMD_ARGS;
 
 public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
+
     private final Reporter reporter;
 
     public OSCommandInjectionAnalyzer(Reporter reporter) {
@@ -49,11 +65,11 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
             return;
         }
 
-        if (!isOsExecCall(context, functionCall)) {
+        if (!isOsExecCall(functionCall)) {
             return;
         }
 
-        Document document = OSCompilerPluginUtil.getDocument(context);
+        Document document = getDocument(context);
 
         if (containsUserControlledInput(functionCall.arguments(), context)) {
             Location location = functionCall.location();
@@ -61,11 +77,54 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         }
     }
 
+    public static boolean isOsExecCall(FunctionCallExpressionNode functionCall) {
+        if (!(functionCall.functionName() instanceof QualifiedNameReferenceNode qNode)) {
+            return false;
+        }
+        return qNode.modulePrefix().text().equals(OS) && qNode.identifier().text().equals(EXEC);
+    }
+
+    public static Document getDocument(SyntaxNodeAnalysisContext context) {
+        return context.currentPackage().module(context.moduleId()).document(context.documentId());
+    }
+
     private boolean containsUserControlledInput(SeparatedNodeList<FunctionArgumentNode> arguments,
                                                 SyntaxNodeAnalysisContext context) {
-        for (Node arg : arguments) {
-            if (isUserControlledInput(arg, context)) {
-                return true;
+        for (FunctionArgumentNode arg : arguments) {
+            // Extract the expression inside the argument node
+            ExpressionNode expr;
+            if (arg instanceof PositionalArgumentNode posArg) {
+                expr = posArg.expression();
+            } else if (arg instanceof NamedArgumentNode namedArg) {
+                expr = namedArg.expression();
+            } else {
+                continue;
+            }
+
+            // Check if the extracted expression is a record (mapping constructor)
+            if (expr instanceof MappingConstructorExpressionNode mappingNode) {
+                for (MappingFieldNode field : mappingNode.fields()) {
+                    if (field instanceof SpecificFieldNode specificField) {
+                        String fieldName = specificField.fieldName().toString().trim();
+
+                        // Extract and check the `arguments` field
+                        if (fieldName.equals("arguments")) {
+                            ExpressionNode valueExpr = specificField.valueExpr().orElse(null);
+                            if (valueExpr instanceof ListConstructorExpressionNode listNode) {
+                                for (Node listItem : listNode.expressions()) {
+                                    if (isUserControlledInput(listItem, context)) {
+                                        return true;
+                                    }
+                                }
+                            } else if (valueExpr instanceof SimpleNameReferenceNode refNode) {
+                                // Check if the variable is assigned user-controlled input
+                                if (isUserControlledInput(refNode, context)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         return false;
@@ -88,34 +147,84 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         }
 
         if (symbol.kind() == SymbolKind.VARIABLE) {
-            return isDerivedFromParameter(node);
+            return isAssignedUserControlledInput(node, context);
         }
 
         return false;
     }
 
     private boolean isInsidePublicFunction(Node node) {
-        Node parent = node.parent();
+        Node parent = node;
         while (parent != null) {
             if (parent instanceof FunctionDefinitionNode functionNode) {
                 return functionNode.qualifierList().stream()
-                        .anyMatch(q -> q.text().equals("public"));
+                        .anyMatch(q -> q.text().equals(PUBLIC_QUALIFIER));
             }
-            parent = parent.parent();
+            parent = node.parent();
         }
         return false;
     }
 
-    private boolean isDerivedFromParameter(Node node) {
+    private boolean isAssignedUserControlledInput(Node node, SyntaxNodeAnalysisContext context) {
         Node parent = node.parent();
+
+        // Traverse up the AST to find where the variable is assigned
         while (parent != null) {
             if (parent instanceof FunctionDefinitionNode functionNode && isInsidePublicFunction(functionNode)) {
-                return functionNode.functionSignature().parameters().stream()
-                        .anyMatch(param -> param.toSourceCode().equals(node.toSourceCode()));
+                // Check if this variable is assigned from a function parameter
+                for (var param : functionNode.functionSignature().parameters()) {
+                    String paramName = ((RequiredParameterNode) param).paramName().get().text();
+
+                    // Check if this variable (node) is assigned from a function parameter
+                    if (isVariableAssignedFrom(node, paramName, functionNode, context)) {
+                        return true;
+                    }
+                }
             }
             parent = parent.parent();
         }
         return false;
     }
 
+    private boolean isVariableAssignedFrom(Node variable, String paramName,
+                                           FunctionDefinitionNode functionNode, SyntaxNodeAnalysisContext context) {
+        FunctionBodyNode body = functionNode.functionBody();
+
+        if (body instanceof FunctionBodyBlockNode blockBody) {
+            for (var statement : blockBody.statements()) {
+                if (statement instanceof VariableDeclarationNode varDecl) {
+                    if (varDecl.initializer().isPresent()) {
+                        ExpressionNode initializer = varDecl.initializer().get();
+                        if (initializer instanceof ListConstructorExpressionNode listExpr) {
+                            for (var listItem : listExpr.expressions()) {
+                                if (listItem.toSourceCode().equals(paramName)) {
+                                    return true;
+                                }
+                            }
+                        } else if (initializer.toSourceCode().equals(paramName)) {
+                            return true;
+                        }
+                    }
+                } else if (statement instanceof AssignmentStatementNode assignment) {
+                    String assignedVar = assignment.varRef().toSourceCode();
+                    ExpressionNode assignedValue = assignment.expression();
+
+                    if (assignedVar.equals(variable.toSourceCode())) {
+                        if (assignedValue.toSourceCode().equals(paramName)) {
+                            return true;
+                        }
+
+                        if (assignedValue instanceof ListConstructorExpressionNode listExpr) {
+                            for (var listItem : listExpr.expressions()) {
+                                if (listItem.toSourceCode().equals(paramName)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
