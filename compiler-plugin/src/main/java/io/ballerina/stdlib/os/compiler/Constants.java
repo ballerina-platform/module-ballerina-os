@@ -28,4 +28,5 @@ public class Constants {
     public static final String PUBLIC_QUALIFIER = "public";
     public static final String OS = "os";
     public static final String EXEC = "exec";
+    public static final String ARGUMENTS = "arguments";
 }

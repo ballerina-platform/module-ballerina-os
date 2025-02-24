@@ -46,6 +46,7 @@ import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.scan.Reporter;
 import io.ballerina.tools.diagnostics.Location;
 
+import static io.ballerina.stdlib.os.compiler.Constants.ARGUMENTS;
 import static io.ballerina.stdlib.os.compiler.Constants.EXEC;
 import static io.ballerina.stdlib.os.compiler.Constants.OS;
 import static io.ballerina.stdlib.os.compiler.Constants.PUBLIC_QUALIFIER;
@@ -108,7 +109,7 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                         String fieldName = specificField.fieldName().toString().trim();
 
                         // Extract and check the `arguments` field
-                        if (fieldName.equals("arguments")) {
+                        if (fieldName.equals(ARGUMENTS)) {
                             ExpressionNode valueExpr = specificField.valueExpr().orElse(null);
                             if (valueExpr instanceof ListConstructorExpressionNode listNode) {
                                 for (Node listItem : listNode.expressions()) {
