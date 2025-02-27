@@ -52,6 +52,9 @@ import static io.ballerina.stdlib.os.compiler.Constants.OS;
 import static io.ballerina.stdlib.os.compiler.Constants.PUBLIC_QUALIFIER;
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_CMD_ARGS;
 
+/**
+ * Analyzes function calls for potential command injection vulnerabilities.
+ */
 public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
 
     private final Reporter reporter;
