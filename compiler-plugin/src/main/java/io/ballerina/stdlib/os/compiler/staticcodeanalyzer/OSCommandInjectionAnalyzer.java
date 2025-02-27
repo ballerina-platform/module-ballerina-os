@@ -30,7 +30,6 @@ import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
-import io.ballerina.compiler.syntax.tree.MappingFieldNode;
 import io.ballerina.compiler.syntax.tree.NamedArgumentNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.PositionalArgumentNode;
@@ -39,6 +38,7 @@ import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
 import io.ballerina.compiler.syntax.tree.SeparatedNodeList;
 import io.ballerina.compiler.syntax.tree.SimpleNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.SpecificFieldNode;
+import io.ballerina.compiler.syntax.tree.StatementNode;
 import io.ballerina.compiler.syntax.tree.VariableDeclarationNode;
 import io.ballerina.projects.Document;
 import io.ballerina.projects.plugins.AnalysisTask;
@@ -92,41 +92,57 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
     private boolean containsUserControlledInput(SeparatedNodeList<FunctionArgumentNode> arguments,
                                                 SyntaxNodeAnalysisContext context) {
         for (FunctionArgumentNode arg : arguments) {
-            // Extract the expression inside the argument node
-            ExpressionNode expr;
-            if (arg instanceof PositionalArgumentNode posArg) {
-                expr = posArg.expression();
-            } else if (arg instanceof NamedArgumentNode namedArg) {
-                expr = namedArg.expression();
-            } else {
+            ExpressionNode expr = extractExpression(arg);
+            if (expr == null) {
                 continue;
             }
 
-            // Check if the extracted expression is a record (mapping constructor)
-            if (expr instanceof MappingConstructorExpressionNode mappingNode) {
-                for (MappingFieldNode field : mappingNode.fields()) {
-                    if (field instanceof SpecificFieldNode specificField) {
-                        String fieldName = specificField.fieldName().toString().trim();
-
-                        // Extract and check the `arguments` field
-                        if (fieldName.equals(ARGUMENTS)) {
-                            ExpressionNode valueExpr = specificField.valueExpr().orElse(null);
-                            if (valueExpr instanceof ListConstructorExpressionNode listNode) {
-                                for (Node listItem : listNode.expressions()) {
-                                    if (isUserControlledInput(listItem, context)) {
-                                        return true;
-                                    }
-                                }
-                            } else if (valueExpr instanceof SimpleNameReferenceNode refNode &&
-                                    isUserControlledInput(refNode, context)) {
-                                return true;
-                            }
-                        }
-                    }
-                }
+            if (isMappingConstructorWithUserControlledInput(expr, context)) {
+                return true;
             }
         }
         return false;
+    }
+
+    private ExpressionNode extractExpression(FunctionArgumentNode arg) {
+        return switch (arg) {
+            case PositionalArgumentNode posArg -> posArg.expression();
+            case NamedArgumentNode namedArg -> namedArg.expression();
+            default -> null;
+        };
+    }
+
+    private boolean isMappingConstructorWithUserControlledInput(ExpressionNode expr,
+                                                                SyntaxNodeAnalysisContext context) {
+        if (!(expr instanceof MappingConstructorExpressionNode mappingNode)) {
+            return false;
+        }
+
+        return mappingNode.fields().stream()
+                .filter(field -> field instanceof SpecificFieldNode specificField)
+                .map(field -> (SpecificFieldNode) field)
+                .anyMatch(specificField -> isUserControlledField(specificField, context));
+    }
+
+    private boolean isUserControlledField(SpecificFieldNode specificField,
+                                          SyntaxNodeAnalysisContext context) {
+        String fieldName = specificField.fieldName().toString().trim();
+        if (!fieldName.equals(ARGUMENTS)) {
+            return false;
+        }
+
+        ExpressionNode valueExpr = specificField.valueExpr().orElse(null);
+        return valueExpr != null && containsUserControlledInput(valueExpr, context);
+    }
+
+    private boolean containsUserControlledInput(ExpressionNode valueExpr,
+                                                SyntaxNodeAnalysisContext context) {
+        if (valueExpr instanceof ListConstructorExpressionNode listNode) {
+            return listNode.expressions().stream()
+                    .anyMatch(item -> isUserControlledInput(item, context));
+        }
+        return valueExpr instanceof SimpleNameReferenceNode refNode
+                && isUserControlledInput(refNode, context);
     }
 
     private boolean isUserControlledInput(Node node, SyntaxNodeAnalysisContext context) {
@@ -187,39 +203,52 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
 
         if (body instanceof FunctionBodyBlockNode blockBody) {
             for (var statement : blockBody.statements()) {
-                if (statement instanceof VariableDeclarationNode varDecl) {
-                    if (varDecl.initializer().isPresent()) {
-                        ExpressionNode initializer = varDecl.initializer().get();
-                        if (initializer instanceof ListConstructorExpressionNode listExpr) {
-                            for (var listItem : listExpr.expressions()) {
-                                if (listItem.toSourceCode().equals(paramName)) {
-                                    return true;
-                                }
-                            }
-                        } else if (initializer.toSourceCode().equals(paramName)) {
-                            return true;
-                        }
-                    }
-                } else if (statement instanceof AssignmentStatementNode assignment) {
-                    String assignedVar = assignment.varRef().toSourceCode();
-                    ExpressionNode assignedValue = assignment.expression();
-
-                    if (assignedVar.equals(variable.toSourceCode())) {
-                        if (assignedValue.toSourceCode().equals(paramName)) {
-                            return true;
-                        }
-
-                        if (assignedValue instanceof ListConstructorExpressionNode listExpr) {
-                            for (var listItem : listExpr.expressions()) {
-                                if (listItem.toSourceCode().equals(paramName)) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
+                if (isVariableDeclaredWithParam(statement, paramName)) {
+                    return true;
+                }
+                if (isVariableAssignedWithParam(statement, variable, paramName)) {
+                    return true;
                 }
             }
         }
+        return false;
+    }
+
+    private boolean isVariableDeclaredWithParam(StatementNode statement, String paramName) {
+        if (!(statement instanceof VariableDeclarationNode varDecl)) {
+            return false;
+        }
+
+        return varDecl.initializer()
+                .map(initializer -> isExpressionMatchingParam(initializer, paramName))
+                .orElse(false);
+    }
+
+    private boolean isVariableAssignedWithParam(StatementNode statement, Node variable, String paramName) {
+        if (!(statement instanceof AssignmentStatementNode assignment)) {
+            return false;
+        }
+
+        String assignedVar = assignment.varRef().toSourceCode();
+        ExpressionNode assignedValue = assignment.expression();
+
+        if (!assignedVar.equals(variable.toSourceCode())) {
+            return false;
+        }
+
+        return isExpressionMatchingParam(assignedValue, paramName);
+    }
+
+    private boolean isExpressionMatchingParam(ExpressionNode expression, String paramName) {
+        if (expression.toSourceCode().equals(paramName)) {
+            return true;
+        }
+
+        if (expression instanceof ListConstructorExpressionNode listExpr) {
+            return listExpr.expressions().stream()
+                    .anyMatch(item -> item.toSourceCode().equals(paramName));
+        }
+
         return false;
     }
 }
