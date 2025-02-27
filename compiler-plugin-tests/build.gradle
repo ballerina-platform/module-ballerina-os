@@ -73,7 +73,7 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
-    sourceSets project(':io-compiler-plugin').sourceSets.main
+    sourceSets project(':os-compiler-plugin').sourceSets.main
 }
 
 spotbugsTest {
