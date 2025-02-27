@@ -117,11 +117,9 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                                         return true;
                                     }
                                 }
-                            } else if (valueExpr instanceof SimpleNameReferenceNode refNode) {
-                                // Check if the variable is assigned user-controlled input
-                                if (isUserControlledInput(refNode, context)) {
-                                    return true;
-                                }
+                            } else if (valueExpr instanceof SimpleNameReferenceNode refNode &&
+                                    isUserControlledInput(refNode, context)) {
+                                return true;
                             }
                         }
                     }
@@ -173,7 +171,7 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                     String paramName = ((RequiredParameterNode) param).paramName().get().text();
 
                     // Check if this variable (node) is assigned from a function parameter
-                    if (isVariableAssignedFrom(node, paramName, functionNode, context)) {
+                    if (isVariableAssignedFrom(node, paramName, functionNode)) {
                         return true;
                     }
                 }
@@ -184,7 +182,7 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
     }
 
     private boolean isVariableAssignedFrom(Node variable, String paramName,
-                                           FunctionDefinitionNode functionNode, SyntaxNodeAnalysisContext context) {
+                                           FunctionDefinitionNode functionNode) {
         FunctionBodyNode body = functionNode.functionBody();
 
         if (body instanceof FunctionBodyBlockNode blockBody) {
