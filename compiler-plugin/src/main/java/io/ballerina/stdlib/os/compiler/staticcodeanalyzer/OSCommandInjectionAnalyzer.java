@@ -142,7 +142,7 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         }
 
         if (symbol.kind() == SymbolKind.VARIABLE) {
-            return isAssignedUserControlledInput(node, context);
+            return isAssignedUserControlledInput(node);
         }
 
         return false;
@@ -160,7 +160,7 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         return false;
     }
 
-    private boolean isAssignedUserControlledInput(Node node, SyntaxNodeAnalysisContext context) {
+    private boolean isAssignedUserControlledInput(Node node) {
         Node parent = node.parent();
 
         // Traverse up the AST to find where the variable is assigned
