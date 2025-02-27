@@ -133,11 +133,7 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
 
     private boolean isUserControlledInput(Node node, SyntaxNodeAnalysisContext context) {
         SemanticModel semanticModel = context.semanticModel();
-        if (semanticModel == null) {
-            return false;
-        }
-
-        if (semanticModel.symbol(node).isEmpty()) {
+        if (semanticModel == null && semanticModel.symbol(node).isEmpty()) {
             return false;
         }
 
