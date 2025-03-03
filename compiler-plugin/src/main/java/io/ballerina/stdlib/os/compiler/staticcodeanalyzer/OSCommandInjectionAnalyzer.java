@@ -28,8 +28,11 @@ import io.ballerina.compiler.syntax.tree.FunctionBodyBlockNode;
 import io.ballerina.compiler.syntax.tree.FunctionBodyNode;
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
+import io.ballerina.compiler.syntax.tree.ImportOrgNameNode;
+import io.ballerina.compiler.syntax.tree.ImportPrefixNode;
 import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
+import io.ballerina.compiler.syntax.tree.ModulePartNode;
 import io.ballerina.compiler.syntax.tree.NamedArgumentNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.PositionalArgumentNode;
@@ -46,7 +49,11 @@ import io.ballerina.projects.plugins.SyntaxNodeAnalysisContext;
 import io.ballerina.scan.Reporter;
 import io.ballerina.tools.diagnostics.Location;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static io.ballerina.stdlib.os.compiler.Constants.ARGUMENTS;
+import static io.ballerina.stdlib.os.compiler.Constants.BALLERINA_ORG;
 import static io.ballerina.stdlib.os.compiler.Constants.EXEC;
 import static io.ballerina.stdlib.os.compiler.Constants.OS;
 import static io.ballerina.stdlib.os.compiler.Constants.PUBLIC_QUALIFIER;
@@ -69,11 +76,25 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
             return;
         }
 
-        if (!isOsExecCall(functionCall)) {
-            return;
+        Document document = getDocument(context);
+        List<String> importPrefix = new ArrayList<>();
+        if (document.syntaxTree().rootNode() instanceof ModulePartNode modulePartNode) {
+            importPrefix = modulePartNode.imports().stream()
+                    .filter(importDeclarationNode -> {
+                        ImportOrgNameNode importOrgNameNode = importDeclarationNode.orgName().orElse(null);
+                        return importOrgNameNode != null && BALLERINA_ORG.equals(importOrgNameNode.orgName().text());
+                    })
+                    .filter(importDeclarationNode -> importDeclarationNode.moduleName().stream()
+                            .anyMatch(moduleNameNode -> OS.equals(moduleNameNode.text())))
+                    .map(importDeclarationNode -> {
+                        ImportPrefixNode importPrefixNode = importDeclarationNode.prefix().orElse(null);
+                        return importPrefixNode != null ? importPrefixNode.prefix().text() : OS;
+                    }).toList();
         }
 
-        Document document = getDocument(context);
+        if (!isOsExecCall(functionCall, importPrefix)) {
+            return;
+        }
 
         if (containsUserControlledInput(functionCall.arguments(), context)) {
             Location location = functionCall.location();
@@ -81,11 +102,11 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         }
     }
 
-    public static boolean isOsExecCall(FunctionCallExpressionNode functionCall) {
+    public static boolean isOsExecCall(FunctionCallExpressionNode functionCall, List<String> importPrefix) {
         if (!(functionCall.functionName() instanceof QualifiedNameReferenceNode qNode)) {
             return false;
         }
-        return qNode.modulePrefix().text().equals(OS) && qNode.identifier().text().equals(EXEC);
+        return importPrefix.contains(qNode.modulePrefix().text()) && qNode.identifier().text().equals(EXEC);
     }
 
     public static Document getDocument(SyntaxNodeAnalysisContext context) {

@@ -29,4 +29,5 @@ public class Constants {
     public static final String OS = "os";
     public static final String EXEC = "exec";
     public static final String ARGUMENTS = "arguments";
+    public static final String BALLERINA_ORG = "ballerina";
 }
