@@ -3,4 +3,4 @@ id = "os-compiler-plugin"
 class = "io.ballerina.stdlib.os.compiler.OSCompilerPlugin"
 
 [[dependency]]
-path = "../compiler-plugin/build/libs/os-compiler-plugin-1.9.1-SNAPSHOT.jar"
+path = "../compiler-plugin/build/libs/os-compiler-plugin-1.10.0-SNAPSHOT.jar"
