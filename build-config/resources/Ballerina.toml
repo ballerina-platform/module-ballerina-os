@@ -26,12 +26,6 @@ path = "./lib/io-native-@io.native.version@.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
-artifactId = "os-compiler-plugin"
-version = "@toml.version@"
-path = "../compiler-plugin/build/libs/os-compiler-plugin-@project.version@.jar"
-
-[[platform.java21.dependency]]
-groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
 version = "@toml.version@"
 path = "../test-utils/build/libs/os-test-utils-@project.version@.jar"
