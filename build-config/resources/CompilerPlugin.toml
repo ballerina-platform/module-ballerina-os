@@ -1,6 +1,0 @@
-[plugin]
-id = "os-compiler-plugin"
-class = "io.ballerina.stdlib.os.compiler.OSCompilerPlugin"
-
-[[dependency]]
-path = "../compiler-plugin/build/libs/os-compiler-plugin-@project.version@.jar"
