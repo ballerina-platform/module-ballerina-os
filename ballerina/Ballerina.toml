@@ -22,7 +22,7 @@ path = "../native/build/libs/os-native-1.10.0-SNAPSHOT.jar"
 groupId = "io.ballerina.stdlib"
 artifactId = "io-native"
 version = "1.8.0"
-path = "./lib/io-native-1.8.0-20250311-092700-6ed2eb5.jar"
+path = "./lib/io-native-1.8.0-20250311-132600-1ffe624.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
