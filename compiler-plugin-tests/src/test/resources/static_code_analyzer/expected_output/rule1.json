@@ -2,12 +2,32 @@
   {
     "location": {
       "filePath": "main.bal",
+      "startLine": 19,
+      "endLine": 19,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 705,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule1/main.bal",
+    "filePath": "/home/nureka/Documents/GitHub/module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule1/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
       "startLine": 23,
       "endLine": 26,
       "startColumn": 30,
       "endColumn": 6,
-      "startOffset": 868,
-      "length": 68
+      "startOffset": 891,
+      "length": 71
     },
     "rule": {
       "id": "ballerina/os:1",
@@ -17,6 +37,6 @@
     },
     "source": "BUILT_IN",
     "fileName": "rule1/main.bal",
-    "filePath": "/Users/sachink/Desktop/module-ballerina-os/module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule1/main.bal"
+    "filePath": "/home/nureka/Documents/GitHub/module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule1/main.bal"
   }
 ]
