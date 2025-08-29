@@ -83,12 +83,12 @@ public class StaticCodeAnalyzerTest {
             Assertions.assertRule(
                     rules,
                     "ballerina/os:1",
-                    "Avoid constructing system command arguments from user input without proper sanitization",
+                    AVOID_UNSANITIZED_CMD_ARGS.getDescription(),
                     VULNERABILITY);
             Assertions.assertRule(
                     rules,
                     "ballerina/os:2",
-                    "Avoid constructing environment variables from user input without proper sanitization",
+                    AVOID_UNSANITIZED_ENV_VARS.getDescription(),
                     VULNERABILITY);
 
             // validate the issues
