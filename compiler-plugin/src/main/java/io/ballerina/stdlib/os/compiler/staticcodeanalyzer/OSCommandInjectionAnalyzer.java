@@ -153,14 +153,22 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                 continue;
             }
 
-            if (((arg instanceof NamedArgumentNode named && named.argumentName().name().text().equals(VALUE))
-                    || (arg instanceof PositionalArgumentNode && idx == 1)) && isUserControlledInput(expr, context)) {
+            if ((isNamedValueArgument(arg) || isSecondPositionalArgument(arg, idx))
+                    && isUserControlledInput(expr, context)) {
                 return true;
             }
             idx++;
         }
 
         return false;
+    }
+
+    private boolean isNamedValueArgument(FunctionArgumentNode arg) {
+        return arg instanceof NamedArgumentNode named && named.argumentName().name().text().equals(VALUE);
+    }
+
+    private boolean isSecondPositionalArgument(FunctionArgumentNode arg, int idx) {
+        return arg instanceof PositionalArgumentNode && idx == 1;
     }
 
     private ExpressionNode extractExpression(FunctionArgumentNode arg) {
