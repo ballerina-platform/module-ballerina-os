@@ -51,6 +51,7 @@ import io.ballerina.tools.diagnostics.Location;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_CMD_ARGS;
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_ENV_VARS;
@@ -78,6 +79,8 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
             return;
         }
 
+        SemanticModel semanticModel = context.semanticModel();
+
         Document document = getDocument(context);
         List<String> importPrefix = new ArrayList<>();
         if (document.syntaxTree().rootNode() instanceof ModulePartNode modulePartNode) {
@@ -94,36 +97,51 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                     }).toList();
         }
 
-        if (isOsExecCall(functionCall, importPrefix)
+        if (isOsExecCall(functionCall, importPrefix, semanticModel)
                 && containsUserControlledInput(functionCall.arguments(), context)) {
             Location location = functionCall.location();
             this.reporter.reportIssue(document, location, AVOID_UNSANITIZED_CMD_ARGS.getId());
         }
 
-        if (isOsSetEnvCall(functionCall, importPrefix)
+        if (isOsSetEnvCall(functionCall, importPrefix, semanticModel)
                 && containsUntrustedEnvValue(functionCall.arguments(), context)) {
             Location location = functionCall.location();
             this.reporter.reportIssue(document, location, AVOID_UNSANITIZED_ENV_VARS.getId());
         }
     }
 
-    public static boolean isOsExecCall(FunctionCallExpressionNode functionCall, List<String> importPrefix) {
+    public boolean isOsExecCall(FunctionCallExpressionNode functionCall, List<String> importPrefix,
+                               SemanticModel semanticModel) {
+        return isOsFunctionCall(functionCall, importPrefix, EXEC, semanticModel);
+    }
+
+    public boolean isOsSetEnvCall(FunctionCallExpressionNode functionCall, List<String> importPrefix,
+                                 SemanticModel semanticModel) {
+        return isOsFunctionCall(functionCall, importPrefix, SET_ENV, semanticModel);
+    }
+
+    private boolean isOsFunctionCall(FunctionCallExpressionNode functionCall, List<String> importPrefix,
+                                            String functionName, SemanticModel semanticModel) {
         if (!(functionCall.functionName() instanceof QualifiedNameReferenceNode qNode)) {
             return false;
         }
 
-        return importPrefix.contains(qNode.modulePrefix().text()) && qNode.identifier().text().equals(EXEC);
-    }
+        Optional<Symbol> modulePrefixSymbol = semanticModel.symbol(qNode.modulePrefix());
+        Optional<Symbol> functionSymbol = semanticModel.symbol(qNode.identifier());
 
-    public static boolean isOsSetEnvCall(FunctionCallExpressionNode functionCall, List<String> importPrefix) {
-        if (!(functionCall.functionName() instanceof QualifiedNameReferenceNode qNode)) {
+        if (modulePrefixSymbol.isEmpty() || functionSymbol.isEmpty()) {
             return false;
         }
 
-        return importPrefix.contains(qNode.modulePrefix().text()) && qNode.identifier().text().equals(SET_ENV);
+        if (modulePrefixSymbol.get().getName().isEmpty() || functionSymbol.get().getName().isEmpty()) {
+            return false;
+        }
+
+        return importPrefix.contains(modulePrefixSymbol.get().getName().get())
+                && functionSymbol.get().getName().get().equals(functionName);
     }
 
-    public static Document getDocument(SyntaxNodeAnalysisContext context) {
+    public Document getDocument(SyntaxNodeAnalysisContext context) {
         return context.currentPackage().module(context.moduleId()).document(context.documentId());
     }
 
