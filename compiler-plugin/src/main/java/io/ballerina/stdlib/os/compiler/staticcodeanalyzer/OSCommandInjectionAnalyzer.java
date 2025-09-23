@@ -51,20 +51,23 @@ import io.ballerina.tools.diagnostics.Location;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static io.ballerina.stdlib.os.compiler.Constants.ARGUMENTS;
-import static io.ballerina.stdlib.os.compiler.Constants.BALLERINA_ORG;
-import static io.ballerina.stdlib.os.compiler.Constants.EXEC;
-import static io.ballerina.stdlib.os.compiler.Constants.OS;
-import static io.ballerina.stdlib.os.compiler.Constants.PUBLIC_QUALIFIER;
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_CMD_ARGS;
+import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_ENV_VARS;
 
 /**
  * Analyzes function calls for potential command injection vulnerabilities.
  */
 public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalysisContext> {
-
     private final Reporter reporter;
+    private static final String PUBLIC_QUALIFIER = "public";
+    private static final String OS = "os";
+    private static final String EXEC = "exec";
+    private static final String ARGUMENTS = "arguments";
+    private static final String BALLERINA_ORG = "ballerina";
+    private static final String SET_ENV = "setEnv";
+    private static final String VALUE = "value";
 
     public OSCommandInjectionAnalyzer(Reporter reporter) {
         this.reporter = reporter;
@@ -75,6 +78,8 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         if (!(context.node() instanceof FunctionCallExpressionNode functionCall)) {
             return;
         }
+
+        SemanticModel semanticModel = context.semanticModel();
 
         Document document = getDocument(context);
         List<String> importPrefix = new ArrayList<>();
@@ -92,24 +97,51 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                     }).toList();
         }
 
-        if (!isOsExecCall(functionCall, importPrefix)) {
-            return;
-        }
-
-        if (containsUserControlledInput(functionCall.arguments(), context)) {
+        if (isOsExecCall(functionCall, importPrefix, semanticModel)
+                && containsUserControlledInput(functionCall.arguments(), context)) {
             Location location = functionCall.location();
             this.reporter.reportIssue(document, location, AVOID_UNSANITIZED_CMD_ARGS.getId());
         }
+
+        if (isOsSetEnvCall(functionCall, importPrefix, semanticModel)
+                && containsUntrustedEnvValue(functionCall.arguments(), context)) {
+            Location location = functionCall.location();
+            this.reporter.reportIssue(document, location, AVOID_UNSANITIZED_ENV_VARS.getId());
+        }
     }
 
-    public static boolean isOsExecCall(FunctionCallExpressionNode functionCall, List<String> importPrefix) {
+    public boolean isOsExecCall(FunctionCallExpressionNode functionCall, List<String> importPrefix,
+                               SemanticModel semanticModel) {
+        return isOsFunctionCall(functionCall, importPrefix, EXEC, semanticModel);
+    }
+
+    public boolean isOsSetEnvCall(FunctionCallExpressionNode functionCall, List<String> importPrefix,
+                                 SemanticModel semanticModel) {
+        return isOsFunctionCall(functionCall, importPrefix, SET_ENV, semanticModel);
+    }
+
+    private boolean isOsFunctionCall(FunctionCallExpressionNode functionCall, List<String> importPrefix,
+                                            String functionName, SemanticModel semanticModel) {
         if (!(functionCall.functionName() instanceof QualifiedNameReferenceNode qNode)) {
             return false;
         }
-        return importPrefix.contains(qNode.modulePrefix().text()) && qNode.identifier().text().equals(EXEC);
+
+        Optional<Symbol> modulePrefixSymbol = semanticModel.symbol(qNode.modulePrefix());
+        Optional<Symbol> functionSymbol = semanticModel.symbol(qNode.identifier());
+
+        if (modulePrefixSymbol.isEmpty() || functionSymbol.isEmpty()) {
+            return false;
+        }
+
+        if (modulePrefixSymbol.get().getName().isEmpty() || functionSymbol.get().getName().isEmpty()) {
+            return false;
+        }
+
+        return importPrefix.contains(modulePrefixSymbol.get().getName().get())
+                && functionSymbol.get().getName().get().equals(functionName);
     }
 
-    public static Document getDocument(SyntaxNodeAnalysisContext context) {
+    public Document getDocument(SyntaxNodeAnalysisContext context) {
         return context.currentPackage().module(context.moduleId()).document(context.documentId());
     }
 
@@ -125,7 +157,36 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                 return true;
             }
         }
+
         return false;
+    }
+
+    private boolean containsUntrustedEnvValue(SeparatedNodeList<FunctionArgumentNode> arguments,
+                                              SyntaxNodeAnalysisContext context) {
+        int idx = 0;
+        for (FunctionArgumentNode arg : arguments) {
+            ExpressionNode expr = extractExpression(arg);
+            if (expr == null) {
+                idx++;
+                continue;
+            }
+
+            if ((isNamedValueArgument(arg) || isSecondPositionalArgument(arg, idx))
+                    && isUserControlledInput(expr, context)) {
+                return true;
+            }
+            idx++;
+        }
+
+        return false;
+    }
+
+    private boolean isNamedValueArgument(FunctionArgumentNode arg) {
+        return arg instanceof NamedArgumentNode named && named.argumentName().name().text().equals(VALUE);
+    }
+
+    private boolean isSecondPositionalArgument(FunctionArgumentNode arg, int idx) {
+        return arg instanceof PositionalArgumentNode && idx == 1;
     }
 
     private ExpressionNode extractExpression(FunctionArgumentNode arg) {
@@ -143,8 +204,8 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         }
 
         return mappingNode.fields().stream()
-                .filter(field -> field instanceof SpecificFieldNode specificField)
-                .map(field -> (SpecificFieldNode) field)
+                .filter(SpecificFieldNode.class::isInstance)
+                .map(SpecificFieldNode.class::cast)
                 .anyMatch(specificField -> isUserControlledField(specificField, context));
     }
 
@@ -156,7 +217,7 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
         }
 
         ExpressionNode valueExpr = specificField.valueExpr().orElse(null);
-        return valueExpr != null && containsUserControlledInput(valueExpr, context);
+        return containsUserControlledInput(valueExpr, context);
     }
 
     private boolean containsUserControlledInput(ExpressionNode valueExpr,
@@ -165,13 +226,14 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
             return listNode.expressions().stream()
                     .anyMatch(item -> isUserControlledInput(item, context));
         }
+
         return valueExpr instanceof SimpleNameReferenceNode refNode
                 && isUserControlledInput(refNode, context);
     }
 
     private boolean isUserControlledInput(Node node, SyntaxNodeAnalysisContext context) {
         SemanticModel semanticModel = context.semanticModel();
-        if (!semanticModel.symbol(node).isPresent()) {
+        if (semanticModel.symbol(node).isEmpty()) {
             return false;
         }
 
@@ -195,29 +257,31 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                 return functionNode.qualifierList().stream()
                         .anyMatch(q -> q.text().equals(PUBLIC_QUALIFIER));
             }
-            parent = node.parent();
+            parent = parent.parent();
         }
+
         return false;
     }
 
     private boolean isAssignedUserControlledInput(Node node) {
         Node parent = node.parent();
 
-        // Traverse up the AST to find where the variable is assigned
         while (parent != null) {
             if (parent instanceof FunctionDefinitionNode functionNode && isInsidePublicFunction(functionNode)) {
-                // Check if this variable is assigned from a function parameter
                 for (var param : functionNode.functionSignature().parameters()) {
-                    String paramName = ((RequiredParameterNode) param).paramName().get().text();
+                    if (param instanceof RequiredParameterNode requiredParam &&
+                            requiredParam.paramName().isPresent()) {
+                        String paramName = requiredParam.paramName().get().text();
 
-                    // Check if this variable (node) is assigned from a function parameter
-                    if (isVariableAssignedFrom(node, paramName, functionNode)) {
-                        return true;
+                        if (isVariableAssignedFrom(node, paramName, functionNode)) {
+                            return true;
+                        }
                     }
                 }
             }
             parent = parent.parent();
         }
+
         return false;
     }
 
@@ -230,11 +294,13 @@ public class OSCommandInjectionAnalyzer implements AnalysisTask<SyntaxNodeAnalys
                 if (isVariableDeclaredWithParam(statement, paramName)) {
                     return true;
                 }
+
                 if (isVariableAssignedWithParam(statement, variable, paramName)) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 

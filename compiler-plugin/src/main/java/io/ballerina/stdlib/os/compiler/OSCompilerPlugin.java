@@ -23,12 +23,11 @@ import io.ballerina.projects.plugins.CompilerPluginContext;
 import io.ballerina.scan.ScannerContext;
 import io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSStaticCodeAnalyzer;
 
-import static io.ballerina.stdlib.os.compiler.Constants.SCANNER_CONTEXT;
-
 /**
  * The compiler plugin implementation for Ballerina OS package.
  */
 public class OSCompilerPlugin extends CompilerPlugin {
+    private static final String SCANNER_CONTEXT = "ScannerContext";
 
     @Override
     public void init(CompilerPluginContext context) {

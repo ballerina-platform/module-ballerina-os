@@ -3,5 +3,10 @@
     "id":  1,
     "kind": "VULNERABILITY",
     "description": "Avoid constructing system command arguments from user input without proper sanitization"
+  },
+  {
+    "id":  2,
+    "kind": "VULNERABILITY",
+    "description": "Avoid constructing environment variables from user input without proper sanitization"
   }
 ]

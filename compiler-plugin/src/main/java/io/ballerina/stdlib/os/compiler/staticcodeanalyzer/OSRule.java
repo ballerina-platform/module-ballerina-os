@@ -27,8 +27,10 @@ import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.RuleFactory.cre
  * Represents static code rules specific to the Ballerina OS package.
  */
 public enum OSRule {
-    AVOID_UNSANITIZED_CMD_ARGS(createRule(1, "Avoid constructing system command arguments from user " +
-            "input without proper sanitization", VULNERABILITY));
+    AVOID_UNSANITIZED_CMD_ARGS(createRule(1, "Avoid constructing system command arguments from user input " +
+            "without proper sanitization", VULNERABILITY)),
+    AVOID_UNSANITIZED_ENV_VARS(createRule(2, "Avoid constructing environment variables from user input " +
+            "without proper sanitization", VULNERABILITY));
 
     private final Rule rule;
 
@@ -40,8 +42,8 @@ public enum OSRule {
         return this.rule.numericId();
     }
 
-    public Rule getRule() {
-        return this.rule;
+    public String getDescription() {
+        return this.rule.description();
     }
 
     @Override
