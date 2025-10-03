@@ -16,7 +16,7 @@ graalvmCompatible = true
 groupId = "io.ballerina.stdlib"
 artifactId = "os-native"
 version = "1.10.1"
-path = "../native/build/libs/os-native-1.10.1-SNAPSHOT.jar"
+path = "../native/build/libs/os-native-1.10.1.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
@@ -28,10 +28,10 @@ path = "./lib/io-native-1.8.0.jar"
 groupId = "io.ballerina.stdlib"
 artifactId = "os-compiler-plugin"
 version = "1.10.1"
-path = "../compiler-plugin/build/libs/os-compiler-plugin-1.10.1-SNAPSHOT.jar"
+path = "../compiler-plugin/build/libs/os-compiler-plugin-1.10.1.jar"
 
 [[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
 version = "1.10.1"
-path = "../test-utils/build/libs/os-test-utils-1.10.1-SNAPSHOT.jar"
+path = "../test-utils/build/libs/os-test-utils-1.10.1.jar"
