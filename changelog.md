@@ -1,7 +1,7 @@
 # Change Log
 This file contains all the notable changes done to the Ballerina OS package through the releases.
 
-## [Unreleased]
+## [1.10.1] - [2025-10-03]
 
 ### Added
 - [Add static code rules](https://github.com/ballerina-platform/ballerina-library/issues/7283)
