@@ -121,7 +121,7 @@ isolated function listEnvExtern() returns map<string> = @java:Method {
 
 # Executes an operating system command as a subprocess of the current process.
 # ```ballerina
-# os:Process|os:Error result = os:exec({value: "bal", arguments: ["run", filepath]}, BAL_CONFIG_FILE = "/abc/Config.toml");
+# os:Process|os:Error result = os:exec({value: "bal", arguments: ["run", filepath]}, BAL_CONFIG_FILES = "/abc/Config.toml");
 # ```
 #
 # + command - The command to be executed
