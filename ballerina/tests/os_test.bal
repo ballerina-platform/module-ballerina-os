@@ -252,7 +252,7 @@ function testExecNegative() returns error? {
             test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": CreateProcess error=2, " +
             "The system cannot find the file specified");
         } else {
-            test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": Exec failed, error: 2 (No such file or directory)");
+            test:assertEquals(process.message().trim(), "Failed to retrieve the process object: Cannot run program \"foo\": Exec failed, error: 2 (No such file or directory)");
         }
     } else {
         test:assertFail("Expected error message does not match");
