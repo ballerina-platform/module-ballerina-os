@@ -7,30 +7,30 @@ keywords = ["environment"]
 repository = "https://github.com/ballerina-platform/module-ballerina-os"
 icon = "icon.png"
 license = ["Apache-2.0"]
-distribution = "2201.14.0"
+distribution = "2201.12.0"
 
-[platform.java25]
+[platform.java21]
 graalvmCompatible = true
 
-[[platform.java25.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-native"
 version = "@toml.version@"
 path = "../native/build/libs/os-native-@project.version@.jar"
 
-[[platform.java25.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "io-native"
 version = "@io.version@"
 path = "./lib/io-native-@io.native.version@.jar"
 
-[[platform.java25.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-compiler-plugin"
 version = "@toml.version@"
 path = "../compiler-plugin/build/libs/os-compiler-plugin-@project.version@.jar"
 
-[[platform.java25.dependency]]
+[[platform.java21.dependency]]
 groupId = "io.ballerina.stdlib"
 artifactId = "os-test-utils"
 version = "@toml.version@"
