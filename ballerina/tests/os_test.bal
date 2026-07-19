@@ -252,7 +252,17 @@ function testExecNegative() returns error? {
             test:assertEquals(process.message(), "Failed to retrieve the process object: Cannot run program \"foo\": CreateProcess error=2, " +
             "The system cannot find the file specified");
         } else {
-            test:assertEquals(process.message().trim(), "Failed to retrieve the process object: Cannot run program \"foo\": Exec failed, error: 2 (No such file or directory)");
+            // The exact wording of the underlying exec failure differs between JDK versions
+            // (JDK 21: "error=2, No such file or directory", JDK 25: "Exec failed, error: 2
+            // (No such file or directory)"), so validate the parts that carry the actual meaning
+            // - the program name and the "file not found" cause - instead of the exact phrasing.
+            string errorMessage = process.message().trim();
+            test:assertTrue(errorMessage.includes("Failed to retrieve the process object: Cannot run program \"foo\":"),
+                "Unexpected error message: " + errorMessage);
+            test:assertTrue(errorMessage.includes("error=2") || errorMessage.includes("error: 2"),
+                "Unexpected error message: " + errorMessage);
+            test:assertTrue(errorMessage.includes("No such file or directory"),
+                "Unexpected error message: " + errorMessage);
         }
     } else {
         test:assertFail("Expected error message does not match");
