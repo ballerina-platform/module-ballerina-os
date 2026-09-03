@@ -22,6 +22,26 @@
   {
     "location": {
       "filePath": "main.bal",
+      "startLine": 38,
+      "endLine": 38,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 1247,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule2/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule2/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
       "startLine": 20,
       "endLine": 23,
       "startColumn": 29,

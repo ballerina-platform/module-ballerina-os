@@ -23,6 +23,7 @@ import io.ballerina.compiler.api.symbols.Symbol;
 import io.ballerina.compiler.api.symbols.SymbolKind;
 import io.ballerina.compiler.syntax.tree.AssignmentStatementNode;
 import io.ballerina.compiler.syntax.tree.BasicLiteralNode;
+import io.ballerina.compiler.syntax.tree.BlockStatementNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
 import io.ballerina.compiler.syntax.tree.FunctionBodyBlockNode;
@@ -38,6 +39,7 @@ import io.ballerina.compiler.syntax.tree.ModulePartNode;
 import io.ballerina.compiler.syntax.tree.ModuleVariableDeclarationNode;
 import io.ballerina.compiler.syntax.tree.NamedArgumentNode;
 import io.ballerina.compiler.syntax.tree.Node;
+import io.ballerina.compiler.syntax.tree.NodeList;
 import io.ballerina.compiler.syntax.tree.PositionalArgumentNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
@@ -217,34 +219,61 @@ public final class OsAnalysisUtils {
     }
 
     /**
-     * Resolve a simple name reference to the expression the variable was initialised with.
+     * Resolve a simple name reference to the value the variable last held before this point.
+     * <p>
+     * Taking the declaration's initialiser alone would read a stale value: after
+     * {@code string executable = "sh"; executable = "echo";} the call runs {@code echo}, and reporting on
+     * {@code sh} would be reporting a command the program never executes. Only writes that appear before the
+     * reference are considered, and the last of them wins.
      */
     private static Optional<ExpressionNode> resolveVariableInitializer(ExpressionNode expression) {
         if (expression.kind() != SyntaxKind.SIMPLE_NAME_REFERENCE) {
             return Optional.empty();
         }
         String variableName = expression.toSourceCode().trim();
+        int referenceOffset = expression.textRange().startOffset();
         Node current = expression.parent();
         while (current != null) {
-            if (current instanceof FunctionBodyBlockNode body) {
-                for (StatementNode statement : body.statements()) {
-                    if (statement instanceof VariableDeclarationNode declaration
-                            && declaresVariable(declaration.typedBindingPattern().toSourceCode(), variableName)) {
-                        return declaration.initializer();
-                    }
-                }
-            }
-            if (current instanceof ModulePartNode modulePart) {
+            Optional<ExpressionNode> resolved = Optional.empty();
+            if (current instanceof BlockStatementNode block) {
+                resolved = findLastWrite(block.statements(), variableName, referenceOffset);
+            } else if (current instanceof FunctionBodyBlockNode body) {
+                resolved = findLastWrite(body.statements(), variableName, referenceOffset);
+            } else if (current instanceof ModulePartNode modulePart) {
                 for (Node member : modulePart.members()) {
                     if (member instanceof ModuleVariableDeclarationNode declaration
                             && declaresVariable(declaration.typedBindingPattern().toSourceCode(), variableName)) {
-                        return declaration.initializer();
+                        resolved = declaration.initializer();
                     }
                 }
+            }
+            if (resolved.isPresent()) {
+                return resolved;
             }
             current = current.parent();
         }
         return Optional.empty();
+    }
+
+    /**
+     * Find the value the variable was last given by a declaration or an assignment appearing before the reference.
+     */
+    private static Optional<ExpressionNode> findLastWrite(NodeList<StatementNode> statements, String variableName,
+                                                          int referenceOffset) {
+        Optional<ExpressionNode> resolved = Optional.empty();
+        for (StatementNode statement : statements) {
+            if (statement.textRange().startOffset() >= referenceOffset) {
+                break;
+            }
+            if (statement instanceof VariableDeclarationNode declaration
+                    && declaresVariable(declaration.typedBindingPattern().toSourceCode(), variableName)) {
+                resolved = declaration.initializer();
+            } else if (statement instanceof AssignmentStatementNode assignment
+                    && variableName.equals(assignment.varRef().toSourceCode().trim())) {
+                resolved = Optional.of(assignment.expression());
+            }
+        }
+        return resolved;
     }
 
     private static boolean declaresVariable(String typedBindingPattern, String variableName) {
@@ -343,7 +372,7 @@ public final class OsAnalysisUtils {
             return false;
         }
         for (StatementNode statement : blockBody.statements()) {
-            if (isVariableDeclaredWithParam(statement, paramName)
+            if (isVariableDeclaredWithParam(statement, variable, paramName)
                     || isVariableAssignedWithParam(statement, variable, paramName)) {
                 return true;
             }
@@ -351,8 +380,19 @@ public final class OsAnalysisUtils {
         return false;
     }
 
-    private static boolean isVariableDeclaredWithParam(StatementNode statement, String paramName) {
-        return statement instanceof VariableDeclarationNode declaration && declaration.initializer()
+    /**
+     * Check whether the queried variable is the one this declaration initialises from a parameter.
+     * <p>
+     * Without the binding check, any declaration fed by a parameter would mark every variable in the function as
+     * user-controlled, so an unrelated safe value would be reported.
+     */
+    private static boolean isVariableDeclaredWithParam(StatementNode statement, Node variable, String paramName) {
+        if (!(statement instanceof VariableDeclarationNode declaration)
+                || !declaresVariable(declaration.typedBindingPattern().toSourceCode(),
+                variable.toSourceCode().trim())) {
+            return false;
+        }
+        return declaration.initializer()
                 .map(initializer -> isExpressionMatchingParam(initializer, paramName))
                 .orElse(false);
     }

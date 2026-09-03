@@ -22,6 +22,7 @@ import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OsFunctionContext;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OsAnalysisUtils.resolveStringValue;
 import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OsConstants.EXEC;
@@ -37,6 +38,12 @@ import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UN
  */
 public class AvoidUnqualifiedExecutablePathRule implements OsFunctionRule {
 
+    /**
+     * Windows resolves {@code C:tool.exe} against that drive's current directory rather than through
+     * {@code PATH}, so it is a relative path and not what this rule reports.
+     */
+    private static final Pattern DRIVE_RELATIVE = Pattern.compile("^[A-Za-z]:");
+
     @Override
     public void analyze(OsFunctionContext context) {
         Optional<ExpressionNode> value = context.getCommandFieldValue(VALUE_FIELD);
@@ -45,6 +52,7 @@ public class AvoidUnqualifiedExecutablePathRule implements OsFunctionRule {
         }
         boolean isUnqualified = resolveStringValue(value.get())
                 .filter(executable -> !executable.isEmpty())
+                .filter(executable -> !DRIVE_RELATIVE.matcher(executable).find())
                 .map(executable -> !executable.contains("/") && !executable.contains("\\"))
                 .orElse(false);
         if (isUnqualified) {

@@ -33,3 +33,12 @@ public function main() {
         io:println("Error setting environment variable: ", output);
     }
 }
+
+// Negative case - an unrelated declaration is fed by the parameter, but the value
+// passed to setEnv is not, so taint must not carry across to it
+public function setSafeEnv(string userInput) returns os:Error? {
+    string logged = userInput;
+    string safeValue = "production";
+    check os:setEnv("APP_MODE", safeValue);
+    return;
+}

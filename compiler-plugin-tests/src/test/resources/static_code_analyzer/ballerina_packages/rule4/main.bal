@@ -48,3 +48,12 @@ public function relativePathCommand() returns os:Process|error {
         arguments: []
     });
 }
+
+// Negative case - Windows resolves a drive-relative path against that drive's
+// current directory rather than through PATH
+public function driveRelativeCommand() returns os:Process|error {
+    return check os:exec({
+        value: "C:tool.exe",
+        arguments: []
+    });
+}

@@ -258,7 +258,7 @@ Running `sh -c` gives up the separation between a command and its arguments.
 
 `os:exec` takes the executable and its arguments separately, and that separation is what keeps an argument from being read as syntax. Invoking a shell with a command string throws it away: the argument becomes a script, and every metacharacter in it, such as `;`, `|` or `$()`, is interpreted again. A value that was safe as an argument becomes a command of its own.
 
-The rule reports a shell only when it is handed a command string, through `-c`, `/c` or the PowerShell equivalents. A shell invoked to run a script by path re-parses nothing and is not reported.
+The rule reports a shell only when it is handed a command string, through `-c`, `/c` or the PowerShell equivalents. A shell invoked to run a script *by path* is not reported, since no argument is re-parsed as syntax. That is not a statement that such a call is safe: the shell still reads and executes the script, so the script path and its contents have to be as trusted as the program itself.
 
 #### 5.3.2. What is the potential impact?
 
@@ -303,6 +303,8 @@ An executable named without a path is chosen by the environment rather than by t
 #### 5.4.1. Why this is an issue?
 
 A bare executable name is resolved through `PATH` at run time, so which program actually runs depends on the environment the service happens to start in. Anyone able to place a file earlier in `PATH`, or to set `PATH` itself, chooses the program that executes. `os:setEnv` allows exactly that from within the same program.
+
+A Windows drive-relative form such as `C:tool.exe` is resolved against that drive's current directory rather than through `PATH`, so it is a relative path and is not reported.
 
 #### 5.4.2. What is the potential impact?
 
