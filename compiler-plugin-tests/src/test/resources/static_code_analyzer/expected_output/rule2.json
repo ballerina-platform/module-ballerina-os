@@ -6,7 +6,7 @@
       "endLine": 19,
       "startColumn": 0,
       "endColumn": 6,
-      "startOffset": 705,
+      "startOffset": 686,
       "length": 6
     },
     "rule": {
@@ -26,8 +26,8 @@
       "endLine": 23,
       "startColumn": 29,
       "endColumn": 5,
-      "startOffset": 796,
-      "length": 84
+      "startOffset": 776,
+      "length": 81
     },
     "rule": {
       "id": "ballerina/os:2",

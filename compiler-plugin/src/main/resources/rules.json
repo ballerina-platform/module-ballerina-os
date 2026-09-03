@@ -1,12 +1,22 @@
 [
   {
-    "id":  1,
+    "id": 1,
     "kind": "VULNERABILITY",
     "description": "Avoid constructing system command arguments from user input without proper sanitization"
   },
   {
-    "id":  2,
+    "id": 2,
     "kind": "VULNERABILITY",
     "description": "Avoid constructing environment variables from user input without proper sanitization"
+  },
+  {
+    "id": 3,
+    "kind": "VULNERABILITY",
+    "description": "Avoid executing commands through a shell interpreter"
+  },
+  {
+    "id": 4,
+    "kind": "VULNERABILITY",
+    "description": "Avoid executing commands resolved through the PATH environment variable"
   }
 ]
