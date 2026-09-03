@@ -151,6 +151,13 @@ The following static code rules are applied to the OS module.
 
 An argument the caller controls changes what an executed command does.
 
+| Property              | Description |
+|-----------------------|-------------|
+| **Rule ID**           | ballerina/os:1 |
+| **Rule Kind**         | Vulnerability |
+| **CWE**               | [CWE-78](https://cwe.mitre.org/data/definitions/78.html), [CWE-88](https://cwe.mitre.org/data/definitions/88.html) |
+| **OWASP Top 10:2025** | [A05 Injection](https://owasp.org/Top10/2025/A05_2025-Injection/) |
+
 #### 5.1.1. Why this is an issue?
 
 `os:exec` runs a program with the arguments given to it. When one of those arguments comes from outside the program, the caller decides part of what the command does. Depending on the program being run, that can mean reading a different file, writing to a different destination, or enabling behaviour the code never intended to offer.
@@ -191,6 +198,13 @@ public function listDirectory(string userInput) returns os:Process|error {
 ### 5.2. Avoid constructing environment variables from user input without proper sanitization
 
 An environment variable set from untrusted input changes the behaviour of every process started afterwards.
+
+| Property              | Description |
+|-----------------------|-------------|
+| **Rule ID**           | ballerina/os:2 |
+| **Rule Kind**         | Vulnerability |
+| **CWE**               | [CWE-88](https://cwe.mitre.org/data/definitions/88.html), [CWE-454](https://cwe.mitre.org/data/definitions/454.html) |
+| **OWASP Top 10:2025** | [A05 Injection](https://owasp.org/Top10/2025/A05_2025-Injection/), [A06 Insecure Design](https://owasp.org/Top10/2025/A06_2025-Insecure_Design/) |
 
 #### 5.2.1. Why this is an issue?
 
@@ -233,6 +247,13 @@ public function configure(string userInput) returns os:Error? {
 
 Running `sh -c` gives up the separation between a command and its arguments.
 
+| Property              | Description |
+|-----------------------|-------------|
+| **Rule ID**           | ballerina/os:3 |
+| **Rule Kind**         | Vulnerability |
+| **CWE**               | [CWE-78](https://cwe.mitre.org/data/definitions/78.html) |
+| **OWASP Top 10:2025** | [A05 Injection](https://owasp.org/Top10/2025/A05_2025-Injection/) |
+
 #### 5.3.1. Why this is an issue?
 
 `os:exec` takes the executable and its arguments separately, and that separation is what keeps an argument from being read as syntax. Invoking a shell with a command string throws it away: the argument becomes a script, and every metacharacter in it, such as `;`, `|` or `$()`, is interpreted again. A value that was safe as an argument becomes a command of its own.
@@ -271,6 +292,13 @@ public function countFiles() returns os:Process|error {
 ### 5.4. Avoid executing commands resolved through the PATH environment variable
 
 An executable named without a path is chosen by the environment rather than by the code.
+
+| Property              | Description |
+|-----------------------|-------------|
+| **Rule ID**           | ballerina/os:4 |
+| **Rule Kind**         | Vulnerability |
+| **CWE**               | [CWE-426](https://cwe.mitre.org/data/definitions/426.html) |
+| **OWASP Top 10:2025** | [A05 Injection](https://owasp.org/Top10/2025/A05_2025-Injection/) |
 
 #### 5.4.1. Why this is an issue?
 
