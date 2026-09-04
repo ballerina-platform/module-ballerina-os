@@ -27,7 +27,6 @@ import io.ballerina.compiler.syntax.tree.BlockStatementNode;
 import io.ballerina.compiler.syntax.tree.ExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionArgumentNode;
 import io.ballerina.compiler.syntax.tree.FunctionBodyBlockNode;
-import io.ballerina.compiler.syntax.tree.FunctionBodyNode;
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.IdentifierToken;
@@ -40,6 +39,7 @@ import io.ballerina.compiler.syntax.tree.ModuleVariableDeclarationNode;
 import io.ballerina.compiler.syntax.tree.NamedArgumentNode;
 import io.ballerina.compiler.syntax.tree.Node;
 import io.ballerina.compiler.syntax.tree.NodeList;
+import io.ballerina.compiler.syntax.tree.NonTerminalNode;
 import io.ballerina.compiler.syntax.tree.PositionalArgumentNode;
 import io.ballerina.compiler.syntax.tree.QualifiedNameReferenceNode;
 import io.ballerina.compiler.syntax.tree.RequiredParameterNode;
@@ -265,12 +265,41 @@ public final class OsAnalysisUtils {
             if (statement.textRange().startOffset() >= referenceOffset) {
                 break;
             }
-            if (statement instanceof VariableDeclarationNode declaration
-                    && declaresVariable(declaration.typedBindingPattern().toSourceCode(), variableName)) {
-                resolved = declaration.initializer();
-            } else if (statement instanceof AssignmentStatementNode assignment
-                    && variableName.equals(assignment.varRef().toSourceCode().trim())) {
-                resolved = Optional.of(assignment.expression());
+            Optional<ExpressionNode> write = findWriteWithin(statement, variableName, referenceOffset);
+            if (write.isPresent()) {
+                resolved = write;
+            }
+        }
+        return resolved;
+    }
+
+    /**
+     * Find the last write to the variable within a statement, descending into any block it contains.
+     * <p>
+     * A write inside an {@code if} or a loop still assigns the variable, so a search limited to the top level of
+     * the function would read a value the call never sees. A conditional write is taken as effective: for a
+     * security rule, assuming the assignment happened is the safe direction.
+     */
+    private static Optional<ExpressionNode> findWriteWithin(Node node, String variableName, int referenceOffset) {
+        if (node.textRange().startOffset() >= referenceOffset) {
+            return Optional.empty();
+        }
+        if (node instanceof VariableDeclarationNode declaration
+                && declaresVariable(declaration.typedBindingPattern().toSourceCode(), variableName)) {
+            return declaration.initializer();
+        }
+        if (node instanceof AssignmentStatementNode assignment
+                && variableName.equals(assignment.varRef().toSourceCode().trim())) {
+            return Optional.of(assignment.expression());
+        }
+        if (!(node instanceof NonTerminalNode nonTerminal)) {
+            return Optional.empty();
+        }
+        Optional<ExpressionNode> resolved = Optional.empty();
+        for (Node child : nonTerminal.children()) {
+            Optional<ExpressionNode> write = findWriteWithin(child, variableName, referenceOffset);
+            if (write.isPresent()) {
+                resolved = write;
             }
         }
         return resolved;
@@ -347,62 +376,36 @@ public final class OsAnalysisUtils {
         return false;
     }
 
+    /**
+     * Check whether the value the variable last held before this point came from a public function parameter.
+     * <p>
+     * Resolution is bound to the reference: a write that appears after the call says nothing about the value the
+     * call used, and a write inside a nested block is still a write. Both are handled by resolving the last
+     * effective write through the enclosing scopes.
+     */
     private static boolean isAssignedUserControlledInput(Node node) {
-        Node parent = node.parent();
-        while (parent != null) {
-            if (parent instanceof FunctionDefinitionNode functionNode && isInsidePublicFunction(functionNode)) {
+        if (!(node instanceof ExpressionNode reference)) {
+            return false;
+        }
+        Optional<ExpressionNode> lastWrite = resolveVariableInitializer(reference);
+        if (lastWrite.isEmpty()) {
+            return false;
+        }
+        Node current = node.parent();
+        while (current != null) {
+            if (current instanceof FunctionDefinitionNode functionNode && isInsidePublicFunction(functionNode)) {
                 for (Node parameter : functionNode.functionSignature().parameters()) {
                     if (parameter instanceof RequiredParameterNode requiredParameter
                             && requiredParameter.paramName().isPresent()
-                            && isVariableAssignedFrom(node, requiredParameter.paramName().get().text(),
-                            functionNode)) {
+                            && isExpressionMatchingParam(lastWrite.get(),
+                            requiredParameter.paramName().get().text())) {
                         return true;
                     }
                 }
             }
-            parent = parent.parent();
+            current = current.parent();
         }
         return false;
-    }
-
-    private static boolean isVariableAssignedFrom(Node variable, String paramName,
-                                                  FunctionDefinitionNode functionNode) {
-        FunctionBodyNode body = functionNode.functionBody();
-        if (!(body instanceof FunctionBodyBlockNode blockBody)) {
-            return false;
-        }
-        for (StatementNode statement : blockBody.statements()) {
-            if (isVariableDeclaredWithParam(statement, variable, paramName)
-                    || isVariableAssignedWithParam(statement, variable, paramName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check whether the queried variable is the one this declaration initialises from a parameter.
-     * <p>
-     * Without the binding check, any declaration fed by a parameter would mark every variable in the function as
-     * user-controlled, so an unrelated safe value would be reported.
-     */
-    private static boolean isVariableDeclaredWithParam(StatementNode statement, Node variable, String paramName) {
-        if (!(statement instanceof VariableDeclarationNode declaration)
-                || !declaresVariable(declaration.typedBindingPattern().toSourceCode(),
-                variable.toSourceCode().trim())) {
-            return false;
-        }
-        return declaration.initializer()
-                .map(initializer -> isExpressionMatchingParam(initializer, paramName))
-                .orElse(false);
-    }
-
-    private static boolean isVariableAssignedWithParam(StatementNode statement, Node variable, String paramName) {
-        if (!(statement instanceof AssignmentStatementNode assignment)) {
-            return false;
-        }
-        return assignment.varRef().toSourceCode().equals(variable.toSourceCode())
-                && isExpressionMatchingParam(assignment.expression(), paramName);
     }
 
     private static boolean isExpressionMatchingParam(ExpressionNode expression, String paramName) {

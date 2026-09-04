@@ -105,6 +105,7 @@ public class StaticCodeAnalyzerTest {
     }
 
     private void validateIssues(OSRule rule, List<Issue> issues) {
+        int index;
         switch (rule) {
             case AVOID_UNSANITIZED_CMD_ARGS:
                 // The fixture runs `/bin/sh -c`, so it also triggers the shell invocation rule
@@ -115,9 +116,13 @@ public class StaticCodeAnalyzerTest {
                         23, 26, Source.BUILT_IN);
                 break;
             case AVOID_UNSANITIZED_ENV_VARS:
-                Assert.assertEquals(issues.size(), 1);
-                Assertions.assertIssue(issues, 0, "ballerina/os:2", "main.bal",
+                index = 0;
+                Assert.assertEquals(issues.size(), 2);
+                Assertions.assertIssue(issues, index++, "ballerina/os:2", "main.bal",
                         20, 23, Source.BUILT_IN);
+                // The parameter reaches the value through a write inside a nested block
+                Assertions.assertIssue(issues, index, "ballerina/os:2", "main.bal",
+                        60, 60, Source.BUILT_IN);
                 break;
             case AVOID_SHELL_INVOCATION:
                 Assert.assertEquals(issues.size(), 4);

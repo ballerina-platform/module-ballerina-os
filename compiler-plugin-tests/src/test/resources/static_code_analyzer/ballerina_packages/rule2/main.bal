@@ -42,3 +42,22 @@ public function setSafeEnv(string userInput) returns os:Error? {
     check os:setEnv("APP_MODE", safeValue);
     return;
 }
+
+// Negative case - the write happens after the call, so it says nothing about
+// the value the call actually used
+public function assignedAfterUse(string userInput) returns os:Error? {
+    string mode = "production";
+    check os:setEnv("APP_MODE", mode);
+    mode = userInput;
+    return;
+}
+
+// A write inside a nested block still reaches the call that follows it
+public function assignedInNestedBlock(string userInput, boolean override) returns os:Error? {
+    string mode = "production";
+    if override {
+        mode = userInput;
+    }
+    check os:setEnv("APP_MODE", mode);
+    return;
+}
