@@ -179,7 +179,7 @@ public class StaticCodeAnalyzerTest {
             ObjectMapper mapper = new ObjectMapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
             JsonNode node = mapper.readTree(json);
             String normalizedJson = mapper.writeValueAsString(node)
-                    .replaceAll(":\".*" + MODULE_BALLERINA_OS, ":\"" + MODULE_BALLERINA_OS);
+                    .replaceAll(":\"[^\"]*" + MODULE_BALLERINA_OS, ":\"" + MODULE_BALLERINA_OS);
             return isWindows() ? normalizedJson.replace("/", "\\\\") : normalizedJson;
         } catch (Exception ignore) {
             return json;
