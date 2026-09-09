@@ -135,19 +135,14 @@ public final class OsAnalysisUtils {
      */
     public static Optional<ExpressionNode> getArgument(FunctionCallExpressionNode functionCall, int position,
                                                        String parameterName) {
-        int positionalIndex = 0;
+        int[] positionalIndex = {0};
         for (FunctionArgumentNode argument : functionCall.arguments()) {
             switch (argument) {
-                case NamedArgumentNode namedArgument -> {
-                    if (parameterName.equals(namedArgument.argumentName().name().text())) {
-                        return Optional.of(namedArgument.expression());
-                    }
-                }
-                case PositionalArgumentNode positionalArgument -> {
-                    if (positionalIndex++ == position) {
-                        return Optional.of(positionalArgument.expression());
-                    }
-                }
+                case NamedArgumentNode namedArgument
+                        when parameterName.equals(namedArgument.argumentName().name().text()) ->
+                        { return Optional.of(namedArgument.expression()); }
+                case PositionalArgumentNode positionalArgument when positionalIndex[0]++ == position ->
+                        { return Optional.of(positionalArgument.expression()); }
                 default -> {
                     // A rest argument spreads a value that cannot be resolved without data-flow analysis
                 }
@@ -160,12 +155,13 @@ public final class OsAnalysisUtils {
      * Find a field by name within a record. Computed and spread fields cannot be resolved statically and are
      * skipped.
      *
-     * @param record    the record to search
-     * @param fieldName the field name to look for
+     * @param mappingConstructor the record to search
+     * @param fieldName          the field name to look for
      * @return the matching field if present, empty otherwise
      */
-    public static Optional<SpecificFieldNode> findField(MappingConstructorExpressionNode record, String fieldName) {
-        return record.fields().stream()
+    public static Optional<SpecificFieldNode> findField(MappingConstructorExpressionNode mappingConstructor,
+                                                          String fieldName) {
+        return mappingConstructor.fields().stream()
                 .filter(field -> field.kind() == SyntaxKind.SPECIFIC_FIELD)
                 .map(field -> (SpecificFieldNode) field)
                 .filter(field -> matchesFieldName(field.fieldName(), fieldName))
@@ -232,27 +228,40 @@ public final class OsAnalysisUtils {
         }
         String variableName = expression.toSourceCode().trim();
         int referenceOffset = expression.textRange().startOffset();
-        Node current = expression.parent();
-        while (current != null) {
-            Optional<ExpressionNode> resolved = Optional.empty();
-            if (current instanceof BlockStatementNode block) {
-                resolved = findLastWrite(block.statements(), variableName, referenceOffset);
-            } else if (current instanceof FunctionBodyBlockNode body) {
-                resolved = findLastWrite(body.statements(), variableName, referenceOffset);
-            } else if (current instanceof ModulePartNode modulePart) {
-                for (Node member : modulePart.members()) {
-                    if (member instanceof ModuleVariableDeclarationNode declaration
-                            && declaresVariable(declaration.typedBindingPattern().toSourceCode(), variableName)) {
-                        resolved = declaration.initializer();
-                    }
-                }
-            }
+        for (Node scope = expression.parent(); scope != null; scope = scope.parent()) {
+            Optional<ExpressionNode> resolved = resolveInScope(scope, variableName, referenceOffset);
             if (resolved.isPresent()) {
                 return resolved;
             }
-            current = current.parent();
         }
         return Optional.empty();
+    }
+
+    /**
+     * Resolve the variable's last write within a single enclosing scope, without walking further up the tree.
+     */
+    private static Optional<ExpressionNode> resolveInScope(Node scope, String variableName, int referenceOffset) {
+        if (scope instanceof BlockStatementNode block) {
+            return findLastWrite(block.statements(), variableName, referenceOffset);
+        }
+        if (scope instanceof FunctionBodyBlockNode body) {
+            return findLastWrite(body.statements(), variableName, referenceOffset);
+        }
+        if (scope instanceof ModulePartNode modulePart) {
+            return findModuleLevelWrite(modulePart, variableName);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<ExpressionNode> findModuleLevelWrite(ModulePartNode modulePart, String variableName) {
+        Optional<ExpressionNode> resolved = Optional.empty();
+        for (Node member : modulePart.members()) {
+            if (member instanceof ModuleVariableDeclarationNode declaration
+                    && declaresVariable(declaration.typedBindingPattern().toSourceCode(), variableName)) {
+                resolved = declaration.initializer();
+            }
+        }
+        return resolved;
     }
 
     /**
