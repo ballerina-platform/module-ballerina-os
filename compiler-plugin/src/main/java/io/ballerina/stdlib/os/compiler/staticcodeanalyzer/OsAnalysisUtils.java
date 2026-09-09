@@ -139,10 +139,12 @@ public final class OsAnalysisUtils {
         for (FunctionArgumentNode argument : functionCall.arguments()) {
             switch (argument) {
                 case NamedArgumentNode namedArgument
-                        when parameterName.equals(namedArgument.argumentName().name().text()) ->
-                        { return Optional.of(namedArgument.expression()); }
-                case PositionalArgumentNode positionalArgument when positionalIndex[0]++ == position ->
-                        { return Optional.of(positionalArgument.expression()); }
+                        when parameterName.equals(namedArgument.argumentName().name().text()) -> {
+                    return Optional.of(namedArgument.expression());
+                }
+                case PositionalArgumentNode positionalArgument when positionalIndex[0]++ == position -> {
+                    return Optional.of(positionalArgument.expression());
+                }
                 default -> {
                     // A rest argument spreads a value that cannot be resolved without data-flow analysis
                 }
