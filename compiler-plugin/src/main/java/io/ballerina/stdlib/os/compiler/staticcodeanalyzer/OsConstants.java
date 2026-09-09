@@ -18,26 +18,25 @@
 
 package io.ballerina.stdlib.os.compiler.staticcodeanalyzer;
 
-import io.ballerina.projects.plugins.CodeAnalysisContext;
-import io.ballerina.projects.plugins.CodeAnalyzer;
-import io.ballerina.scan.Reporter;
-
-import java.util.List;
-
-import static io.ballerina.compiler.syntax.tree.SyntaxKind.FUNCTION_CALL;
-
 /**
- * The static code analyzer implementation for Ballerina OS package.
+ * Names from the {@code ballerina/os} API that the analysis rules match against.
  */
-public class OSStaticCodeAnalyzer extends CodeAnalyzer {
-    private final Reporter reporter;
+public final class OsConstants {
 
-    public OSStaticCodeAnalyzer(Reporter reporter) {
-        this.reporter = reporter;
-    }
+    public static final String OS = "os";
+    public static final String BALLERINA_ORG = "ballerina";
 
-    @Override
-    public void init(CodeAnalysisContext analysisContext) {
-        analysisContext.addSyntaxNodeAnalysisTask(new OsFunctionCallAnalyzer(reporter), List.of(FUNCTION_CALL));
+    public static final String EXEC = "exec";
+    public static final String SET_ENV = "setEnv";
+
+    public static final String COMMAND_PARAM = "command";
+    public static final String VALUE_PARAM = "value";
+    public static final int COMMAND_POSITION = 0;
+    public static final int VALUE_POSITION = 1;
+
+    public static final String VALUE_FIELD = "value";
+    public static final String ARGUMENTS_FIELD = "arguments";
+
+    private OsConstants() {
     }
 }

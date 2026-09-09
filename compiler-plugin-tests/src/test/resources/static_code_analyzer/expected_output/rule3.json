@@ -1,0 +1,202 @@
+[
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 19,
+      "endLine": 19,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 751,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 27,
+      "endLine": 27,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 985,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 37,
+      "endLine": 37,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 1268,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 45,
+      "endLine": 45,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 1505,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 53,
+      "endLine": 53,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 1751,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 62,
+      "endLine": 62,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 2041,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 20,
+      "endLine": 23,
+      "startColumn": 17,
+      "endColumn": 6,
+      "startOffset": 826,
+      "length": 83
+    },
+    "rule": {
+      "id": "ballerina/os:3",
+      "numericId": 3,
+      "description": "Avoid executing commands through a shell interpreter",
+      "ruleKind": "VULNERABILITY"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 30,
+      "endLine": 33,
+      "startColumn": 17,
+      "endColumn": 6,
+      "startOffset": 1156,
+      "length": 72
+    },
+    "rule": {
+      "id": "ballerina/os:3",
+      "numericId": 3,
+      "description": "Avoid executing commands through a shell interpreter",
+      "ruleKind": "VULNERABILITY"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 38,
+      "endLine": 41,
+      "startColumn": 17,
+      "endColumn": 6,
+      "startOffset": 1350,
+      "length": 75
+    },
+    "rule": {
+      "id": "ballerina/os:3",
+      "numericId": 3,
+      "description": "Avoid executing commands through a shell interpreter",
+      "ruleKind": "VULNERABILITY"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 39,
+      "endLine": 39,
+      "startColumn": 15,
+      "endColumn": 24,
+      "startOffset": 1375,
+      "length": 9
+    },
+    "rule": {
+      "id": "ballerina/os:4",
+      "numericId": 4,
+      "description": "Avoid executing commands resolved through the PATH environment variable",
+      "ruleKind": "VULNERABILITY"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule3/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule3/main.bal"
+  }
+]

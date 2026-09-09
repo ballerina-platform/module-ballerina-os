@@ -6,7 +6,67 @@
       "endLine": 19,
       "startColumn": 0,
       "endColumn": 6,
-      "startOffset": 705,
+      "startOffset": 686,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule2/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule2/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 38,
+      "endLine": 38,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 1247,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule2/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule2/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 47,
+      "endLine": 47,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 1553,
+      "length": 6
+    },
+    "rule": {
+      "id": "ballerina:3",
+      "numericId": 3,
+      "description": "Non isolated public function",
+      "ruleKind": "CODE_SMELL"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule2/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule2/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 55,
+      "endLine": 55,
+      "startColumn": 0,
+      "endColumn": 6,
+      "startOffset": 1804,
       "length": 6
     },
     "rule": {
@@ -26,8 +86,28 @@
       "endLine": 23,
       "startColumn": 29,
       "endColumn": 5,
-      "startOffset": 796,
-      "length": 84
+      "startOffset": 776,
+      "length": 81
+    },
+    "rule": {
+      "id": "ballerina/os:2",
+      "numericId": 2,
+      "description": "Avoid constructing environment variables from user input without proper sanitization",
+      "ruleKind": "VULNERABILITY"
+    },
+    "source": "BUILT_IN",
+    "fileName": "rule2/main.bal",
+    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule2/main.bal"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 60,
+      "endLine": 60,
+      "startColumn": 10,
+      "endColumn": 37,
+      "startOffset": 1990,
+      "length": 27
     },
     "rule": {
       "id": "ballerina/os:2",
