@@ -97,6 +97,14 @@ release {
     }
 }
 
-tasks.named('build') {
-    dependsOn('os-ballerina:build')
+if (tasks.names.contains('build')) {
+    tasks.named('build') {
+        dependsOn('os-ballerina:build')
+
+    }
+} else {
+    tasks.register('build') {
+        dependsOn('os-ballerina:build')
+
+    }
 }
