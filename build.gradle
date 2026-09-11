@@ -97,6 +97,6 @@ release {
     }
 }
 
-task build {
+tasks.named('build') {
     dependsOn('os-ballerina:build')
 }
