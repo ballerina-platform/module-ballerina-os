@@ -132,7 +132,7 @@
     "rule": {
       "id": "ballerina/os:3",
       "numericId": 3,
-      "description": "Avoid executing commands through a shell interpreter",
+      "description": "A command is executed through a shell interpreter using a command string.",
       "ruleKind": "VULNERABILITY"
     },
     "source": "BUILT_IN",
@@ -152,7 +152,7 @@
     "rule": {
       "id": "ballerina/os:3",
       "numericId": 3,
-      "description": "Avoid executing commands through a shell interpreter",
+      "description": "A command is executed through a shell interpreter using a command string.",
       "ruleKind": "VULNERABILITY"
     },
     "source": "BUILT_IN",
@@ -172,7 +172,7 @@
     "rule": {
       "id": "ballerina/os:3",
       "numericId": 3,
-      "description": "Avoid executing commands through a shell interpreter",
+      "description": "A command is executed through a shell interpreter using a command string.",
       "ruleKind": "VULNERABILITY"
     },
     "source": "BUILT_IN",
@@ -192,7 +192,7 @@
     "rule": {
       "id": "ballerina/os:4",
       "numericId": 4,
-      "description": "Avoid executing commands resolved through the PATH environment variable",
+      "description": "An executable is invoked by name and resolved through the PATH environment variable.",
       "ruleKind": "VULNERABILITY"
     },
     "source": "BUILT_IN",

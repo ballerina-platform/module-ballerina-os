@@ -27,13 +27,14 @@ import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.RuleFactory.cre
  * Represents static code rules specific to the Ballerina OS package.
  */
 public enum OSRule {
-    AVOID_UNSANITIZED_CMD_ARGS(createRule(1, "Avoid constructing system command arguments from user input " +
-            "without proper sanitization", VULNERABILITY)),
-    AVOID_UNSANITIZED_ENV_VARS(createRule(2, "Avoid constructing environment variables from user input " +
-            "without proper sanitization", VULNERABILITY)),
-    AVOID_SHELL_INVOCATION(createRule(3, "Avoid executing commands through a shell interpreter", VULNERABILITY)),
-    AVOID_UNQUALIFIED_EXECUTABLE_PATH(createRule(4, "Avoid executing commands resolved through the PATH " +
-            "environment variable", VULNERABILITY));
+    AVOID_UNSANITIZED_CMD_ARGS(createRule(1,
+            "A system command argument is built from user input without sanitization.", VULNERABILITY)),
+    AVOID_UNSANITIZED_ENV_VARS(createRule(2,
+            "An environment variable value is built from user input without sanitization.", VULNERABILITY)),
+    AVOID_SHELL_INVOCATION(createRule(3,
+            "A command is executed through a shell interpreter using a command string.", VULNERABILITY)),
+    AVOID_UNQUALIFIED_EXECUTABLE_PATH(createRule(4,
+            "An executable is invoked by name and resolved through the PATH environment variable.", VULNERABILITY));
 
     private final Rule rule;
 
