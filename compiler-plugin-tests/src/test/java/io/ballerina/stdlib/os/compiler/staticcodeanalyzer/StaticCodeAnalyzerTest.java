@@ -41,14 +41,10 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import static io.ballerina.scan.RuleKind.VULNERABILITY;
-import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_CMD_ARGS;
-import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OSRule.AVOID_UNSANITIZED_ENV_VARS;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class StaticCodeAnalyzerTest {
@@ -63,10 +59,36 @@ public class StaticCodeAnalyzerTest {
 
     @Test
     public void validateRulesJson() throws IOException {
-        String expectedRules = "[" + Arrays.stream(OSRule.values())
-                .map(OSRule::toString).collect(Collectors.joining(",")) + "]";
-        String actualRules = Files.readString(JSON_RULES_FILE_PATH);
-        assertJsonEqual(actualRules, expectedRules);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rulesNode = mapper.readTree(Files.readString(JSON_RULES_FILE_PATH));
+        Assert.assertTrue(rulesNode.isArray());
+        Assert.assertEquals(rulesNode.size(), OSRule.values().length);
+        for (OSRule rule : OSRule.values()) {
+            JsonNode ruleNode = findRuleNode(rulesNode, rule.getId());
+            Assert.assertNotNull(ruleNode, "Rule with id " + rule.getId() + " not found in rules.json");
+            Assert.assertEquals(ruleNode.path("kind").asText(), VULNERABILITY.name());
+            Assert.assertEquals(ruleNode.path("description").asText(), rule.getDescription());
+            Assert.assertFalse(ruleNode.path("name").asText().isBlank(),
+                    "Rule " + rule.getId() + " is missing a name");
+            Assert.assertFalse(ruleNode.path("severity").asText().isBlank(),
+                    "Rule " + rule.getId() + " is missing a severity");
+            Assert.assertFalse(ruleNode.path("fullDescription").asText().isBlank(),
+                    "Rule " + rule.getId() + " is missing a fullDescription");
+            Assert.assertTrue(ruleNode.path("tags").isArray() && !ruleNode.path("tags").isEmpty(),
+                    "Rule " + rule.getId() + " is missing tags");
+            Assert.assertTrue(ruleNode.path("standards").path("cwe").isArray()
+                            && !ruleNode.path("standards").path("cwe").isEmpty(),
+                    "Rule " + rule.getId() + " is missing CWE standards");
+        }
+    }
+
+    private JsonNode findRuleNode(JsonNode rulesNode, int id) {
+        for (JsonNode ruleNode : rulesNode) {
+            if (ruleNode.path("id").asInt() == id) {
+                return ruleNode;
+            }
+        }
+        return null;
     }
 
     @Test
@@ -101,29 +123,49 @@ public class StaticCodeAnalyzerTest {
     }
 
     private void validateRules(List<Rule> rules) {
-        Assertions.assertRule(
-                rules,
-                "ballerina/os:1",
-                AVOID_UNSANITIZED_CMD_ARGS.getDescription(),
-                VULNERABILITY);
-        Assertions.assertRule(
-                rules,
-                "ballerina/os:2",
-                AVOID_UNSANITIZED_ENV_VARS.getDescription(),
-                VULNERABILITY);
+        for (OSRule rule : OSRule.values()) {
+            Assertions.assertRule(rules, "ballerina/os:" + rule.getId(), rule.getDescription(), VULNERABILITY);
+        }
     }
 
     private void validateIssues(OSRule rule, List<Issue> issues) {
+        int index;
         switch (rule) {
             case AVOID_UNSANITIZED_CMD_ARGS:
-                Assert.assertEquals(issues.size(), 1);
+                // The fixture runs `/bin/sh -c`, so it also triggers the shell invocation rule
+                Assert.assertEquals(issues.size(), 2);
                 Assertions.assertIssue(issues, 0, "ballerina/os:1", "main.bal",
+                        23, 26, Source.BUILT_IN);
+                Assertions.assertIssue(issues, 1, "ballerina/os:3", "main.bal",
                         23, 26, Source.BUILT_IN);
                 break;
             case AVOID_UNSANITIZED_ENV_VARS:
-                Assert.assertEquals(issues.size(), 1);
-                Assertions.assertIssue(issues, 0, "ballerina/os:2", "main.bal",
+                index = 0;
+                Assert.assertEquals(issues.size(), 2);
+                Assertions.assertIssue(issues, index++, "ballerina/os:2", "main.bal",
                         20, 23, Source.BUILT_IN);
+                // The parameter reaches the value through a write inside a nested block
+                Assertions.assertIssue(issues, index, "ballerina/os:2", "main.bal",
+                        60, 60, Source.BUILT_IN);
+                break;
+            case AVOID_SHELL_INVOCATION:
+                Assert.assertEquals(issues.size(), 4);
+                Assertions.assertIssue(issues, 0, "ballerina/os:3", "main.bal",
+                        20, 23, Source.BUILT_IN);
+                Assertions.assertIssue(issues, 1, "ballerina/os:3", "main.bal",
+                        30, 33, Source.BUILT_IN);
+                Assertions.assertIssue(issues, 2, "ballerina/os:3", "main.bal",
+                        38, 41, Source.BUILT_IN);
+                // `cmd.exe` carries no path, so it is also resolved through PATH
+                Assertions.assertIssue(issues, 3, "ballerina/os:4", "main.bal",
+                        39, 39, Source.BUILT_IN);
+                break;
+            case AVOID_UNQUALIFIED_EXECUTABLE_PATH:
+                Assert.assertEquals(issues.size(), 2);
+                Assertions.assertIssue(issues, 0, "ballerina/os:4", "main.bal",
+                        21, 21, Source.BUILT_IN);
+                Assertions.assertIssue(issues, 1, "ballerina/os:4", "main.bal",
+                        30, 30, Source.BUILT_IN);
                 break;
             default:
                 Assert.fail("Unhandled rule in validateIssues: " + rule);
@@ -161,7 +203,7 @@ public class StaticCodeAnalyzerTest {
             ObjectMapper mapper = new ObjectMapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
             JsonNode node = mapper.readTree(json);
             String normalizedJson = mapper.writeValueAsString(node)
-                    .replaceAll(":\".*" + MODULE_BALLERINA_OS, ":\"" + MODULE_BALLERINA_OS);
+                    .replaceAll(":\"[^\"]*" + MODULE_BALLERINA_OS, ":\"" + MODULE_BALLERINA_OS);
             return isWindows() ? normalizedJson.replace("/", "\\\\") : normalizedJson;
         } catch (Exception ignore) {
             return json;

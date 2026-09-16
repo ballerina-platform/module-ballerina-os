@@ -1,12 +1,96 @@
 [
   {
-    "id":  1,
+    "id": 1,
     "kind": "VULNERABILITY",
-    "description": "Avoid constructing system command arguments from user input without proper sanitization"
+    "name": "Avoid constructing system command arguments from user input without proper sanitization",
+    "severity": "BLOCKER",
+    "description": "A system command argument is built from user input without sanitization.",
+    "fullDescription": "When user-controlled input is used to build the arguments of a system command, an attacker can inject additional arguments or shell metacharacters and run commands of their choosing with the privileges of the service. Pass arguments as a list rather than a constructed string, and validate the input against an allow-list.",
+    "tags": [
+      "os",
+      "injection"
+    ],
+    "standards": {
+      "cwe": [
+        78,
+        88
+      ],
+      "owasp": [
+        {
+          "year": 2025,
+          "categories": [5]
+        }
+      ]
+    }
   },
   {
-    "id":  2,
+    "id": 2,
     "kind": "VULNERABILITY",
-    "description": "Avoid constructing environment variables from user input without proper sanitization"
+    "name": "Avoid constructing environment variables from user input without proper sanitization",
+    "severity": "MEDIUM",
+    "description": "An environment variable value is built from user input without sanitization.",
+    "fullDescription": "Setting an environment variable from user-controlled input lets an attacker influence the behaviour of the current process and any child process it starts, including variables that change library loading or interpreter behaviour. Validate the input against an allow-list before using it.",
+    "tags": [
+      "os",
+      "injection"
+    ],
+    "standards": {
+      "cwe": [
+        454,
+        15
+      ],
+      "owasp": [
+        {
+          "year": 2025,
+          "categories": [2, 6]
+        }
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "kind": "VULNERABILITY",
+    "name": "Avoid executing commands through a shell interpreter",
+    "severity": "HIGH",
+    "description": "A command is executed through a shell interpreter using a command string.",
+    "fullDescription": "Running a shell with a command string, through -c, /c, or the PowerShell equivalents, causes every argument to be re-parsed as shell syntax, so metacharacters such as ;, |, or $() are interpreted again and any value reaching the command string can run arbitrary commands with the privileges of the service. Run the executable directly and pass its arguments as separate list elements instead of building a shell command string.",
+    "tags": [
+      "os",
+      "injection"
+    ],
+    "standards": {
+      "cwe": [
+        78
+      ],
+      "owasp": [
+        {
+          "year": 2025,
+          "categories": [5]
+        }
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "kind": "VULNERABILITY",
+    "name": "Avoid executing commands resolved through the PATH environment variable",
+    "severity": "HIGH",
+    "description": "An executable is invoked by name and resolved through the PATH environment variable.",
+    "fullDescription": "A bare executable name is resolved through PATH at run time, so the program that actually executes depends on the environment the service happens to start in. Anyone able to place a file earlier in PATH, or to set PATH itself, chooses the program that runs, with the full privileges of the service. Name the executable using an absolute path, or a path relative to a directory the service controls.",
+    "tags": [
+      "os",
+      "untrusted-search-path"
+    ],
+    "standards": {
+      "cwe": [
+        426
+      ],
+      "owasp": [
+        {
+          "year": 2025,
+          "categories": [5]
+        }
+      ]
+    }
   }
 ]
