@@ -1,5 +1,4 @@
-Ballerina OS Library
-===================
+# Ballerina OS Library
 
   [![Build](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerina-os/actions/workflows/build-timestamped-master.yml)
   [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerina-os/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerina-os)
@@ -8,9 +7,9 @@ Ballerina OS Library
   [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-os.svg)](https://github.com/ballerina-platform/module-ballerina-os/commits/master)
   [![Github issues](https://img.shields.io/github/issues/ballerina-platform/ballerina-standard-library/module/os.svg?label=Open%20Issues)](https://github.com/ballerina-platform/ballerina-standard-library/labels/module%2Fos)
 
-This library provides APIs to retrieve information about the environment variables and the current users of the Operating System.
+## Overview
 
-The APIs are platform-independent, i.e., uniform across all operating systems.
+This module provides APIs to retrieve information about the environment variables and the current users of the Operating System. The APIs are platform-independent, uniform across all operating systems.
 
 ## Issues and projects
 
@@ -79,7 +78,7 @@ Execute the commands below to build from source.
 
 ## Contribute to Ballerina
 
-As an open source project, Ballerina welcomes contributions from the community. 
+As an open-source project, Ballerina welcomes contributions from the community. 
 
 For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
 

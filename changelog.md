@@ -1,6 +1,11 @@
 # Change Log
 This file contains all the notable changes done to the Ballerina OS package through the releases.
 
+## [Unreleased]
+
+### Changed
+- [[#9132] Add `Type/Library` and `Area/Built-in` Keywords, Reformat README for Connector Store Discoverability](https://github.com/ballerina-platform/ballerina-library/issues/9132)
+
 ## [1.10.1] - [2025-10-03]
 
 ### Added
