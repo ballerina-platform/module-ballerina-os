@@ -203,8 +203,8 @@ An environment variable set from untrusted input changes the behaviour of every 
 |-----------------------|-------------|
 | **Rule ID**           | ballerina/os:2 |
 | **Rule Kind**         | Vulnerability |
-| **CWE**               | [CWE-88](https://cwe.mitre.org/data/definitions/88.html), [CWE-454](https://cwe.mitre.org/data/definitions/454.html) |
-| **OWASP Top 10:2025** | [A05 Injection](https://owasp.org/Top10/2025/A05_2025-Injection/), [A06 Insecure Design](https://owasp.org/Top10/2025/A06_2025-Insecure_Design/) |
+| **CWE**               | [CWE-454](https://cwe.mitre.org/data/definitions/454.html), [CWE-15](https://cwe.mitre.org/data/definitions/15.html) |
+| **OWASP Top 10:2025** | [A02 Security Misconfiguration](https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/), [A06 Insecure Design](https://owasp.org/Top10/2025/A06_2025-Insecure_Design/) |
 
 #### 5.2.1. Why this is an issue?
 
@@ -239,9 +239,10 @@ public function configure(string userInput) returns os:Error? {
 
 #### 5.2.4. Additional Resources
 
-- [CWE-88: Improper Neutralization of Argument Delimiters in a Command](https://cwe.mitre.org/data/definitions/88.html)
 - [CWE-454: External Initialization of Trusted Variables](https://cwe.mitre.org/data/definitions/454.html)
-- [OWASP Top 10:2025 A05 Injection](https://owasp.org/Top10/2025/A05_2025-Injection/)
+- [CWE-15: External Control of System or Configuration Setting](https://cwe.mitre.org/data/definitions/15.html)
+- [OWASP Top 10:2025 A02 Security Misconfiguration](https://owasp.org/Top10/2025/A02_2025-Security_Misconfiguration/)
+- [OWASP Top 10:2025 A06 Insecure Design](https://owasp.org/Top10/2025/A06_2025-Insecure_Design/)
 
 ### 5.3. Avoid executing commands through a shell interpreter
 

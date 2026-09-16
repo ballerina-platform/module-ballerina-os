@@ -32,7 +32,7 @@
     "rule": {
       "id": "ballerina/os:1",
       "numericId": 1,
-      "description": "Avoid constructing system command arguments from user input without proper sanitization",
+      "description": "A system command argument is built from user input without sanitization.",
       "ruleKind": "VULNERABILITY"
     },
     "source": "BUILT_IN",
@@ -52,7 +52,7 @@
     "rule": {
       "id": "ballerina/os:3",
       "numericId": 3,
-      "description": "Avoid executing commands through a shell interpreter",
+      "description": "A command is executed through a shell interpreter using a command string.",
       "ruleKind": "VULNERABILITY"
     },
     "source": "BUILT_IN",

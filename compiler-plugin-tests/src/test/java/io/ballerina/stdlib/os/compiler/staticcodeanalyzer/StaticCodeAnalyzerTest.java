@@ -41,10 +41,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import static io.ballerina.scan.RuleKind.VULNERABILITY;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -61,10 +59,36 @@ public class StaticCodeAnalyzerTest {
 
     @Test
     public void validateRulesJson() throws IOException {
-        String expectedRules = "[" + Arrays.stream(OSRule.values())
-                .map(OSRule::toString).collect(Collectors.joining(",")) + "]";
-        String actualRules = Files.readString(JSON_RULES_FILE_PATH);
-        assertJsonEqual(actualRules, expectedRules);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rulesNode = mapper.readTree(Files.readString(JSON_RULES_FILE_PATH));
+        Assert.assertTrue(rulesNode.isArray());
+        Assert.assertEquals(rulesNode.size(), OSRule.values().length);
+        for (OSRule rule : OSRule.values()) {
+            JsonNode ruleNode = findRuleNode(rulesNode, rule.getId());
+            Assert.assertNotNull(ruleNode, "Rule with id " + rule.getId() + " not found in rules.json");
+            Assert.assertEquals(ruleNode.path("kind").asText(), VULNERABILITY.name());
+            Assert.assertEquals(ruleNode.path("description").asText(), rule.getDescription());
+            Assert.assertFalse(ruleNode.path("name").asText().isBlank(),
+                    "Rule " + rule.getId() + " is missing a name");
+            Assert.assertFalse(ruleNode.path("severity").asText().isBlank(),
+                    "Rule " + rule.getId() + " is missing a severity");
+            Assert.assertFalse(ruleNode.path("fullDescription").asText().isBlank(),
+                    "Rule " + rule.getId() + " is missing a fullDescription");
+            Assert.assertTrue(ruleNode.path("tags").isArray() && !ruleNode.path("tags").isEmpty(),
+                    "Rule " + rule.getId() + " is missing tags");
+            Assert.assertTrue(ruleNode.path("standards").path("cwe").isArray()
+                            && !ruleNode.path("standards").path("cwe").isEmpty(),
+                    "Rule " + rule.getId() + " is missing CWE standards");
+        }
+    }
+
+    private JsonNode findRuleNode(JsonNode rulesNode, int id) {
+        for (JsonNode ruleNode : rulesNode) {
+            if (ruleNode.path("id").asInt() == id) {
+                return ruleNode;
+            }
+        }
+        return null;
     }
 
     @Test
