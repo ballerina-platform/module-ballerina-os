@@ -182,10 +182,10 @@ public function listDirectory(string userInput) returns os:Process|error {
 
 ```ballerina
 public function listDirectory(string userInput) returns os:Process|error {
-    if userInput != "reports" && userInput != "archive" {
+    if !["reports", "archive"].some(directory => directory == userInput) {
         return error("unknown directory");
     }
-    return check os:exec({value: "/bin/ls", arguments: ["/var/data/" + userInput]});
+    return check os:exec({value: "/bin/ls", arguments: [userInput]});
 }
 ```
 
@@ -230,7 +230,7 @@ public function configure(string userInput) returns os:Error? {
 
 ```ballerina
 public function configure(string userInput) returns os:Error? {
-    if userInput != "production" && userInput != "staging" {
+    if !["production", "staging"].some(mode => mode == userInput) {
         return error("unknown mode");
     }
     check os:setEnv("APP_MODE", userInput);

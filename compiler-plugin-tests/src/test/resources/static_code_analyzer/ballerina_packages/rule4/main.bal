@@ -33,27 +33,7 @@ public function unqualifiedCommandViaVariable() returns os:Process|error {
     });
 }
 
-// Negative case - an absolute path
-public function absolutePathCommand() returns os:Process|error {
-    return check os:exec({
-        value: "/usr/bin/git",
-        arguments: ["status"]
-    });
-}
-
-// Negative case - a relative path is still an explicit path
-public function relativePathCommand() returns os:Process|error {
-    return check os:exec({
-        value: "./scripts/build.sh",
-        arguments: []
-    });
-}
-
-// Negative case - Windows resolves a drive-relative path against that drive's
-// current directory rather than through PATH
-public function driveRelativeCommand() returns os:Process|error {
-    return check os:exec({
-        value: "C:tool.exe",
-        arguments: []
-    });
+// The non-compliant example from the rule documentation
+public function status() returns os:Process|error {
+    return check os:exec({value: "git", arguments: ["status"]});
 }

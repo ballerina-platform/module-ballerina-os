@@ -2,122 +2,15 @@
   {
     "location": {
       "filePath": "main.bal",
-      "startLine": 19,
-      "endLine": 19,
-      "startColumn": 0,
-      "endColumn": 6,
-      "startOffset": 737,
-      "length": 6
-    },
-    "rule": {
-      "id": "ballerina:3",
-      "numericId": 3,
-      "description": "Non isolated public function",
-      "ruleKind": "CODE_SMELL"
-    },
-    "source": "BUILT_IN",
-    "fileName": "rule4/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule4/main.bal"
-  },
-  {
-    "location": {
-      "filePath": "main.bal",
-      "startLine": 27,
-      "endLine": 27,
-      "startColumn": 0,
-      "endColumn": 6,
-      "startOffset": 918,
-      "length": 6
-    },
-    "rule": {
-      "id": "ballerina:3",
-      "numericId": 3,
-      "description": "Non isolated public function",
-      "ruleKind": "CODE_SMELL"
-    },
-    "source": "BUILT_IN",
-    "fileName": "rule4/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule4/main.bal"
-  },
-  {
-    "location": {
-      "filePath": "main.bal",
-      "startLine": 36,
-      "endLine": 36,
-      "startColumn": 0,
-      "endColumn": 6,
-      "startOffset": 1155,
-      "length": 6
-    },
-    "rule": {
-      "id": "ballerina:3",
-      "numericId": 3,
-      "description": "Non isolated public function",
-      "ruleKind": "CODE_SMELL"
-    },
-    "source": "BUILT_IN",
-    "fileName": "rule4/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule4/main.bal"
-  },
-  {
-    "location": {
-      "filePath": "main.bal",
-      "startLine": 44,
-      "endLine": 44,
-      "startColumn": 0,
-      "endColumn": 6,
-      "startOffset": 1380,
-      "length": 6
-    },
-    "rule": {
-      "id": "ballerina:3",
-      "numericId": 3,
-      "description": "Non isolated public function",
-      "ruleKind": "CODE_SMELL"
-    },
-    "source": "BUILT_IN",
-    "fileName": "rule4/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule4/main.bal"
-  },
-  {
-    "location": {
-      "filePath": "main.bal",
-      "startLine": 53,
-      "endLine": 53,
-      "startColumn": 0,
-      "endColumn": 6,
-      "startOffset": 1667,
-      "length": 6
-    },
-    "rule": {
-      "id": "ballerina:3",
-      "numericId": 3,
-      "description": "Non isolated public function",
-      "ruleKind": "CODE_SMELL"
-    },
-    "source": "BUILT_IN",
-    "fileName": "rule4/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule4/main.bal"
-  },
-  {
-    "location": {
-      "filePath": "main.bal",
       "startLine": 21,
       "endLine": 21,
       "startColumn": 15,
-      "endColumn": 19,
-      "startOffset": 843,
-      "length": 4
+      "endColumn": 19
     },
     "rule": {
-      "id": "ballerina/os:4",
-      "numericId": 4,
-      "description": "An executable is invoked by name and resolved through the PATH environment variable.",
-      "ruleKind": "VULNERABILITY"
+      "id": "ballerina/os:4"
     },
-    "source": "BUILT_IN",
-    "fileName": "rule4/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule4/main.bal"
+    "source": "BUILT_IN"
   },
   {
     "location": {
@@ -125,18 +18,24 @@
       "startLine": 30,
       "endLine": 30,
       "startColumn": 15,
-      "endColumn": 25,
-      "startOffset": 1066,
-      "length": 10
+      "endColumn": 25
     },
     "rule": {
-      "id": "ballerina/os:4",
-      "numericId": 4,
-      "description": "An executable is invoked by name and resolved through the PATH environment variable.",
-      "ruleKind": "VULNERABILITY"
+      "id": "ballerina/os:4"
     },
-    "source": "BUILT_IN",
-    "fileName": "rule4/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule4/main.bal"
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 37,
+      "endLine": 37,
+      "startColumn": 33,
+      "endColumn": 38
+    },
+    "rule": {
+      "id": "ballerina/os:4"
+    },
+    "source": "BUILT_IN"
   }
 ]

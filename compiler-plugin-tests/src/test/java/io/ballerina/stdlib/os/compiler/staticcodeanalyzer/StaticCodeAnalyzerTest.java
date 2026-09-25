@@ -20,7 +20,6 @@ package io.ballerina.stdlib.os.compiler.staticcodeanalyzer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.ballerina.projects.Project;
 import io.ballerina.projects.ProjectEnvironmentBuilder;
 import io.ballerina.projects.directory.BuildProject;
@@ -33,6 +32,7 @@ import io.ballerina.scan.test.Assertions;
 import io.ballerina.scan.test.TestOptions;
 import io.ballerina.scan.test.TestRunner;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -41,8 +41,9 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import static io.ballerina.scan.RuleKind.VULNERABILITY;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -55,7 +56,8 @@ public class StaticCodeAnalyzerTest {
     private static final Path JSON_RULES_FILE_PATH = Paths
             .get("../", "compiler-plugin", "src", "main", "resources", "rules.json").toAbsolutePath();
     private static final Path DISTRIBUTION_PATH = Paths.get("../", "target", "ballerina-runtime");
-    private static final String MODULE_BALLERINA_OS = "module-ballerina-os";
+    private static final String COMPLIANT_SUFFIX = "_compliant";
+    private static final String OS_RULE_PREFIX = "ballerina/os:";
 
     @Test
     public void validateRulesJson() throws IOException {
@@ -116,6 +118,58 @@ public class StaticCodeAnalyzerTest {
         console.reset();
     }
 
+    @DataProvider(name = "compliantPackages")
+    public Object[][] compliantPackages() {
+        return Arrays.stream(OSRule.values())
+                .map(rule -> new Object[]{rule})
+                .toArray(Object[][]::new);
+    }
+
+    /**
+     * Scan code written the way each rule asks for and confirm no OS rule reports on it.
+     */
+    @Test(dataProvider = "compliantPackages")
+    public void testCompliantCode(OSRule rule) {
+        assertNoOsIssues("rule" + rule.getId() + COMPLIANT_SUFFIX);
+    }
+
+    /**
+     * Scan the package and confirm no OS rule reports on it.
+     * <p>
+     * Every OS rule is checked, not only the one the package is written for, so a fix for one rule that trips
+     * another is caught as well.
+     */
+    private void assertNoOsIssues(String packageName) {
+        ByteArrayOutputStream console = new ByteArrayOutputStream();
+        TestRunner testRunner = scanCompilingPackage(packageName, new PrintStream(console, true, UTF_8));
+
+        validateRules(testRunner.getRules());
+        List<String> osIssues = testRunner.getIssues().stream()
+                .map(issue -> issue.rule().id() + " at " + issue.location().lineRange())
+                .filter(issue -> issue.startsWith(OS_RULE_PREFIX))
+                .toList();
+        Assert.assertTrue(osIssues.isEmpty(), "Compliant code in " + packageName + " reported " + osIssues);
+        Assert.assertFalse(extractJson(console.toString(UTF_8)).contains("\"" + OS_RULE_PREFIX),
+                "Scan output for compliant code in " + packageName + " contains an OS rule issue");
+    }
+
+    /**
+     * Scan the package and confirm it compiles, since code that fails to compile would be scanned for the wrong
+     * reason.
+     */
+    private TestRunner scanCompilingPackage(String packageName, PrintStream printStream) {
+        Project project = BuildProject.load(getEnvironmentBuilder(), RESOURCE_PACKAGES_DIRECTORY.resolve(packageName));
+        TestRunner testRunner = new TestRunner(TestOptions.builder(project).setOutputStream(printStream).build());
+        testRunner.performScan();
+
+        // This must run after the scan: compiling first caches a compilation the scanner's analyzers never took
+        // part in.
+        Assert.assertFalse(project.currentPackage().getCompilation().diagnosticResult().hasErrors(),
+                packageName + " does not compile: "
+                        + project.currentPackage().getCompilation().diagnosticResult().errors());
+        return testRunner;
+    }
+
     private TestRunner setupTestRunner(Path targetPackagePath, PrintStream printStream) {
         Project project = BuildProject.load(getEnvironmentBuilder(), targetPackagePath);
         TestOptions options = TestOptions.builder(project).setOutputStream(printStream).build();
@@ -133,23 +187,45 @@ public class StaticCodeAnalyzerTest {
         switch (rule) {
             case AVOID_UNSANITIZED_CMD_ARGS:
                 // The fixture runs `/bin/sh -c`, so it also triggers the shell invocation rule
-                Assert.assertEquals(issues.size(), 2);
+                Assert.assertEquals(issues.size(), 7);
                 Assertions.assertIssue(issues, 0, "ballerina/os:1", "main.bal",
-                        23, 26, Source.BUILT_IN);
+                        22, 25, Source.BUILT_IN);
                 Assertions.assertIssue(issues, 1, "ballerina/os:3", "main.bal",
-                        23, 26, Source.BUILT_IN);
+                        22, 25, Source.BUILT_IN);
+                // Conditions that do not validate the value passed to the command are not sanitization
+                Assertions.assertIssue(issues, 2, "ballerina/os:1", "main.bal",
+                        35, 38, Source.BUILT_IN);
+                Assertions.assertIssue(issues, 3, "ballerina/os:1", "main.bal",
+                        48, 51, Source.BUILT_IN);
+                Assertions.assertIssue(issues, 4, "ballerina/os:1", "main.bal",
+                        58, 61, Source.BUILT_IN);
+                // The non-compliant examples from the rule documentation
+                Assertions.assertIssue(issues, 5, "ballerina/os:1", "main.bal",
+                        68, 68, Source.BUILT_IN);
+                Assertions.assertIssue(issues, 6, "ballerina/os:1", "main.bal",
+                        76, 79, Source.BUILT_IN);
                 break;
             case AVOID_UNSANITIZED_ENV_VARS:
                 index = 0;
-                Assert.assertEquals(issues.size(), 2);
+                Assert.assertEquals(issues.size(), 6);
                 Assertions.assertIssue(issues, index++, "ballerina/os:2", "main.bal",
-                        20, 23, Source.BUILT_IN);
+                        19, 22, Source.BUILT_IN);
                 // The parameter reaches the value through a write inside a nested block
+                Assertions.assertIssue(issues, index++, "ballerina/os:2", "main.bal",
+                        32, 32, Source.BUILT_IN);
+                // Conditions that do not validate the value written are not sanitization
+                Assertions.assertIssue(issues, index++, "ballerina/os:2", "main.bal",
+                        39, 39, Source.BUILT_IN);
+                Assertions.assertIssue(issues, index++, "ballerina/os:2", "main.bal",
+                        47, 47, Source.BUILT_IN);
+                // The non-compliant examples from the rule documentation
+                Assertions.assertIssue(issues, index++, "ballerina/os:2", "main.bal",
+                        54, 54, Source.BUILT_IN);
                 Assertions.assertIssue(issues, index, "ballerina/os:2", "main.bal",
-                        60, 60, Source.BUILT_IN);
+                        59, 59, Source.BUILT_IN);
                 break;
             case AVOID_SHELL_INVOCATION:
-                Assert.assertEquals(issues.size(), 4);
+                Assert.assertEquals(issues.size(), 5);
                 Assertions.assertIssue(issues, 0, "ballerina/os:3", "main.bal",
                         20, 23, Source.BUILT_IN);
                 Assertions.assertIssue(issues, 1, "ballerina/os:3", "main.bal",
@@ -159,13 +235,19 @@ public class StaticCodeAnalyzerTest {
                 // `cmd.exe` carries no path, so it is also resolved through PATH
                 Assertions.assertIssue(issues, 3, "ballerina/os:4", "main.bal",
                         39, 39, Source.BUILT_IN);
+                // The non-compliant example from the rule documentation
+                Assertions.assertIssue(issues, 4, "ballerina/os:3", "main.bal",
+                        46, 46, Source.BUILT_IN);
                 break;
             case AVOID_UNQUALIFIED_EXECUTABLE_PATH:
-                Assert.assertEquals(issues.size(), 2);
+                Assert.assertEquals(issues.size(), 3);
                 Assertions.assertIssue(issues, 0, "ballerina/os:4", "main.bal",
                         21, 21, Source.BUILT_IN);
                 Assertions.assertIssue(issues, 1, "ballerina/os:4", "main.bal",
                         30, 30, Source.BUILT_IN);
+                // The non-compliant example from the rule documentation
+                Assertions.assertIssue(issues, 2, "ballerina/os:4", "main.bal",
+                        37, 37, Source.BUILT_IN);
                 break;
             default:
                 Assert.fail("Unhandled rule in validateIssues: " + rule);
@@ -173,11 +255,41 @@ public class StaticCodeAnalyzerTest {
         }
     }
 
+    /**
+     * Check the OS issues in the printed scan report against the expected output.
+     * <p>
+     * Only the fields listed in the expected output are compared, and issues from other rules are ignored, so the
+     * test keeps passing when the scan tool adds fields to its report or changes its own built-in rules.
+     */
     private void validateOutput(ByteArrayOutputStream console, String targetPackageName) throws IOException {
-        String output = console.toString(UTF_8);
-        String jsonOutput = extractJson(output);
-        String expectedOutput = Files.readString(EXPECTED_OUTPUT_DIRECTORY.resolve(targetPackageName + ".json"));
-        assertJsonEqual(jsonOutput, expectedOutput);
+        ObjectMapper mapper = new ObjectMapper();
+        List<JsonNode> actualIssues = new ArrayList<>();
+        for (JsonNode issue : mapper.readTree(extractJson(console.toString(UTF_8)))) {
+            if (issue.path("rule").path("id").asText().startsWith(OS_RULE_PREFIX)) {
+                actualIssues.add(issue);
+            }
+        }
+        JsonNode expectedIssues = mapper.readTree(
+                Files.readString(EXPECTED_OUTPUT_DIRECTORY.resolve(targetPackageName + ".json")));
+
+        Assert.assertEquals(actualIssues.size(), expectedIssues.size(),
+                "Unexpected number of OS issues in the scan report of " + targetPackageName + ": " + actualIssues);
+        for (int i = 0; i < expectedIssues.size(); i++) {
+            assertContainsFields(actualIssues.get(i), expectedIssues.get(i), targetPackageName + "[" + i + "]");
+        }
+    }
+
+    private static void assertContainsFields(JsonNode actual, JsonNode expected, String path) {
+        if (!expected.isObject()) {
+            // Compared as text: TestNG treats JsonNode as an Iterable, which makes any two value nodes equal
+            Assert.assertEquals(actual.toString(), expected.toString(), "Mismatch at " + path);
+            return;
+        }
+        expected.fields().forEachRemaining(field -> {
+            String fieldPath = path + "." + field.getKey();
+            Assert.assertTrue(actual.has(field.getKey()), "Missing field " + fieldPath + " in " + actual);
+            assertContainsFields(actual.get(field.getKey()), field.getValue(), fieldPath);
+        });
     }
 
     private static ProjectEnvironmentBuilder getEnvironmentBuilder() {
@@ -192,25 +304,5 @@ public class StaticCodeAnalyzerTest {
             return "";
         }
         return consoleOutput.substring(startIndex, endIndex + 1);
-    }
-
-    private void assertJsonEqual(String actual, String expected) {
-        Assert.assertEquals(normalizeString(actual), normalizeString(expected));
-    }
-
-    private static String normalizeString(String json) {
-        try {
-            ObjectMapper mapper = new ObjectMapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-            JsonNode node = mapper.readTree(json);
-            String normalizedJson = mapper.writeValueAsString(node)
-                    .replaceAll(":\"[^\"]*" + MODULE_BALLERINA_OS, ":\"" + MODULE_BALLERINA_OS);
-            return isWindows() ? normalizedJson.replace("/", "\\\\") : normalizedJson;
-        } catch (Exception ignore) {
-            return json;
-        }
-    }
-
-    private static boolean isWindows() {
-        return System.getProperty("os.name").toLowerCase(Locale.ENGLISH).startsWith("windows");
     }
 }

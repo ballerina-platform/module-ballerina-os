@@ -30,10 +30,12 @@ import io.ballerina.compiler.syntax.tree.FunctionBodyBlockNode;
 import io.ballerina.compiler.syntax.tree.FunctionCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.FunctionDefinitionNode;
 import io.ballerina.compiler.syntax.tree.IdentifierToken;
+import io.ballerina.compiler.syntax.tree.IfElseStatementNode;
 import io.ballerina.compiler.syntax.tree.ImportDeclarationNode;
 import io.ballerina.compiler.syntax.tree.ImportOrgNameNode;
 import io.ballerina.compiler.syntax.tree.ListConstructorExpressionNode;
 import io.ballerina.compiler.syntax.tree.MappingConstructorExpressionNode;
+import io.ballerina.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerina.compiler.syntax.tree.ModulePartNode;
 import io.ballerina.compiler.syntax.tree.ModuleVariableDeclarationNode;
 import io.ballerina.compiler.syntax.tree.NamedArgumentNode;
@@ -64,6 +66,19 @@ import static io.ballerina.stdlib.os.compiler.staticcodeanalyzer.OsConstants.OS;
 public final class OsAnalysisUtils {
 
     private static final String PUBLIC_QUALIFIER = "public";
+
+    /**
+     * Statements that leave the enclosing block, so an {@code if} ending in one guards the statements after it.
+     */
+    private static final Set<SyntaxKind> EXITING_STATEMENTS = Set.of(SyntaxKind.RETURN_STATEMENT,
+            SyntaxKind.PANIC_STATEMENT, SyntaxKind.FAIL_STATEMENT, SyntaxKind.CONTINUE_STATEMENT,
+            SyntaxKind.BREAK_STATEMENT);
+
+    /**
+     * Methods that measure or reshape a value without checking its content, so calling one is not validation.
+     */
+    private static final Set<String> NON_VALIDATING_METHODS = Set.of("length", "trim", "toString", "toLowerAscii",
+            "toUpperAscii", "clone", "cloneReadOnly");
 
     private OsAnalysisUtils() {
     }
@@ -336,24 +351,31 @@ public final class OsAnalysisUtils {
     }
 
     /**
-     * Check whether a value reaching this point came from a parameter of a public function.
+     * Check whether a value reaching this point came from a parameter of a public function without being checked
+     * first.
      * <p>
      * A public function is the module's boundary, so its parameters are the closest thing to an untrusted input
-     * this module can identify without a data-flow engine.
+     * this module can identify without a data-flow engine. A value that is only used once a validating condition
+     * over it has held is treated as sanitized; see {@link #isSanitized(Node, Set)}.
      *
      * @param node          the expression to check
      * @param semanticModel the semantic model
-     * @return true if the value originates from a public function parameter
+     * @return true if unchecked input from a public function parameter reaches the expression
      */
     public static boolean isUserControlledInput(Node node, SemanticModel semanticModel) {
         Optional<Symbol> symbol = semanticModel.symbol(node);
         if (symbol.isEmpty()) {
             return false;
         }
+        String name = node.toSourceCode().trim();
         if (symbol.get().kind() == SymbolKind.PARAMETER && isInsidePublicFunction(node)) {
-            return true;
+            return !isSanitized(node, Set.of(name));
         }
-        return symbol.get().kind() == SymbolKind.VARIABLE && isAssignedUserControlledInput(node);
+        if (symbol.get().kind() != SymbolKind.VARIABLE) {
+            return false;
+        }
+        Optional<String> sourceParameter = findUserControlledSource(node);
+        return sourceParameter.isPresent() && !isSanitized(node, Set.of(name, sourceParameter.get()));
     }
 
     /**
@@ -388,19 +410,19 @@ public final class OsAnalysisUtils {
     }
 
     /**
-     * Check whether the value the variable last held before this point came from a public function parameter.
+     * Find the public function parameter that the value the variable last held before this point came from.
      * <p>
      * Resolution is bound to the reference: a write that appears after the call says nothing about the value the
      * call used, and a write inside a nested block is still a write. Both are handled by resolving the last
      * effective write through the enclosing scopes.
      */
-    private static boolean isAssignedUserControlledInput(Node node) {
+    private static Optional<String> findUserControlledSource(Node node) {
         if (!(node instanceof ExpressionNode reference)) {
-            return false;
+            return Optional.empty();
         }
         Optional<ExpressionNode> lastWrite = resolveVariableInitializer(reference);
         if (lastWrite.isEmpty()) {
-            return false;
+            return Optional.empty();
         }
         Node current = node.parent();
         while (current != null) {
@@ -410,13 +432,111 @@ public final class OsAnalysisUtils {
                             && requiredParameter.paramName().isPresent()
                             && isExpressionMatchingParam(lastWrite.get(),
                             requiredParameter.paramName().get().text())) {
-                        return true;
+                        return Optional.of(requiredParameter.paramName().get().text());
                     }
                 }
             }
             current = current.parent();
         }
+        return Optional.empty();
+    }
+
+    /**
+     * Check whether the reference is only reached once a validating condition over one of the names has held.
+     * <p>
+     * Two shapes are recognised, both bounded by the enclosing function:
+     * <ul>
+     *     <li>the reference sits in the {@code then} branch of an {@code if} whose condition validates the value, as
+     *     in {@code if allowed.some(k => k == input) { os:exec(...) }}</li>
+     *     <li>an earlier {@code if} without an {@code else}, in an enclosing block, validates the value and always
+     *     leaves the block, as in {@code if !isSafe(input) { return error(...); }} before the call</li>
+     * </ul>
+     * The direction of the condition is not checked, so this is a heuristic rather than a proof that the check is
+     * sound.
+     */
+    private static boolean isSanitized(Node reference, Set<String> names) {
+        Node child = reference;
+        for (Node parent = reference.parent(); parent != null; child = parent, parent = parent.parent()) {
+            if (parent instanceof FunctionDefinitionNode) {
+                return false;
+            }
+            if (parent instanceof IfElseStatementNode ifElse && ifElse.ifBody().equals(child)
+                    && isValidatingCondition(ifElse.condition(), names)) {
+                return true;
+            }
+            if (parent instanceof BlockStatementNode block
+                    && hasEarlierExitingGuard(block.statements(), child, names)) {
+                return true;
+            }
+            if (parent instanceof FunctionBodyBlockNode body
+                    && hasEarlierExitingGuard(body.statements(), child, names)) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    private static boolean hasEarlierExitingGuard(NodeList<StatementNode> statements, Node child,
+                                                  Set<String> names) {
+        int childOffset = child.textRange().startOffset();
+        for (StatementNode statement : statements) {
+            if (statement.textRange().startOffset() >= childOffset) {
+                return false;
+            }
+            if (statement instanceof IfElseStatementNode ifElse && ifElse.elseBody().isEmpty()
+                    && alwaysExits(ifElse.ifBody()) && isValidatingCondition(ifElse.condition(), names)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean alwaysExits(BlockStatementNode block) {
+        NodeList<StatementNode> statements = block.statements();
+        return !statements.isEmpty() && EXITING_STATEMENTS.contains(statements.get(statements.size() - 1).kind());
+    }
+
+    /**
+     * A condition validates a value when it hands the value to a call, either as the receiver as in
+     * {@code input.matches(...)} or inside the arguments as in {@code allowed.some(k => k == input)} or
+     * {@code isSafe(input)}. A bare comparison such as {@code input != ""} checks nothing about the content, and
+     * neither does a call that only measures or reshapes the value, so neither counts.
+     */
+    private static boolean isValidatingCondition(Node condition, Set<String> names) {
+        if (condition instanceof FunctionCallExpressionNode functionCall
+                && referencesAny(functionCall.arguments(), names)) {
+            return true;
+        }
+        if (condition instanceof MethodCallExpressionNode methodCall
+                && !NON_VALIDATING_METHODS.contains(methodCall.methodName().toSourceCode().trim())
+                && (referencesAny(methodCall.expression(), names) || referencesAny(methodCall.arguments(), names))) {
+            return true;
+        }
+        if (!(condition instanceof NonTerminalNode nonTerminal)) {
+            return false;
+        }
+        for (Node child : nonTerminal.children()) {
+            if (isValidatingCondition(child, names)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean referencesAny(Iterable<? extends Node> nodes, Set<String> names) {
+        for (Node node : nodes) {
+            if (referencesAny(node, names)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean referencesAny(Node node, Set<String> names) {
+        if (node.kind() == SyntaxKind.SIMPLE_NAME_REFERENCE) {
+            return names.contains(node.toSourceCode().trim());
+        }
+        return node instanceof NonTerminalNode nonTerminal && referencesAny(nonTerminal.children(), names);
     }
 
     private static boolean isExpressionMatchingParam(ExpressionNode expression, String paramName) {
