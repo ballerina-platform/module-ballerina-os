@@ -3,40 +3,78 @@
     "location": {
       "filePath": "main.bal",
       "startLine": 19,
-      "endLine": 19,
-      "startColumn": 0,
-      "endColumn": 6,
-      "startOffset": 705,
-      "length": 6
+      "endLine": 22,
+      "startColumn": 29,
+      "endColumn": 5
     },
     "rule": {
-      "id": "ballerina:3",
-      "numericId": 3,
-      "description": "Non isolated public function",
-      "ruleKind": "CODE_SMELL"
+      "id": "ballerina/os:2"
     },
-    "source": "BUILT_IN",
-    "fileName": "rule2/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule2/main.bal"
+    "source": "BUILT_IN"
   },
   {
     "location": {
       "filePath": "main.bal",
-      "startLine": 20,
-      "endLine": 23,
-      "startColumn": 29,
-      "endColumn": 5,
-      "startOffset": 796,
-      "length": 84
+      "startLine": 32,
+      "endLine": 32,
+      "startColumn": 10,
+      "endColumn": 37
     },
     "rule": {
-      "id": "ballerina/os:2",
-      "numericId": 2,
-      "description": "Avoid constructing environment variables from user input without proper sanitization",
-      "ruleKind": "VULNERABILITY"
+      "id": "ballerina/os:2"
     },
-    "source": "BUILT_IN",
-    "fileName": "rule2/main.bal",
-    "filePath": "module-ballerina-os/compiler-plugin-tests/src/test/resources/static_code_analyzer/ballerina_packages/rule2/main.bal"
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 39,
+      "endLine": 39,
+      "startColumn": 15,
+      "endColumn": 47
+    },
+    "rule": {
+      "id": "ballerina/os:2"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 47,
+      "endLine": 47,
+      "startColumn": 15,
+      "endColumn": 47
+    },
+    "rule": {
+      "id": "ballerina/os:2"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 54,
+      "endLine": 54,
+      "startColumn": 10,
+      "endColumn": 42
+    },
+    "rule": {
+      "id": "ballerina/os:2"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 59,
+      "endLine": 59,
+      "startColumn": 20,
+      "endColumn": 56
+    },
+    "rule": {
+      "id": "ballerina/os:2"
+    },
+    "source": "BUILT_IN"
   }
 ]

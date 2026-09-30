@@ -1,0 +1,41 @@
+[
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 21,
+      "endLine": 21,
+      "startColumn": 15,
+      "endColumn": 19
+    },
+    "rule": {
+      "id": "ballerina/os:4"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 30,
+      "endLine": 30,
+      "startColumn": 15,
+      "endColumn": 25
+    },
+    "rule": {
+      "id": "ballerina/os:4"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 37,
+      "endLine": 37,
+      "startColumn": 33,
+      "endColumn": 38
+    },
+    "rule": {
+      "id": "ballerina/os:4"
+    },
+    "source": "BUILT_IN"
+  }
+]

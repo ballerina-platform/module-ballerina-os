@@ -1,0 +1,67 @@
+[
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 20,
+      "endLine": 23,
+      "startColumn": 17,
+      "endColumn": 6
+    },
+    "rule": {
+      "id": "ballerina/os:3"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 30,
+      "endLine": 33,
+      "startColumn": 17,
+      "endColumn": 6
+    },
+    "rule": {
+      "id": "ballerina/os:3"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 38,
+      "endLine": 41,
+      "startColumn": 17,
+      "endColumn": 6
+    },
+    "rule": {
+      "id": "ballerina/os:3"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 39,
+      "endLine": 39,
+      "startColumn": 15,
+      "endColumn": 24
+    },
+    "rule": {
+      "id": "ballerina/os:4"
+    },
+    "source": "BUILT_IN"
+  },
+  {
+    "location": {
+      "filePath": "main.bal",
+      "startLine": 46,
+      "endLine": 46,
+      "startColumn": 17,
+      "endColumn": 87
+    },
+    "rule": {
+      "id": "ballerina/os:3"
+    },
+    "source": "BUILT_IN"
+  }
+]
