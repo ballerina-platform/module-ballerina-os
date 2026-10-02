@@ -3,6 +3,8 @@ This file contains all the notable changes done to the Ballerina OS package thro
 
 ## [Unreleased]
 
+## [1.10.2] - [2026-10-02]
+
 ### Changed
 - [[#9132] Add `Type/Library` and `Area/Built-in` Keywords, Reformat README for Connector Store Discoverability](https://github.com/ballerina-platform/ballerina-library/issues/9132)
 
