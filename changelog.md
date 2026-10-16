@@ -1,7 +1,7 @@
 # Change Log
 This file contains all the notable changes done to the Ballerina OS package through the releases.
 
-## [Unreleased]
+## [1.10.3] - 2026-10-16
 
 ### Changed
 
